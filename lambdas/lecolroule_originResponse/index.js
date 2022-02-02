@@ -16,7 +16,7 @@ exports.handler = async (event, context) => {
 */
     //Set new headers
     headers['strict-transport-security'] = [{key: 'Strict-Transport-Security', value: 'max-age= 63072000; includeSubdomains; preload'}];
-    headers['content-security-policy'] = [{key: 'Content-Security-Policy', value: "default-src 'self' https://www.google.com https://www.google-analytics.com https://www.chalet-montagne.com; img-src 'self' data: https://www.google-analytics.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; object-src 'none'"}];
+    headers['content-security-policy'] = [{key: 'Content-Security-Policy', value: "default-src 'self' https://www.google.com https://www.google-analytics.com; img-src 'self' data: https://www.google-analytics.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; object-src 'none'"}];
     headers['x-content-type-options'] = [{key: 'X-Content-Type-Options', value: 'nosniff'}];
     headers['x-frame-options'] = [{key: 'X-Frame-Options', value: 'DENY'}];
     headers['x-xss-protection'] = [{key: 'X-XSS-Protection', value: '1; mode=block'}];
@@ -68,6 +68,15 @@ exports.handler = async (event, context) => {
         {
             headers['content-type'] = [{key: 'Content-Type', value: contentType}];
         }
+    }
+    
+    // Tells the browser to cache the file for 24h
+    if(!headers['cache-control'])
+    {
+        headers['cache-control'] = [{ 
+            key:   'Cache-Control', 
+            value: 'public, max-age=86400' 
+        }];
     }
 
     // Debug
