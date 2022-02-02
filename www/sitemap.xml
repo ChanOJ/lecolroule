@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/" />
+	</url>
+<!--
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/appartement</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/apartment</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/appartement-ski</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/ski-apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/ski-apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-ski" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/ski-apartment</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/ski-apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/ski-apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-ski" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/appartement-rando-velo</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/biking-hiking-apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/biking-hiking-apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-rando-velo" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/biking-hiking-apartment</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/biking-hiking-apartment" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/biking-hiking-apartment" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-rando-velo" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/contact-reservation</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/booking-contact" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/booking-contact" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/contact-reservation" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/booking-contact</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/booking-contact" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/booking-contact" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/contact-reservation" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/appartement-commerces</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment-shops" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment-shops" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-commerces" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/apartment-shops</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment-shops" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment-shops" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-commerces" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/appartement-trajet</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment-route" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment-route" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-trajet" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/apartment-route</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/apartment-route" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/apartment-route" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/appartement-trajet" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/covid-19</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/covid-19" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/covid-19" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/covid-19" />
+	</url>
+	<url>
+		<loc>https://www.lecolroule.fr/valloire/en/covid-19</loc>
+		<changefreq>weekly</changefreq>
+		<xhtml:link rel="alternate" hreflang="x-default" href="https://www.lecolroule.fr/valloire/en/covid-19" />
+		<xhtml:link rel="alternate" hreflang="en" href="https://www.lecolroule.fr/valloire/en/covid-19" />
+		<xhtml:link rel="alternate" hreflang="fr" href="https://www.lecolroule.fr/valloire/covid-19" />
+	</url>
+-->
+</urlset>
