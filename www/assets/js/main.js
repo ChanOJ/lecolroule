@@ -4,11 +4,9 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
-const debug = !location.hostname.startsWith('www.');
 const rootPath = '/valloire/';
-const error404 = '/404.html'; // must be a non existent file
-const rxArticle = /^[a-z]+[a-z0-9-]*[a-z0-9]+$/i;
-var mainTitle;
+const error404 = './404.html'; // must be a non existent file
+var rxArticle = /^[a-z]+[a-z0-9-]*[a-z0-9]+$/i;
 
 (function($) {
 
@@ -87,102 +85,32 @@ var mainTitle;
 				if (rxArticle.test(id))
 					$article = $main_articles.filter('#' + id);
 
-			// No such article? Bail (should return 404).
-				if (!$article || $article.length == 0) {
-					location.href = error404;
-					return;
+				// No such article? Bail (should return 404).
+					if (!$article || $article.length == 0) {
+						location.href = error404;
+						return;
+					}
+
+				// Analytics
+				if (typeof gtag === "function") {
+					gtag('event', 'page_view', {
+						page_path: location.pathname + location.hash
+					});
 				}
 
-				if (!mainTitle) mainTitle = document.title;
-				document.title = $article.children('h2').text() + ' - ' + $('h1').text();
+				// Handle lock.
 
-			// Handle lock.
+					// Already locked? Speed through "show" steps w/o delays.
+						if (locked || (typeof initial != 'undefined' && initial === true)) {
 
-			// Already locked? Speed through "show" steps w/o delays.
-				if (locked || (typeof initial != 'undefined' && initial === true)) {
+							// Mark as switching.
+								$body.addClass('is-switching');
 
-					// Mark as switching.
-						$body.addClass('is-switching');
+							// Mark as visible.
+								$body.addClass('is-article-visible');
 
-					// Mark as visible.
-						$body.addClass('is-article-visible');
-
-					// Deactivate all articles (just in case one's already active).
-						$main_articles.removeClass('active');
-
-					// Hide header, footer.
-						$header.hide();
-						$footer.hide();
-
-					// Show main, article.
-						$main.show();
-						$article.show();
-
-					// Activate article.
-						$article.addClass('active');
-
-					// Unlock.
-						locked = false;
-
-					// Unmark as switching.
-						setTimeout(function() {
-							$body.removeClass('is-switching');
-						}, (initial ? 1000 : 0));
-
-					return;
-
-				}
-
-			// Lock.
-				locked = true;
-
-			// Article already visible? Just swap articles.
-				if ($body.hasClass('is-article-visible')) {
-
-					// Deactivate current article.
-						var $currentArticle = $main_articles.filter('.active');
-
-						$currentArticle.removeClass('active');
-
-					// Show article.
-						setTimeout(function() {
-
-							// Hide current article.
-								$currentArticle.hide();
-
-							// Show article.
-								$article.show();
-
-							// Activate article.
-								setTimeout(function() {
-
-									$article.addClass('active');
-
-									// Window stuff.
-										$window
-											.scrollTop(0)
-											.triggerHandler('resize.flexbox-fix');
-
-									// Unlock.
-										setTimeout(function() {
-											locked = false;
-										}, delay);
-
-								}, 25);
-
-						}, delay);
-
-				}
-
-			// Otherwise, handle as normal.
-				else {
-
-					// Mark as visible.
-						$body
-							.addClass('is-article-visible');
-
-					// Show article.
-						setTimeout(function() {
+							// Deactivate all articles (just in case one's already active).
+								$main_articles.removeClass('active');
 
 							// Hide header, footer.
 								$header.hide();
@@ -193,25 +121,100 @@ var mainTitle;
 								$article.show();
 
 							// Activate article.
+								$article.addClass('active');
+
+							// Unlock.
+								locked = false;
+
+							// Unmark as switching.
 								setTimeout(function() {
+									$body.removeClass('is-switching');
+								}, (initial ? 1000 : 0));
 
-									$article.addClass('active');
+							return;
 
-									// Window stuff.
-										$window
-											.scrollTop(0)
-											.triggerHandler('resize.flexbox-fix');
+						}
 
-									// Unlock.
-										setTimeout(function() {
-											locked = false;
-										}, delay);
+					// Lock.
+						locked = true;
 
-								}, 25);
+				// Article already visible? Just swap articles.
+					if ($body.hasClass('is-article-visible')) {
 
-						}, delay);
+						// Deactivate current article.
+							var $currentArticle = $main_articles.filter('.active');
 
-				}
+							$currentArticle.removeClass('active');
+
+						// Show article.
+							setTimeout(function() {
+
+								// Hide current article.
+									$currentArticle.hide();
+
+								// Show article.
+									$article.show();
+
+								// Activate article.
+									setTimeout(function() {
+
+										$article.addClass('active');
+
+										// Window stuff.
+											$window
+												.scrollTop(0)
+												.triggerHandler('resize.flexbox-fix');
+
+										// Unlock.
+											setTimeout(function() {
+												locked = false;
+											}, delay);
+
+									}, 25);
+
+							}, delay);
+
+					}
+
+				// Otherwise, handle as normal.
+					else {
+
+						// Mark as visible.
+							$body
+								.addClass('is-article-visible');
+
+						// Show article.
+							setTimeout(function() {
+
+								// Hide header, footer.
+									$header.hide();
+									$footer.hide();
+
+								// Show main, article.
+									$main.show();
+									$article.show();
+
+								// Activate article.
+									setTimeout(function() {
+
+										$article.addClass('active');
+
+										// Window stuff.
+											$window
+												.scrollTop(0)
+												.triggerHandler('resize.flexbox-fix');
+
+										// Unlock.
+											setTimeout(function() {
+												locked = false;
+											}, delay);
+
+									}, 25);
+
+							}, delay);
+
+					}
+
 			};
 
 			$main._hide = function(addState) {
@@ -224,19 +227,16 @@ var mainTitle;
 
 				// Add state?
 					if (typeof addState != 'undefined'
-					&&	addState === true) {
+					&&	addState === true)
+						//history.pushState(null, null, '#');
 						history.pushState(null, null, './');
 
-						if (!mainTitle) mainTitle = document.title;
-						document.title = mainTitle;
-
-						// Analytics
-						if (typeof gtag === "function") {
-							gtag('event', 'page_view', {
-								page_path: location.pathname
-							});
-						}
-					}
+				// Analytics
+				if (typeof gtag === "function") {
+					gtag('event', 'page_view', {
+						page_path: location.pathname + location.hash
+					});
+				}
 
 				// Handle lock.
 
@@ -323,17 +323,9 @@ var mainTitle;
 					$('<div class="close">Close</div>')
 						.appendTo($this)
 						.on('click', function() {
+							//location.hash = '';
 							$main._hide();
-
-							document.title = mainTitle;
 							window.history.pushState({}, window.title, './'); // Update URL as well as browser history.
-
-							// Analytics
-							if (typeof gtag === "function") {
-								gtag('event', 'page_view', {
-									page_path: location.pathname
-								});
-							}
 						});
 
 				// Prevent clicks from inside article from bubbling.
@@ -382,29 +374,31 @@ var mainTitle;
 				// ignore absolute (ie externals) URLs
 				if (!hrefUrl.includes('://')) {
 
-					if (debug) console.log('hrefUrl=*'+hrefUrl+'*');
+					console.log('hrefUrl=*'+hrefUrl+'*');
 					const pageToLoad = hrefUrl.slice(2); // remove the leading dot-slash
-					if (debug) console.log('pageToLoad=*'+pageToLoad+'*');
+					console.log('pageToLoad=*'+pageToLoad+'*');
 
-					if ($main_articles.filter('#'+pageToLoad).length > 0) {
+					if (pageToLoad == '') {
+						// stop the browser from navigating to the destination URL.
+						event.preventDefault();
+						event.stopPropagation();
+
+						// Hide.
+						console.log('hide');
+						$main._hide();
+						console.log('pushState(../)');
+						window.history.pushState({}, window.title, '../') // Update URL as well as browser history.
+					}
+					else if ($main_articles.filter('#'+pageToLoad).length > 0) {
 						// stop the browser from navigating to the destination URL.
 						event.preventDefault();
 						event.stopPropagation();
 
 						// Show article.
-						if (debug) console.log('show('+pageToLoad+')');
+						console.log('show('+pageToLoad+')');
 						$main._show(pageToLoad);
-
-						if (debug) console.log('pushState('+'./'+pageToLoad+')');
-
+						console.log('pushState('+'./'+pageToLoad+')');
 						window.history.pushState({}, window.title, './'+pageToLoad) // Update URL as well as browser history.
-
-						// Analytics
-						if (typeof gtag === "function") {
-							gtag('event', 'page_view', {
-								page_path: location.pathname
-							});
-						}
 					}
 					else {
 						// stop the browser from navigating to the destination URL.
@@ -412,7 +406,7 @@ var mainTitle;
 						event.stopPropagation();
 
 						// Show article.
-						if (debug) console.log('404 : *' + pageToLoad + '*');
+						console.log('404 : *' + pageToLoad + '*');
 						location.href = error404;
 					}
 				}
@@ -425,21 +419,22 @@ var mainTitle;
 				$main_articles.hide();
 
 			// Initial article.
-				if (debug) console.log('location.pathname=*'+location.pathname+'*');
+				console.log('location.pathname=*'+location.pathname+'*');
 				var pageToLoad = location.pathname.replace(rootPath, '');
-				if (debug) console.log('pageToLoad=*'+pageToLoad+'*');
+				console.log('pageToLoad=*'+pageToLoad+'*');
 				pageToLoad = pageToLoad.replace(/^[a-z][a-z]\//, '');
-				if (debug) console.log('pageToLoad=*'+pageToLoad+'*');
+				console.log('pageToLoad=*'+pageToLoad+'*');
 
 				// if there is an article to load
 				if (rxArticle.test(pageToLoad)) {
 					$window.on('load', function() {
-						if (debug) console.log('show('+pageToLoad+')');
+						console.log('show('+pageToLoad+')');
+						//$main._show(location.hash.substr(1), true);
 						$main._show(pageToLoad, true);
 					});
 				}
 				else if (pageToLoad != '' && $('meta[name=error]').attr("content") != 'true' ) {
-					if (debug) console.log('404 : *' + pageToLoad + '*');
+					console.log('404 : *' + pageToLoad + '*');
 					location.href = error404;
 				}
 
