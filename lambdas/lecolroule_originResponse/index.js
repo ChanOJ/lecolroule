@@ -70,10 +70,9 @@ exports.handler = async (event, context) => {
         }
     }
     
-    // Tells the browser to cache the file for 24h
+    // Tells the browser to cache the file for 7 days
     if(!headers['cache-control'])
     {
-        // 7 days
         headers['cache-control'] = [{ 
             key:   'Cache-Control', 
             value: 'public, max-age=604800' 
