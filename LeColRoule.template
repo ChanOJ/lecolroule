@@ -1,0 +1,456 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "zonelecolroulefr": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "Name": "lecolroule.fr."
+      }
+    },
+    "dnslecolroulefr": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "zonelecolroulefr"
+        },
+        "RecordSets": [
+          {
+            "Name": "lecolroule.fr.",
+            "Type": "AAAA",
+            "AliasTarget": {
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "DNSName": "dbiqkgxhx2axw.cloudfront.net"
+            }
+          }
+        ]
+      }
+    },
+    "dns5a53caae5653c89b8994a30a128a708alecolroulefr": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "zonelecolroulefr"
+        },
+        "RecordSets": [
+          {
+            "Name": "_5a53caae5653c89b8994a30a128a708a.lecolroule.fr.",
+            "Type": "CNAME",
+            "TTL": "300",
+            "ResourceRecords": [
+              "_66abc36f7ee84e054740c814568c632a.bsgbmzkfwj.acm-validations.aws."
+            ]
+          }
+        ]
+      }
+    },
+    "dnswwwlecolroulefr": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "zonelecolroulefr"
+        },
+        "RecordSets": [
+          {
+            "Name": "www.lecolroule.fr.",
+            "Type": "AAAA",
+            "AliasTarget": {
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "DNSName": "d1mfsjq60nz60.cloudfront.net"
+            }
+          }
+        ]
+      }
+    },
+    "dns6221c5fc95ac2bae91ed254d1ac49621wwwlecolroulefr": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": {
+          "Ref": "zonelecolroulefr"
+        },
+        "RecordSets": [
+          {
+            "Name": "_6221c5fc95ac2bae91ed254d1ac49621.www.lecolroule.fr.",
+            "Type": "CNAME",
+            "TTL": "300",
+            "ResourceRecords": [
+              "_b1c6dc400f30631d0268a8bea74f9141.bsgbmzkfwj.acm-validations.aws."
+            ]
+          }
+        ]
+      }
+    },
+    "vpcddc429b5": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "172.31.0.0/16",
+        "InstanceTenancy": "default",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true"
+      }
+    },
+    "subnetf4fff79d": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.31.0.0/20",
+        "AvailabilityZone": "eu-west-3a",
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "subnet1eaade53": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.31.32.0/20",
+        "AvailabilityZone": "eu-west-3c",
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "subnet4c89aa37": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "172.31.16.0/20",
+        "AvailabilityZone": "eu-west-3b",
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "igw72e4c41b": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+      }
+    },
+    "doptb835dfd0": {
+      "Type": "AWS::EC2::DHCPOptions",
+      "Properties": {
+        "DomainName": "eu-west-3.compute.internal",
+        "DomainNameServers": [
+          "AmazonProvidedDNS"
+        ]
+      }
+    },
+    "acl8354a3eb": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "rtb674ab80f": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "distd1mfsjq60nz60cloudfrontnet": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            "www.lecolroule.fr"
+          ],
+          "Enabled": true,
+          "PriceClass": "PriceClass_100",
+          "DefaultCacheBehavior": {
+            "TargetOriginId": "S3-le-col-roule-valloire/www",
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "MinTTL": 0,
+            "AllowedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              }
+            }
+          },
+          "Origins": [
+            {
+              "DomainName": "le-col-roule-valloire.s3-website.eu-west-3.amazonaws.com",
+              "Id": "S3-le-col-roule-valloire/www",
+              "S3OriginConfig": {
+                "HTTPPort": "80",
+                "HTTPSPort": "443",
+                "OriginProtocolPolicy": "http-only"
+              }
+            }
+          ],
+          "Restrictions": {
+            "GeoRestriction": {
+              "RestrictionType": "none",
+              "Locations": [
+
+              ]
+            }
+          },
+          "ViewerCertificate": {
+            "SslSupportMethod": "sni-only",
+            "MinimumProtocolVersion": "TLSv1.2_2019"
+          }
+        }
+      }
+    },
+    "distdbiqkgxhx2axwcloudfrontnet": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
+            "lecolroule.fr"
+          ],
+          "Enabled": true,
+          "PriceClass": "PriceClass_100",
+          "DefaultCacheBehavior": {
+            "TargetOriginId": "S3-Website-le-col-roule-valloire-apex.s3-website.eu-west-3.amazonaws.com",
+            "ViewerProtocolPolicy": "allow-all",
+            "MinTTL": 0,
+            "AllowedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "CachedMethods": [
+              "HEAD",
+              "GET"
+            ],
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              }
+            }
+          },
+          "Origins": [
+            {
+              "DomainName": "le-col-roule-valloire-apex.s3-website.eu-west-3.amazonaws.com",
+              "Id": "S3-Website-le-col-roule-valloire-apex.s3-website.eu-west-3.amazonaws.com",
+              "S3OriginConfig": {
+                "HTTPPort": "80",
+                "HTTPSPort": "443",
+                "OriginProtocolPolicy": "http-only"
+              }
+            }
+          ],
+          "Restrictions": {
+            "GeoRestriction": {
+              "RestrictionType": "none",
+              "Locations": [
+
+              ]
+            }
+          },
+          "ViewerCertificate": {
+            "SslSupportMethod": "sni-only",
+            "MinimumProtocolVersion": "TLSv1.2_2019"
+          }
+        }
+      }
+    },
+    "s3lecolroulevalloire": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "WebsiteConfiguration": {
+          "IndexDocument": "index.html",
+          "ErrorDocument": "error.html"
+        },
+        "AccessControl": "PublicRead",
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        },
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "le-col-roule-valloire"
+          }
+        ]
+      }
+    },
+    "s3lecolroulevalloireapex": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "Private",
+        "VersioningConfiguration": {
+          "Status": "Suspended"
+        },
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "le-col-roule-valloire"
+          }
+        ]
+      }
+    },
+    "sgdefault": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "default VPC security group",
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        }
+      }
+    },
+    "dbsgdefault": {
+      "Type": "AWS::RDS::DBSecurityGroup",
+      "Properties": {
+        "GroupDescription": "default"
+      }
+    },
+    "s3policylecolroulevalloire": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "s3lecolroulevalloire"
+        },
+        "PolicyDocument": {
+          "Version": "2008-10-17",
+          "Id": "PolicyForCloudFrontPublicContent",
+          "Statement": [
+            {
+              "Sid": "PublicReadGetObject",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "s3lecolroulevalloire"
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "acl1": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Egress": "true",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Ref": "acl8354a3eb"
+        }
+      }
+    },
+    "acl2": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "CidrBlock": "0.0.0.0/0",
+        "Protocol": "-1",
+        "RuleAction": "allow",
+        "RuleNumber": "100",
+        "NetworkAclId": {
+          "Ref": "acl8354a3eb"
+        }
+      }
+    },
+    "subnetacl1": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "acl8354a3eb"
+        },
+        "SubnetId": {
+          "Ref": "subnet1eaade53"
+        }
+      }
+    },
+    "subnetacl2": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "acl8354a3eb"
+        },
+        "SubnetId": {
+          "Ref": "subnet4c89aa37"
+        }
+      }
+    },
+    "subnetacl3": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "acl8354a3eb"
+        },
+        "SubnetId": {
+          "Ref": "subnetf4fff79d"
+        }
+      }
+    },
+    "gw1": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        },
+        "InternetGatewayId": {
+          "Ref": "igw72e4c41b"
+        }
+      }
+    },
+    "route1": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {
+          "Ref": "rtb674ab80f"
+        },
+        "GatewayId": {
+          "Ref": "igw72e4c41b"
+        }
+      },
+      "DependsOn": "gw1"
+    },
+    "dchpassoc1": {
+      "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpcddc429b5"
+        },
+        "DhcpOptionsId": {
+          "Ref": "doptb835dfd0"
+        }
+      }
+    },
+    "ingress1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgdefault"
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Ref": "sgdefault"
+        },
+        "SourceSecurityGroupOwnerId": "160330578562"
+      }
+    },
+    "egress1": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "sgdefault"
+        },
+        "IpProtocol": "-1",
+        "CidrIp": "0.0.0.0/0"
+      }
+    }
+  },
+  "Description": "Description du template"
+}
