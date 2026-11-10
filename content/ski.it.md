@@ -1,6 +1,6 @@
 ---
 title: "Inverno"
-heading: '<span class="hide4phone">Atmosfera </span>Sci / Snowboard'
+heading: '<span class="hide4phone">Atmosfera </span>Sci &amp; Snowboard'
 slug: vacanze-sci-valloire
 seoTitle: "Vacanze sulla neve a Valloire, vicino alle piste - Le Col Roulé"
 description: "Skibus gratuito ai piedi dello chalet, 160 km di piste a Valloire e Les 3 Vallées a 35 minuti: la vostra vacanza sugli sci in famiglia al Col Roulé."

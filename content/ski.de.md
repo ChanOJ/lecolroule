@@ -1,6 +1,6 @@
 ---
 title: "Winter"
-heading: '<span class="hide4phone">Winter: </span>Ski / Snowboard'
+heading: 'Ski &amp; Snowboard<span class="hide4phone">-Stimmung</span>'
 slug: skiurlaub-valloire
 seoTitle: "Skiurlaub in Valloire, nahe der Pisten - Le Col Roulé"
 description: "Gratis Skibus vor dem Chalet, 160 km Pisten in Valloire und Les 3 Vallées in 35 Minuten: Ihr Skiurlaub mit der Familie im Col Roulé."

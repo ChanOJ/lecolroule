@@ -1,6 +1,6 @@
 ---
 title: "Winter"
-heading: '<span class="hide4phone">Sfeer </span>Ski / Snow'
+heading: '<span class="hide4phone">Sfeer </span>Ski &amp; Snowboard'
 slug: skivakantie-valloire
 seoTitle: "Skivakantie in Valloire, vlak bij de pistes - Le Col Roulé"
 description: "Gratis skibus aan de voet van het chalet, 160 km pistes in Valloire en Les 3 Vallées op 35 minuten: uw skivakantie met het gezin in Le Col Roulé."
