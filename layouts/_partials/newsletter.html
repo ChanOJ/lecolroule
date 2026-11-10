@@ -59,7 +59,7 @@
 									        </button>
 									      </div>
 								        <input type="text" name="email_address_check" value="" class="input--hidden">
-								        <input type="hidden" name="locale" value="{{ site.Language.Lang }}">
+								        <input type="hidden" name="locale" value="{{ site.Language.Params.brevoLocale | default site.Language.Lang }}">
 								      </form>
 								    </div>
 								  </div>

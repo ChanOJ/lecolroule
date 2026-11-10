@@ -53,7 +53,6 @@ BOT_PROTECTED = [
     "facebook.com",
     "linkedin.com",
     "blablacar.",
-    "exoloisirs.com",
     "oura.com",
     "google.com/maps",
     "maps.app.goo.gl",
