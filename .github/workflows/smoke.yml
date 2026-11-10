@@ -19,11 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # test is skipped during the Hugo migration: it serves the new layout
-          # (branch hugo-site) that this version of smoke_test.py does not know.
-          # Re-enable when hugo-site is merged.
-          # - env: test
-          #   args: ""
+          - env: test
+            args: ""
           - env: prod
             args: "--redirect-domains"
     name: smoke (${{ matrix.env }})

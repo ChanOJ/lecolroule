@@ -91,12 +91,14 @@ Files are deployed as is, at the same path, to the storage zone.
 
 ## Smoke tests
 
-`scripts/smoke_test.py --env test|prod` checks a deployed environment: FR/EN pages and deep links,
-root and HTTP→HTTPS redirects, `error.html` on unknown URLs, security headers, and the environment
-rules (test: `noindex` and analytics blocked; prod: indexable, analytics allowed). Options:
-`--expect-repo-content` (served HTML byte-identical to the checkout, proving upload and purge) and
-`--redirect-domains` (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and
-without `www`, over HTTP and HTTPS, must answer 301 to `https://www.lecolroule.fr/valloire/`).
+`scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
+deep page per language, root redirect by browser language (302), HTTP→HTTPS, the 301 of every legacy
+`/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `error.html` on
+unknown URLs, security headers, and the environment rules (test: `noindex` and analytics blocked;
+prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
+byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
+(`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and without `www`, over
+HTTP and HTTPS, must answer 301 to the prod site).
 
 It runs:
 
