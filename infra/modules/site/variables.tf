@@ -46,6 +46,11 @@ variable "languages" {
   description = "Site languages (\"hugo\" layout): prefixes of the language home pages, /<lang>/."
   type        = list(string)
   default     = ["fr", "en"]
+
+  validation {
+    condition     = length(var.languages) <= 9
+    error_message = "At most 9 languages (edge rule priorities 1-8 are reserved for the root redirects)."
+  }
 }
 
 variable "default_language" {

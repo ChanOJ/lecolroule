@@ -1,4 +1,4 @@
-name: Infrastructure (OpenTofu)
+name: "Infra: bunny.net & DNS (test + prod)"
 
 # - Pull requests touching infra/: format check, validate and plan (shown in the run summary).
 # - Push to main touching infra/: plan only, to spot drift or a forgotten apply.
