@@ -1,39 +1,65 @@
-name: Deploy to bunny.net
+name: Deploy website
+
+# - Push to main: deploy to test (https://test.lecolroule.fr).
+# - Manual run: deploy to test or prod, optionally as a dry run.
+#   The prod environment only accepts deployments from main, so prod always
+#   receives a version that went through main (and therefore through test).
+#
+# Per-environment secrets (GitHub Environments "test" and "prod"):
+#   BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD, BUNNY_PULLZONE_ID
+# Repository secrets shared by both: BUNNY_API_KEY, BUNNY_STORAGE_ENDPOINT
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "infra/**"
+      - ".github/workflows/infra.yml"
+      - "**.md"
   workflow_dispatch:
     inputs:
+      environment:
+        description: "Target environment"
+        type: environment
+        required: true
+        default: test
       dry_run:
-        description: "Dry-run (affiche le plan sans rien modifier)"
+        description: "Dry run (show the plan without changing anything)"
         type: boolean
         default: true
 
 permissions:
   contents: read
 
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
-
 jobs:
   deploy:
-    # Les push ne déploient que si la variable de dépôt DEPLOY_ENABLED vaut "true".
-    # Le lancement manuel (workflow_dispatch) est toujours possible.
-    if: github.event_name == 'workflow_dispatch' || vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
-    environment: production
+    environment:
+      name: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
+      url: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment || 'test') == 'prod' && 'https://www.lecolroule.fr/valloire/' || 'https://test.lecolroule.fr/valloire/' }}
+    concurrency:
+      group: deploy-${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
+      cancel-in-progress: false
+    env:
+      DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
+      BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}
+      BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+      BUNNY_STORAGE_ENDPOINT: ${{ secrets.BUNNY_STORAGE_ENDPOINT }}
+      BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+      BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
     steps:
       - uses: actions/checkout@v7
 
-      - name: Sync vers la Storage Zone et purge du cache
-        env:
-          BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}
-          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
-          BUNNY_STORAGE_ENDPOINT: ${{ secrets.BUNNY_STORAGE_ENDPOINT }}
-          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
-          BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
+      # Guard against a missing environment secret silently falling back to
+      # another environment's storage zone.
+      - name: Check the target storage zone
+        run: |
+          case "$DEPLOY_ENV:$BUNNY_STORAGE_ZONE" in
+            test:le-col-roule-test | prod:le-col-roule) echo "Storage zone matches $DEPLOY_ENV." ;;
+            *) echo "::error::Storage zone does not match environment $DEPLOY_ENV"; exit 1 ;;
+          esac
+
+      - name: Sync to the storage zone and purge the cache
         run: |
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
             python3 scripts/deploy.py --dry-run
