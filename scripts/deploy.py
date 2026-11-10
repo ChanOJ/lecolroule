@@ -110,11 +110,13 @@ def local_files(allow_dirty: bool) -> dict[str, Path]:
 
 class Storage:
     def __init__(self, endpoint: str, zone: str, password: str):
-        endpoint = endpoint.rstrip("/")
-        # The dashboard shows "https://storage.bunnycdn.com/<zone>": accept both forms.
-        if endpoint.endswith("/" + zone):
-            endpoint = endpoint[: -len(zone) - 1]
-        self.base = f"{endpoint}/{urllib.parse.quote(zone)}/"
+        # Only the scheme and host of the endpoint are used: the dashboard shows
+        # "https://storage.bunnycdn.com/<zone>", and a zone name left in the
+        # endpoint must never leak into another zone's URLs.
+        parsed = urllib.parse.urlsplit(endpoint)
+        if parsed.scheme not in ("http", "https") or not parsed.netloc:
+            sys.exit(f"Invalid BUNNY_STORAGE_ENDPOINT: expected https://<host>, got {endpoint!r}")
+        self.base = f"{parsed.scheme}://{parsed.netloc}/{urllib.parse.quote(zone)}/"
         self.headers = {"AccessKey": password}
 
     def _request(self, method: str, rel: str, data: bytes | None = None,
