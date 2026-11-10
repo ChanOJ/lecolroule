@@ -190,10 +190,11 @@ locals {
   accept_language_any = [for l in local.other_languages : "${l}*"]
 
   # bunny.net requires a unique priority (order index) per rule of a pull zone:
-  # 0 security headers, 1-8 root language rules, 9 root default language,
-  # 10.. legacy redirects. Fixed slots avoid transient collisions when rules
-  # are added or removed.
-  root_language_priority   = { for i, l in local.other_languages : l => 1 + i }
+  # 0 security headers, 1-3 legacy layout rules, 4-8 root language rules,
+  # 9 root default language, 10.. legacy redirects, 100 page cache. Fixed,
+  # disjoint slots avoid collisions while rules are added and removed in the
+  # same apply (e.g. switching from the legacy to the hugo layout).
+  root_language_priority   = { for i, l in local.other_languages : l => 4 + i }
   root_default_priority    = 9
   legacy_redirect_priority = { for i, k in sort(keys(var.legacy_redirects)) : k => 10 + i }
 }

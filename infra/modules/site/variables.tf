@@ -48,8 +48,8 @@ variable "languages" {
   default     = ["fr", "en"]
 
   validation {
-    condition     = length(var.languages) <= 9
-    error_message = "At most 9 languages (edge rule priorities 1-8 are reserved for the root redirects)."
+    condition     = length(var.languages) <= 6
+    error_message = "At most 6 languages (edge rule priorities 4-8 are reserved for the root redirects of the non-default ones)."
   }
 }
 
