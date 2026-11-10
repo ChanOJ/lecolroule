@@ -1,7 +1,7 @@
 <!-- Brevo newsletter form (scripts) -->
 		<script>
 		  window.REQUIRED_CODE_ERROR_MESSAGE = {{ i18n "brevoCountryCode" }};
-		  window.LOCALE = {{ site.Language.Lang }};
+		  window.LOCALE = {{ site.Language.Params.brevoLocale | default site.Language.Lang }};
 		  window.EMAIL_INVALID_MESSAGE = window.SMS_INVALID_MESSAGE = {{ i18n "brevoInvalid" }};
 		  window.REQUIRED_ERROR_MESSAGE = {{ i18n "brevoRequired" }};
 		  window.GENERIC_INVALID_MESSAGE = {{ i18n "brevoInvalid" }};

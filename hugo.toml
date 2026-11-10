@@ -96,6 +96,46 @@ enableGitInfo = true
       ogLocale = "en_GB"
       brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
 
+  # NL, DE and IT: Dutch also for Flanders, German in Swiss spelling (ss, no
+  # sharp s) also for Switzerland; hreflang uses the plain language codes, so
+  # every region of each language gets these pages. Newsletter: the English
+  # Brevo form until a form exists for the language.
+  [languages.nl]
+    weight = 3
+    label = "Nederlands"
+    locale = "nl-BE"
+    [languages.nl.params]
+      flag = "/images/nl.svg"
+      airbnb = "https://www.airbnb.nl/rooms/48075207"
+      ogLocale = "nl_BE"
+      # Locale of the Brevo form used (the English one).
+      brevoLocale = "en"
+      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+
+  [languages.de]
+    weight = 4
+    label = "Deutsch"
+    locale = "de-CH"
+    [languages.de.params]
+      flag = "/images/de.svg"
+      airbnb = "https://www.airbnb.de/rooms/48075207"
+      ogLocale = "de_CH"
+      # Locale of the Brevo form used (the English one).
+      brevoLocale = "en"
+      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+
+  [languages.it]
+    weight = 5
+    label = "Italiano"
+    locale = "it-IT"
+    [languages.it.params]
+      flag = "/images/it.svg"
+      airbnb = "https://www.airbnb.it/rooms/48075207"
+      ogLocale = "it_IT"
+      # Locale of the Brevo form used (the English one).
+      brevoLocale = "en"
+      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+
 [minify]
   # Minified HTML, XML and JSON output (stylesheets and scripts are minified
   # by layouts/_partials/asset-url.html and styles.html).

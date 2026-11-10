@@ -43,11 +43,26 @@ REDIRECT_TARGETS = ["https://www.lecolroule.fr/", "https://www.lecolroule.fr/val
 PAGES = {
     "/fr/": "fr",
     "/en/": "en",
+    "/nl/": "nl",
+    "/de/": "de",
+    "/it/": "it",
     "/fr/appartement-valloire/": "fr",
     "/en/valloire-apartment/": "en",
+    "/nl/appartement-valloire/": "nl",
+    "/de/ferienwohnung-valloire/": "de",
+    "/it/appartamento-valloire/": "it",
 }
 # Root redirect: Accept-Language header -> expected language (None: no header).
-ROOT_LANGUAGES = {"fr-FR,fr;q=0.9,en;q=0.8": "fr", "en-GB,en;q=0.9": "en", "de-DE,de;q=0.9": "en", None: "en"}
+ROOT_LANGUAGES = {
+    "fr-FR,fr;q=0.9,en;q=0.8": "fr",
+    "fr-BE,fr;q=0.9": "fr",
+    "en-GB,en;q=0.9": "en",
+    "nl-BE,nl;q=0.9,fr;q=0.8": "nl",
+    "de-CH,de;q=0.9": "de",
+    "it-IT,it;q=0.9": "it",
+    "es-ES,es;q=0.9": "en",
+    None: "en",
+}
 # Root redirect with the language menu cookie: (Cookie, Accept-Language) ->
 # expected language. The cookie prevails; an unknown value is ignored.
 ROOT_COOKIES = {
@@ -55,6 +70,7 @@ ROOT_COOKIES = {
     ("lcr_lang=en", "fr-FR,fr;q=0.9"): "en",
     ("_ga=GA1.1.1; lcr_lang=fr", None): "fr",
     ("lcr_lang=xx", "fr-FR,fr;q=0.9"): "fr",
+    ("lcr_lang=it", "de-CH,de;q=0.9"): "it",
 }
 
 ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com"]

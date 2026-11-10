@@ -1,0 +1,14 @@
+# Interface strings (everything that is not page content).
+language: Taal
+close: Sluiten
+newsletterTitle: "Nieuwsbrief 🏔️"
+newsletterText: "Geen spam, beloofd! Slechts enkele e-mails per jaar (in het Engels) om u op de hoogte te houden van de opening van de reserveringen voor de volgende seizoenen en van ons grote nieuws."
+newsletterLabel: Vul uw e-mailadres in
+newsletterHelp: "Geef uw e-mailadres op om u in te schrijven. Bijv.: abc@xyz.com"
+newsletterButton: Inschrijven
+newsletterError: "Uw inschrijving kon niet worden opgeslagen. Probeer het opnieuw."
+newsletterSuccess: Uw inschrijving is gelukt.
+brevoCountryCode: Kies een landcode
+brevoInvalid: "De ingevulde gegevens zijn ongeldig. Controleer de notatie van de velden en probeer het opnieuw."
+brevoRequired: "Dit veld mag niet leeg blijven. "
+logoAlt: Logo Le Col Roulé

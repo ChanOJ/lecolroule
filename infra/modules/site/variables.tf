@@ -45,7 +45,7 @@ variable "layout" {
 variable "languages" {
   description = "Site languages (\"hugo\" layout): prefixes of the language home pages, /<lang>/."
   type        = list(string)
-  default     = ["fr", "en"]
+  default     = ["fr", "en", "nl", "de", "it"]
 
   validation {
     condition     = length(var.languages) <= 6

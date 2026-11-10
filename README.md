@@ -1,6 +1,7 @@
 # Le Col Roulé — static website
 
-Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/
+Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/, in French (the
+reference), English, Dutch, German and Italian.
 Generated with [Hugo](https://gohugo.io) on the "Dimension" theme by HTML5 UP (jQuery), hosted on
 bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 
@@ -25,7 +26,15 @@ Local preview: `hugo server --renderToMemory` (keeps `dist/` untouched), then ht
 Each page is `content/<page>.<lang>.md` (`apartment`, `shops`, `getting-there`, `ski`, `summer`,
 `booking`; `_index` is the home page). Its URL is `/<lang>/<slug>/`, the slug being set in the
 front matter (the block between `---` lines), together with the title and the menu position.
-Adding a language = adding it in `hugo.toml` and `i18n/`, then translating the files.
+Languages: `fr` (reference: other languages follow its content), `en`, `nl` (neutral Dutch, also
+for Flanders), `de` (Swiss spelling, "ss" and no "ß", fine for Germany and Austria too), `it`.
+External links point to the page in the visitor's language when the site has one, else to its
+English version (valloire.net has no German version). NL/DE/IT use the English Brevo newsletter
+form (`brevoFormAction` in `hugo.toml`); the newsletter text says emails are in English.
+
+Adding a language = adding it in `hugo.toml` (with a flag in `assets/images/`) and `i18n/`,
+translating the files, adding it to `languages` in `infra/modules/site/variables.tf` (root
+redirect) and to `PAGES`/`ROOT_LANGUAGES` in `scripts/smoke_test.py`.
 
 Text is Markdown: `**bold**`, `*italic*`, `- list item`, `### Heading`, `[link](https://...)`.
 On top of it:
@@ -105,8 +114,8 @@ Files are deployed as is, at the same path, to the storage zone.
 ## SEO
 
 - Each page: `seoTitle` (<title>, ~60 characters max), `description` (~150 characters) and
-  `ogImage` (share image) in its front matter; canonical URL, `hreflang` alternates (fr, en,
-  x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
+  `ogImage` (share image) in its front matter; canonical URL, `hreflang` alternates (one per
+  language, x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
 - Structured data (schema.org JSON-LD, `layouts/_partials/structured-data.html`) from
   `params.lodging` in `hugo.toml`: LodgingBusiness (home), Apartment (apartment page), Blog with
   its posts (blog page).
@@ -171,7 +180,7 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 |---|---|
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
 | `modules/site/main.tf` | one environment: storage zone (404 → `not_found_page`), pull zone, hostname |
-| `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
+| `modules/site/edgerules.tf` | edge rules: security headers, root redirect by language, legacy redirects |
 | `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
@@ -229,7 +238,7 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 ## Planned work
 
 1. Clean up unused files now that automated deployment is validated.
-2. PR checks for the website (FR/EN parity).
+2. PR checks for the website (parity of the languages with FR).
 3. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
 4. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
    `lecolroulé.fr`, and `www` of the last three → `https://www.lecolroule.fr/`) from Infomaniak to
