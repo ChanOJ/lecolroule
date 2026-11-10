@@ -55,3 +55,8 @@ Les fichiers sont déployés tels quels, au même chemin, sur la Storage Zone.
 3. SEO : une URL = un contenu propre (aujourd'hui chaque URL sert toute la page → duplicate content).
 4. Rapatrier les edge rules bunny.net dans le dépôt/workflow ; vérifications sur PR
    (liens cassés, parité FR/EN).
+5. Test automatique de la version déployée après chaque déploiement (smoke test : pages FR/EN,
+   pages profondes, 404, assets) — aujourd'hui fait à la main.
+6. Cache : ne purger que les URL modifiées (purge par URL plutôt que toute la Pull Zone), et
+   versionner les assets (hash ou semver dans le chemin, ex. `main.3f2a1c.css`) pour ne plus
+   avoir à les purger du tout ; seules les pages HTML resteraient à purger.
