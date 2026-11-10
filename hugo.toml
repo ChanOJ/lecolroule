@@ -1,0 +1,73 @@
+# Hugo configuration of https://www.lecolroule.fr
+#
+# One page per URL and per language: content/<page>.<lang>.md, published at
+# /<lang>/<slug>/ (slug set in each page's front matter).
+
+baseURL = "https://www.lecolroule.fr/"
+title = "Le Col Roulé"
+publishDir = "dist"
+
+defaultContentLanguage = "fr"
+defaultContentLanguageInSubdir = true
+
+disableKinds = ["taxonomy", "term", "rss"]
+enableRobotsTXT = true
+
+[markup.goldmark.renderer]
+  # Allows the occasional raw HTML in content (e.g. <br>).
+  unsafe = true
+
+[markup.goldmark.extensions.typographer]
+  # Keep straight quotes and apostrophes as typed.
+  disable = true
+
+[markup.goldmark.parser]
+  # Standalone images are rendered by layouts/_markup/render-image.html,
+  # not wrapped in a paragraph.
+  wrapStandAloneImageWithinParagraph = false
+
+[params]
+  googleAnalyticsID = "G-2MX2EV8ZZE"
+  mouseflowProject = "302dacdc-9d9f-47b0-8ae5-d8c5842c6361"
+  recaptchaSiteKey = "6LflesIqAAAAAOjZvfGc0s_DN1VHLHQSiG2ePmSi"
+  twitter = "@LeColRoule"
+  ogImage = "/images/vue_ete3.jpg"
+  copyrightYears = "2021-2026"
+
+  # Social links: footer and booking page.
+  [[params.social]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/company/le-col-roulé-valloire"
+    icon = "linkedin-in"
+    style = "brands"
+  [[params.social]]
+    name = "youtube"
+    url = "https://youtube.com/channel/UCOglkzCFo1V95EHQb4eHKHg"
+    icon = "youtube"
+    style = "brands"
+  [[params.social]]
+    name = "google maps"
+    url = "https://maps.app.goo.gl/ng9N1mwDaAWFdeH87"
+    icon = "map-marked-alt"
+    style = "solid"
+
+[languages]
+  [languages.fr]
+    weight = 1
+    languageName = "Français"
+    languageCode = "fr-FR"
+    [languages.fr.params]
+      flag = "/images/fr.gif"
+      ogLocale = "fr_FR"
+      keywords = "Location, Vacances, Appartement, Hébergement, Ski, Vélo, Cyclisme, VTT, Gravel, Snowboard, Randonnée, Savoie, Alpes, Maurienne, Col du Galibier, Col du Télégraphe, Valloire, Vallée d'Or, 3 Vallées, Trois Vallées, Val-Thorens, Orelle"
+      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFAKFA-m-7SD2GvTdZ_cN1O6lGrKAhBM27iGXAq0_J_OeNBrmoCmaFG3yJI3yNmwbFDy42WJgbczqOzgMMi77KVt4sEPSD_y0B_63vE6LRIcJCsGQXUwjgD5XSNTPc2v-QhriIu3eI_mHBGOxZ8SV45kHFaCh6TqRUPQGj5IL24o8YSI5aFc9pyxEpKP41m9VEeVNCN7VzTdTi"
+
+  [languages.en]
+    weight = 2
+    languageName = "English"
+    languageCode = "en-GB"
+    [languages.en.params]
+      flag = "/images/uk.gif"
+      ogLocale = "en_GB"
+      keywords = "Rental, Vacation, Holiday, Apartment, Flat, Ski, Bike, Bicycle, Mountain bike, MTB, Gravel, Hiking, Snowboard, Alps, France, Valloire, Col du Galibier, Col du Télégraphe, 3 Vallées, Trois Vallées, Val-Thorens, Orelle"
+      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"

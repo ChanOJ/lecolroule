@@ -1,0 +1,13 @@
+# Interface strings (everything that is not page content).
+close: Close
+newsletterTitle: "Newsletter 🏔️"
+newsletterText: "No spam, we promise! Just a few emails a year to keep you informed of the opening of bookings for the following seasons, as well as our big news."
+newsletterLabel: Enter your email address
+newsletterHelp: "Provide your email address to subscribe. For e.g abc@xyz.com"
+newsletterButton: Subscribe
+newsletterError: Your subscription could not be saved. Please try again.
+newsletterSuccess: Your subscription has been successful.
+brevoCountryCode: Please choose a country code
+brevoInvalid: "The information provided is invalid. Please review the field format and try again."
+brevoRequired: "This field cannot be left blank. "
+logoAlt: Logo Le Col Roulé

@@ -1,0 +1,20 @@
+<!-- Brevo newsletter form (scripts) -->
+		<script>
+		  window.REQUIRED_CODE_ERROR_MESSAGE = {{ i18n "brevoCountryCode" }};
+		  window.LOCALE = {{ site.Language.Lang }};
+		  window.EMAIL_INVALID_MESSAGE = window.SMS_INVALID_MESSAGE = {{ i18n "brevoInvalid" }};
+		  window.REQUIRED_ERROR_MESSAGE = {{ i18n "brevoRequired" }};
+		  window.GENERIC_INVALID_MESSAGE = {{ i18n "brevoInvalid" }};
+
+		  window.translation = {
+		    common: {
+		      selectedList: '{quantity} list selected',
+		      selectedLists: '{quantity} lists selected'
+		    }
+		  };
+
+		  var AUTOHIDE = Boolean(1);
+		</script>
+
+		<script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+		<script src="https://www.google.com/recaptcha/api.js?hl={{ site.Language.Lang }}"></script>

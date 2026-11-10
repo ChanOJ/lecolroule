@@ -1,0 +1,7 @@
+{{- /* One article per page, shown over the header by main.js. */ -}}
+{{ define "main" }}
+						<article id="{{ .File.ContentBaseName }}">
+							<h2 class="major">{{ with .Params.heading }}{{ . | safeHTML }}{{ else }}{{ .Title }}{{ end }}</h2>
+							{{ .Content }}
+						</article>
+{{ end }}

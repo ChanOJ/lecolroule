@@ -1,0 +1,25 @@
+{{- /* Blog: newsletter form, then every post (newest first). */ -}}
+{{ define "head" }}
+		{{- partial "brevo-head.html" . }}
+{{ end }}
+{{ define "main" }}
+						<article id="{{ .Section }}">
+							<h2 class="major">{{ .Title }}</h2>
+							{{- partial "newsletter.html" . }}
+							<hr/>
+							{{ .Content }}
+							{{- range .Pages.ByDate.Reverse }}
+							<section class="post">
+								<h3>[{{ .Date.Format "2006-01-02" }}] {{ .Title }}</h3>
+								{{ .Content }}
+								{{- with .Params.image }}
+								<span class="image main"><img class="lozad" data-src="{{ .src }}" alt="{{ .alt }}" />{{ .caption | default .alt }}</span>
+								{{- end }}
+							</section>
+							<hr/>
+							{{- end }}
+						</article>
+{{ end }}
+{{ define "scripts" }}
+		{{- partial "brevo-scripts.html" . }}
+{{ end }}

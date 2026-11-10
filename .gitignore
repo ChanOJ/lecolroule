@@ -9,3 +9,7 @@ dist/
 !infra/terraform.tfstate
 *.tfstate.*
 crash.log
+
+# Hugo
+.hugo_build.lock
+/resources/_gen/

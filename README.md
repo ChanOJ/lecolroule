@@ -1,36 +1,68 @@
 # Le Col Roulé — static website
 
-Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/valloire/
-Built on the "Dimension" theme by HTML5 UP (jQuery), hosted on bunny.net (Storage Zone + Pull Zone).
-DNS is managed at Infomaniak (not in this repository).
+Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/
+Generated with [Hugo](https://gohugo.io) on the "Dimension" theme by HTML5 UP (jQuery), hosted on
+bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 
 ## Layout
 
-- `valloire/indexfr.html`, `valloire/indexen.html`: **all the content** of the site, one page per
-  language, maintained by hand (no template yet). Any content change must be made in both files.
-- `assets/`: theme CSS/JS/webfonts. `assets/js/main.js` holds the client-side routing.
-- `images/`: images used by the pages (`images/blog/` for blog posts, `images/favicon/`).
-- `error.html`: error page (carries `<meta name="error" content="true">`, read by main.js).
-- `index.html` (root): placeholder; the root URL is redirected to `/valloire/` by an edge rule.
-- `robots.txt`, `sitemap.xml`, `favicon.ico`, `bimi.svg`: served as is.
+- `hugo.toml`: site configuration, languages and their settings (flag, Brevo form, keywords).
+- `content/`: **the texts**, one Markdown file per page and per language (see "Editing content").
+- `i18n/<lang>.yaml`: interface strings (newsletter form, close button, ...).
+- `layouts/`: HTML templates shared by all languages (`baseof.html`, `page.html`, `section.html`
+  for the blog, `_partials/`), Markdown render hooks (`_markup/`) and shortcodes (`_shortcodes/`).
+- `static/`: files copied as is: `assets/` (theme CSS/JS/webfonts, `assets/css/site.css` for our
+  additions), `images/`, `error.html`, `favicon.ico`, `bimi.svg`.
+- `dist/`: build output (`hugo`), not committed.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
-- `infra/`: bunny.net configuration as code (OpenTofu, see below).
+- `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
+
+Local preview: `hugo server`, then http://localhost:1313/fr/.
+
+## Editing content
+
+Each page is `content/<page>.<lang>.md` (`apartment`, `shops`, `getting-there`, `ski`, `summer`,
+`booking`; `_index` is the home page). Its URL is `/<lang>/<slug>/`, the slug being set in the
+front matter (the block between `---` lines), together with the title and the menu position.
+Adding a language = adding it in `hugo.toml` and `i18n/`, then translating the files.
+
+Text is Markdown: `**bold**`, `*italic*`, `- list item`, `### Heading`, `[link](https://...)`.
+On top of it:
+
+| Need | Write |
+|---|---|
+| Link to another page of the site (current language) | `[winter](/ski)` |
+| External link (opens in a new tab) | `[Airbnb](https://airbnb.fr/...)` |
+| Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
+| Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
+| Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
+| Embedded Google map | `{{< map src="https://www.google.com/maps/embed?..." height="350" >}}` |
+| Social network icons | `{{< social >}}` |
+
+**Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
+
+```markdown
+---
+title: "Post title"
+date: 2026-01-31
+image: { src: /images/blog/2026-01-31-photo.jpg, alt: Alt text, caption: Optional caption }
+---
+
+Post text in Markdown.
+```
+
+Posts are listed on the blog page, newest first.
 
 ## How it works (do not break)
 
-- Each page contains several `<article id="…">`. `main.js` reads `location.pathname`, strips
-  `/valloire/` then a `xx/` language prefix, and shows the article with the matching id
-  (e.g. `/valloire/appartement`, `/valloire/en/apartment`). Ids are **translated**:
-  `appartement`↔`apartment`, `appartement-commerces`↔`apartment-shops`,
-  `appartement-trajet`↔`apartment-route`, `appartement-ski`↔`ski-apartment`,
-  `appartement-rando-velo`↔`biking-hiking-apartment`, `contact-reservation`↔`booking-contact`.
-  Internal links are relative (`./slug`) and must match an article id of the same page.
-- An unknown id redirects to `/404.html` (a file that intentionally does not exist). Every 404 is
-  answered with `/error.html`, through the storage zone "404 File path" setting: that file must not
-  be renamed or removed.
-- URL mapping (`/valloire/*` → `indexfr.html`, `/valloire/en/*` → `indexen.html`, root → `/valloire/`)
-  is done by **pull zone edge rules**, defined in `infra/modules/site/edgerules.tf`.
+- One HTML page per URL and per language. Each page holds the header (with the menu) and at most one
+  `<article>`; `main.js` shows that article over the header on load. Closing it goes back to the
+  home page of the language (`body[data-home]`) without reloading.
+- Every 404 is answered with `/error.html`, through the storage zone "404 File path" setting: that
+  file must not be renamed or removed.
+- Edge rules (`infra/modules/site/edgerules.tf`): root redirect, security headers and, for the
+  legacy single-page layout, the `/valloire/*` rewrites.
 
 ## Deployment
 

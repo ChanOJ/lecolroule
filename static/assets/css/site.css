@@ -1,0 +1,6 @@
+/* Additions to the Dimension theme (main.css is left untouched). */
+
+/* Space between a list item's leading icon and its text. */
+li > .icon:first-child {
+	margin-right: 0.5em;
+}

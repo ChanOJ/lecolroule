@@ -1,0 +1,15 @@
+{{- /*
+  Font Awesome icon (https://fontawesome.com/v5/search, free icons).
+    {{< icon skiing >}}                       solid icon (default)
+    {{< icon name="map" style="regular" >}}   regular (outlined) icon
+    {{< icon name="fort-awesome" style="brands" title="fort" >}}
+  Optional: title (tooltip), class (extra CSS classes, e.g. "small").
+*/ -}}
+{{- $name := .Get "name" | default (.Get 0) -}}
+{{- $style := .Get "style" | default "solid" -}}
+{{- $classes := slice "icon" -}}
+{{- if ne $style "regular" }}{{ $classes = $classes | append $style }}{{ end -}}
+{{- $classes = $classes | append (printf "fa-%s" $name) -}}
+{{- with .Get "class" }}{{ $classes = $classes | append . }}{{ end -}}
+<span class="{{ delimit $classes " " }}"{{ with .Get "title" }} title="{{ . }}"{{ end }}></span>
+{{- /* */ -}}

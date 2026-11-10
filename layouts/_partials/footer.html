@@ -1,0 +1,10 @@
+<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; Hélène &amp; Charles {{ site.Params.copyrightYears }}. Design: <a href="https://html5up.net" target="_blank" rel="noopener">HTML5&nbsp;UP</a>.<br/>
+							<span class="social">
+								{{- range site.Params.social }}
+								<a href="{{ .url }}" target="_blank" rel="noopener" class="icon {{ .style }} fa-{{ .icon }}" title="{{ .name }}"></a>
+								{{- end }}
+							</span>
+						</p>
+					</footer>
