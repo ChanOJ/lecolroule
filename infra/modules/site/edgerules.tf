@@ -273,9 +273,11 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
   priority    = local.legacy_redirect_priority[each.key]
   match_type  = "MatchAny"
 
-  # Each legacy path, with or without a query string. bunny.net accepts at
-  # most 5 patterns per trigger: split them into several triggers (any match).
-  triggers = [for chunk in chunklist(flatten([for old in each.value : ["${local.base_url}${old}", "${local.base_url}${old}?*"]]), 5) : merge(local.trigger_defaults, {
+  # Exact legacy URLs only: in bunny.net patterns "?" is a single-character
+  # wildcard (and "*" any string), so "/valloire?*" would match every legacy
+  # URL. At most 5 patterns per trigger: split them into several triggers
+  # (the rule matches if any of them does).
+  triggers = [for chunk in chunklist([for old in each.value : "${local.base_url}${old}"], 5) : merge(local.trigger_defaults, {
     type       = "Url"
     match_type = "MatchAny"
     patterns   = chunk
