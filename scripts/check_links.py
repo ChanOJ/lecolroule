@@ -89,14 +89,19 @@ def request(url: str, follow: bool):
 
 def check(url: str):
     """(category, detail): ok / redirect / error / protected."""
-    for attempt in range(2):
+    # Up to 3 attempts on transient failures (network errors, 429, 5xx), so
+    # that a site briefly down does not raise a false alarm.
+    attempts = 3
+    for attempt in range(1, attempts + 1):
         try:
             status, location = request(url, follow=False)
-            break
         except Exception as e:  # DNS, TLS, timeout...
-            if attempt:
+            if attempt == attempts:
                 return "error", f"{type(e).__name__}: {e}"
-            time.sleep(3)
+        else:
+            if status != 429 and status < 500 or attempt == attempts:
+                break
+        time.sleep(5 * attempt)
     protected = any(p in url for p in BOT_PROTECTED)
     if 200 <= status < 300:
         return "ok", str(status)
