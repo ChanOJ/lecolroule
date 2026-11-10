@@ -18,7 +18,12 @@ resource "bunnynet_pullzone" "site" {
   block_no_referer = true
   log_anonymized   = true
 
-  # Obsolete TLS 1.0 / 1.1 disabled: only TLS 1.2+ is accepted.
+  # TLS security level: "Compatible" drops the weak RSA/CBC cipher suites and
+  # TLS 1.0/1.1 allowed by "Legacy", while keeping older-but-maintained clients.
+  tls_level = "Compatible"
+
+  # Deprecated TLS 1.0 / 1.1 stay disabled. Only effective with tls_level
+  # "Legacy"; kept so that switching back to Legacy does not re-enable them.
   tls_support = []
 }
 
