@@ -273,12 +273,13 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
   priority    = local.legacy_redirect_priority[each.key]
   match_type  = "MatchAny"
 
-  triggers = [for t in [{
+  # Each legacy path, with or without a query string. bunny.net accepts at
+  # most 5 patterns per trigger: split them into several triggers (any match).
+  triggers = [for chunk in chunklist(flatten([for old in each.value : ["${local.base_url}${old}", "${local.base_url}${old}?*"]]), 5) : merge(local.trigger_defaults, {
     type       = "Url"
     match_type = "MatchAny"
-    # Each legacy path, with or without a query string.
-    patterns = flatten([for old in each.value : ["${local.base_url}${old}", "${local.base_url}${old}?*"]])
-  }] : merge(local.trigger_defaults, t)]
+    patterns   = chunk
+  })]
 
   actions = [for a in [{
     type       = "Redirect"
