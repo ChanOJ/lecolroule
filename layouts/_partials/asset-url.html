@@ -2,11 +2,14 @@
   URL of a file of assets/ with a content fingerprint in its name, e.g.
   "/images/salon.jpg" -> "/images/salon.<hash>.jpg". The name changes when the
   file changes, so browsers and the CDN can cache these files for a long time.
+  Stylesheets and scripts are minified (unless already, "*.min.*").
   Usage: {{ partial "asset-url.html" "/images/salon.jpg" }}
 */ -}}
 {{- $path := strings.TrimPrefix "/" . -}}
 {{- with resources.Get $path -}}
-  {{- return (. | fingerprint "md5").RelPermalink -}}
+  {{- $res := . -}}
+  {{- if and (in (slice "text/css" "text/javascript") .MediaType.Type) (not (strings.Contains $path ".min.")) }}{{ $res = $res | minify }}{{ end -}}
+  {{- return ($res | fingerprint "md5").RelPermalink -}}
 {{- else -}}
   {{- errorf "asset %q not found in assets/" $path -}}
 {{- end -}}

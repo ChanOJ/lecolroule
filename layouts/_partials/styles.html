@@ -1,12 +1,17 @@
-{{- /* Stylesheets, fingerprinted. main.css is the theme file, left untouched:
-       its @import of Font Awesome and its image URLs are rewritten here. */ -}}
+{{- /* Stylesheets, minified and fingerprinted. main.css is the theme file, left
+       untouched: its @imports (Font Awesome, Source Sans Pro from a font CDN,
+       now served by the site itself, see site.css) and its image URLs are
+       rewritten here. */ -}}
 {{- $main := resources.Get "css/main.css" -}}
 {{- $css := $main.Content -}}
-{{- $css = replace $css "@import url(fontawesome-all.min.css);" "" -}}
+{{- range slice "@import url(fontawesome-all.min.css);" `@import url("https://fonts.bunny.net/css?family=Source+Sans+Pro:300italic,600italic,300,600");` -}}
+  {{- if not (strings.Contains $css .) }}{{ errorf "styles.html: %q not found in main.css" . }}{{ end -}}
+  {{- $css = replace $css . "" -}}
+{{- end -}}
 {{- range slice "/images/bg.jpg" "/images/overlay.png" -}}
   {{- $css = replace $css . (partial "asset-url.html" .) -}}
 {{- end -}}
-{{- $main = $css | resources.FromString "css/main.css" | fingerprint "md5" }}
+{{- $main = $css | resources.FromString "css/main.css" | minify | fingerprint "md5" }}
 		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/fontawesome-all.min.css" }}" />
 		<link rel="stylesheet" href="{{ $main.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/site.css" }}" />

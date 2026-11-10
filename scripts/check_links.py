@@ -62,7 +62,8 @@ BOT_PROTECTED = [
 ]
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari/605.1.15"
-LINK_RE = re.compile(r'(?:href|src|data-src)="(https?://[^"]+)"')
+# Attribute values may be unquoted: the HTML is minified.
+LINK_RE = re.compile(r'''(?<![\w-])(?:href|src|data-src)=(?:"(https?://[^"]+)"|'(https?://[^']+)'|(https?://[^\s"'>]+))''')
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -123,8 +124,8 @@ def collect() -> dict[str, set[str]]:
     links: dict[str, set[str]] = defaultdict(set)
     for page in sorted(DIST.rglob("*.html")):
         rel = "/" + page.relative_to(DIST).as_posix().removesuffix("index.html")
-        for url in LINK_RE.findall(page.read_text(encoding="utf-8")):
-            url = html.unescape(url)
+        for groups in LINK_RE.findall(page.read_text(encoding="utf-8")):
+            url = html.unescape("".join(groups))
             if not any(i in url for i in IGNORED):
                 links[url].add(rel)
     return links

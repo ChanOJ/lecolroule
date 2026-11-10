@@ -128,7 +128,7 @@ def expect_page(url: str, lang: str):
     def run():
         r = fetch(url)
         expect_status(r, 200)
-        assert f'<html lang="{lang}">'.encode() in r.body, f'no <html lang="{lang}">'
+        assert re.search(rf'<html lang="?{lang}"?>'.encode(), r.body), f'no <html lang="{lang}">'
         return f"200, lang={lang}, {len(r.body)} bytes"
     return run
 
@@ -196,15 +196,17 @@ def main() -> int:
     report.check("Unknown legacy URL", legacy_unknown)
 
     def assets():
-        # Every stylesheet, script and image referenced by a page (fingerprinted
-        # URLs: their names change with their content).
+        # Every stylesheet, script, image and preloaded font referenced by a
+        # page (fingerprinted URLs: their names change with their content).
         body = fetch(f"{base}/fr/appartement-valloire/").body.decode()
-        urls = sorted(set(re.findall(r'(?:href|src|data-src)="(/(?:css|js|images)/[^"]+)"', body)))
+        # Attribute values may be unquoted: the HTML is minified.
+        urls = sorted(set(m[0] or m[1] for m in re.findall(
+            r'(?<![\w-])(?:href|src|data-src)=(?:"(/(?:css|js|images|webfonts)/[^"]+)"|(/(?:css|js|images|webfonts)/[^\s"\'>]+))', body)))
         assert urls, "no stylesheet, script or image found in the page"
         broken = [u for u in urls if fetch(base + u).status != 200]
         assert not broken, "not served: " + ", ".join(broken)
         return f"{len(urls)} files served"
-    report.check("Stylesheets, scripts and images", assets)
+    report.check("Stylesheets, scripts, images and fonts", assets)
 
     def not_found():
         r = fetch(f"{base}/fr/page-that-does-not-exist/")

@@ -2,11 +2,18 @@
   <img> of a file of assets/images/ (fingerprinted URL, real width and height
   so that the page does not jump while loading, native lazy loading).
   Usage: {{ partial "img.html" (dict "src" "/images/x.jpg" "alt" "..." "eager" false) }}
+  Options: "resize" (Hugo image processing spec, e.g. "240x webp"), "priority"
+  (fetchpriority="high", for an eager image that is the largest of the page),
+  "width" and "height" (required for SVG files, whose size Hugo cannot read).
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
 {{- $res := resources.Get $path -}}
 {{- if not $res }}{{ errorf "image %q not found in assets/" $path }}{{ end -}}
+{{- with .resize }}{{ $res = $res.Resize . }}{{ end -}}
+{{- $width := .width -}}
+{{- $height := .height -}}
+{{- if not $width }}{{ $width = $res.Width }}{{ $height = $res.Height }}{{ end -}}
 <img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
-	{{- with $res.Width }} width="{{ . }}" height="{{ $res.Height }}"{{ end }}
-	{{- if not .eager }} loading="lazy"{{ end }} decoding="async" />
+	{{- with $width }} width="{{ . }}" height="{{ $height }}"{{ end }}
+	{{- if .eager }}{{ if .priority }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }} decoding="async" />
 {{- /* */ -}}

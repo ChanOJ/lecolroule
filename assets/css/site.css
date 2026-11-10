@@ -1,5 +1,39 @@
 /* Additions to the Dimension theme (main.css is left untouched). */
 
+/* Source Sans Pro (SIL Open Font License), latin subset, served by the site
+   itself: no third-party request blocking the first render. */
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src: url(/webfonts/source-sans-pro-5.3.0-latin-300-normal.woff2) format('woff2');
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: italic;
+	font-weight: 300;
+	font-display: swap;
+	src: url(/webfonts/source-sans-pro-5.3.0-latin-300-italic.woff2) format('woff2');
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url(/webfonts/source-sans-pro-5.3.0-latin-600-normal.woff2) format('woff2');
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: italic;
+	font-weight: 600;
+	font-display: swap;
+	src: url(/webfonts/source-sans-pro-5.3.0-latin-600-italic.woff2) format('woff2');
+}
+
 /* Space between a list item's leading icon and its text. */
 li > .icon:first-child {
 	margin-right: 0.5em;
@@ -7,6 +41,6 @@ li > .icon:first-child {
 
 /* Images carry their real width and height (no layout shift while loading):
    keep the ratio when the theme stretches them to the full width. */
-.image img {
+.image.main img {
 	height: auto;
 }
