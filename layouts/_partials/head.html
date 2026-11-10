@@ -17,16 +17,14 @@
 		<meta property="og:title" content="{{ partial "title.html" . }}" />
 		<meta property="og:description" content="{{ .Description }}" />
 		<meta property="og:url" content="{{ .Permalink }}" />
-		<meta property="og:image" content="{{ (or .Params.ogImage site.Params.ogImage) | absURL }}" />
+		<meta property="og:image" content="{{ partial "asset-url.html" (or .Params.ogImage site.Params.ogImage) | absURL }}" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="{{ site.Params.twitter }}" />
 		<meta name="twitter:image:alt" content="{{ site.Title }} - Valloire" />
 
 
 		<!-- Styles -->
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<link rel="stylesheet" href="/assets/css/site.css" />
-		<noscript><link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
+		{{- partial "styles.html" . }}
 		<!-- Favicon -->
 		<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
@@ -55,5 +53,7 @@
 			})();
 		</script>
 		{{- with .Params.jsonld }}
-		<script type="application/ld+json">{{ . | jsonify | safeJS }}</script>
+		{{- $ld := . }}
+		{{- with $ld.image }}{{ $ld = merge $ld (dict "image" (partial "asset-url.html" . | absURL)) }}{{ end }}
+		<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
 		{{- end }}

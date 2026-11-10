@@ -1,0 +1,4 @@
+{{- /* Theme scripts, fingerprinted. */ -}}
+{{- range slice "lozad.min.js" "jquery.min.js" "browser.min.js" "breakpoints.min.js" "util.js" "main.js" }}
+			<script src="{{ partial "asset-url.html" (print "js/" .) }}"></script>
+{{- end }}

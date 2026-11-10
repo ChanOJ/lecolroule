@@ -9,7 +9,7 @@ jsonld:
   "@type": Apartment
   name: Le Col Roulé
   hasMap: https://goo.gl/maps/3pwy91ck7hqCgJTs7
-  image: https://www.lecolroule.fr/images/vue_ete3.jpg
+  image: /images/vue_ete3.jpg
   numberOfBedrooms: 3
   numberOfFullBathrooms: 1
   numberOfPartialBathrooms: 2

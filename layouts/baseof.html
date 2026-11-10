@@ -17,7 +17,7 @@
 				<!-- TopBar: links to this page in the other languages -->
 					<div id="topbar">
 						{{- range .Translations }}
-						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate"><img class="lozad" data-src="{{ .Language.Params.flag }}" alt="{{ .Language.Label }}" /></a></span>
+						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate"><img class="lozad" data-src="{{ partial "asset-url.html" .Language.Params.flag }}" alt="{{ .Language.Label }}" /></a></span>
 						{{- end }}
 					</div>
 
@@ -36,12 +36,7 @@
 			<div id="bg"></div>
 
 		<!-- Scripts -->
-			<script src="/assets/js/lozad.min.js"></script>
-			<script src="/assets/js/jquery.min.js"></script>
-			<script src="/assets/js/browser.min.js"></script>
-			<script src="/assets/js/breakpoints.min.js"></script>
-			<script src="/assets/js/util.js"></script>
-			<script src="/assets/js/main.js"></script>
+			{{- partial "scripts.html" . }}
 			{{- block "scripts" . }}{{ end }}
 
 	</body>
