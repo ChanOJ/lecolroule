@@ -13,12 +13,14 @@ module "prod" {
   name                = "le-col-roule"
   hostname            = "www.lecolroule.fr"
   replication_regions = ["UK"]
+
+  layout           = "hugo"
+  legacy_redirects = local.legacy_redirects
+  not_found_page   = "/404.html"
 }
 
 # Staging environment: validate a version here before deploying it to prod.
 # Not indexed by search engines, analytics blocked so that stats stay clean.
-# Already on the Hugo layout (one page per URL, branch hugo-site) while prod
-# keeps the legacy single-page layout until the switch.
 module "test" {
   source = "./modules/site"
 
