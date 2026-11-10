@@ -66,9 +66,15 @@ Posts are listed on the blog page, newest first.
   so its fade-in only plays on the first page. A normal page load happens for another language, on a
   fetch error, or when the target page needs stylesheets/scripts the current one lacks; the blog
   (`data-full-load`) always reloads because the Brevo newsletter form only works on a real load.
+- Language menu (top right, `layouts/_partials/language-menu.html`): the 文A button opens the list
+  of the site languages as flags, each linking to the current page in that language (or that
+  language's home page). Choosing one stores it in the `lcr_lang` cookie (one year, `main.js`):
+  the root URL then redirects to that language whatever the browser's language. No cookie is
+  set until a language is chosen (functional preference, no consent needed).
 - Every 404 is answered with `/404.html` (`content/not-found.fr.md`), through the storage zone "404 File path" setting: that
   file must not be renamed or removed.
-- Edge rules (`infra/modules/site/edgerules.tf`): root redirect, security headers and, for the
+- Edge rules (`infra/modules/site/edgerules.tf`): root redirect (language cookie first, then
+  `Accept-Language`), security headers and, for the
   legacy single-page layout, the `/valloire/*` rewrites.
 
 ## Deployment
@@ -129,7 +135,7 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
 ## Smoke tests
 
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
-deep page per language, root redirect by browser language (302), HTTP→HTTPS, the 301 of every legacy
+deep page per language, root redirect by language cookie and by browser language (302), HTTP→HTTPS, the 301 of every legacy
 `/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `404.html` on
 unknown URLs, security headers, and the environment rules (test: `noindex` and analytics blocked;
 prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
@@ -172,7 +178,8 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 
 Environments are named `prod` and `test`. The module option `layout` selects the edge rules:
 `legacy` (single page per language under `/valloire/`, rewrites to `indexfr.html`/`indexen.html`)
-or `hugo` (one page per URL under `/<lang>/`, root redirected with a 302 by `Accept-Language`,
+or `hugo` (one page per URL under `/<lang>/`, root redirected with a 302 by the `lcr_lang`
+cookie, else by `Accept-Language`,
 301 from the legacy URLs listed in `infra/legacy_redirects.json`). Both environments use `hugo`;
 `legacy` is kept until the switch is validated, then removed. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
