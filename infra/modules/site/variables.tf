@@ -13,3 +13,15 @@ variable "replication_regions" {
   type        = list(string)
   default     = []
 }
+
+variable "noindex" {
+  description = "Send X-Robots-Tag: noindex, nofollow so that search engines ignore this environment."
+  type        = bool
+  default     = false
+}
+
+variable "analytics" {
+  description = "Allow analytics (Google Analytics, Mouseflow) in the Content-Security-Policy. When false, their scripts are blocked by the browser."
+  type        = bool
+  default     = true
+}
