@@ -67,20 +67,30 @@ li > .icon:first-child {
 	align-items: center;
 }
 
-	/* At least 44 px wide and tall: easy to tap. */
+	/* At least 44 px wide and tall: easy to tap. The icon is as wide as the
+	   flags (30 px). */
 	.lang-menu .lang-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		background: none;
 		border: 0;
 		box-shadow: none;
 		min-width: 44px;
+		width: 44px;
 		height: 44px;
-		line-height: 44px;
 		padding: 0;
-		font-size: 1.5rem;
 		color: #ffffff;
 		opacity: 0.85;
 		cursor: pointer;
 	}
+
+		.lang-menu .lang-toggle svg {
+			display: block;
+			width: 30px;
+			height: 30px;
+			filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+		}
 
 		.lang-menu .lang-toggle:hover,
 		.lang-menu .lang-toggle[aria-expanded="true"] {
