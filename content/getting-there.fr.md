@@ -1,6 +1,9 @@
 ---
 title: "Comment venir"
 slug: acces-valloire
+seoTitle: "Venir à Valloire en voiture, train ou bus - Le Col Roulé"
+description: "Accès à Valloire en voiture par l'A43, ou en TGV jusqu'à Saint-Michel-de-Maurienne puis en bus, taxi ou covoiturage : toutes les options pour venir."
+ogImage: /images/vue_ete1.jpg
 ---
 
 {{< icon name="car" title="voiture" >}} {{< icon name="motorcycle" title="moto" >}} La mairie de Valloire se plait à le dire, pour venir en voiture ou moto depuis toutes les métropoles de France il n'y a qu'un seul feu rouge ! En effet, l'autoroute mène jusque Saint-Michel-de-Maurienne, puis après 25mn de montée vous êtes arrivé.

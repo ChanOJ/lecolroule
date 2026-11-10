@@ -1,6 +1,9 @@
 ---
 title: "À proximité"
 slug: commerces-valloire
+seoTitle: "Commerces et services à Valloire - Le Col Roulé"
+description: "Boulangeries, restaurants, supermarchés, spa, patinoire, cinéma : tout ce que vous trouverez à 10-15 minutes à pied de l'appartement, au centre de Valloire."
+ogImage: /images/vue_hiver1.jpg
 ---
 
 Le centre village se trouve à [10-15 minutes à pied](https://www.viewgpx.com/route/bMjNJt5p) (en descente). On y trouve tout sur place, à part un hôpital {{< icon name="smile-wink" style="regular" title=";-)" >}}

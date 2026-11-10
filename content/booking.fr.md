@@ -1,6 +1,9 @@
 ---
 title: "Réserver"
 slug: reservation
+seoTitle: "Réserver votre location à Valloire - Le Col Roulé"
+description: "Vérifiez nos disponibilités et réservez votre séjour au Col Roulé, appartement 3 étoiles pour 8 personnes à Valloire, sur Airbnb ou en nous écrivant."
+ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 5

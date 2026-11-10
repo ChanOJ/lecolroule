@@ -1,6 +1,9 @@
 ---
 title: "L'Appartement"
 slug: appartement-valloire
+seoTitle: "Appartement 3 étoiles 8 personnes à Valloire - Le Col Roulé"
+description: "Duplex de 63 m² avec 3 chambres, grande terrasse abritée et vue sur la vallée, parking et borne de recharge, à 10 minutes à pied du centre de Valloire."
+ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 1

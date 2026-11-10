@@ -2,6 +2,9 @@
 title: "Hiver"
 heading: '<span class="hide4phone">Ambiance </span>Ski / Snow'
 slug: location-ski-valloire
+seoTitle: "Location ski à Valloire, près des pistes - Le Col Roulé"
+description: "Skibus gratuit au pied du chalet, 160 km de pistes à Valloire et les 3 Vallées à 35 minutes : votre location de ski en famille au Col Roulé."
+ogImage: /images/vue_hiver1.jpg
 menu:
   main:
     weight: 2

@@ -2,6 +2,9 @@
 title: "Winter"
 heading: 'Ski &amp; Snowboard<span class="hide4phone"> atmosphere</span>'
 slug: valloire-ski-rental
+seoTitle: "Ski rental in Valloire, close to the slopes - Le Col Roulé"
+description: "Free ski bus at the foot of the chalet, 100 miles of slopes in Valloire and Les 3 Vallées 35 minutes away: your family ski rental at Le Col Roulé."
+ogImage: /images/vue_hiver1.jpg
 menu:
   main:
     weight: 2

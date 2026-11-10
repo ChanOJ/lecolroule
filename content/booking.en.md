@@ -1,6 +1,9 @@
 ---
 title: "Book"
 slug: booking
+seoTitle: "Book your holiday rental in Valloire - Le Col Roulé"
+description: "Check availability and book your stay at Le Col Roulé, a 3-star apartment for 8 people in Valloire, on Airbnb or by writing to us."
+ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 5

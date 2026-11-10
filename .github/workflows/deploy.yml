@@ -59,6 +59,8 @@ jobs:
       BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # git history: page lastmod dates (Hugo GitInfo)
 
       - name: Install Hugo
         run: |

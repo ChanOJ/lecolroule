@@ -2,6 +2,9 @@
 title: "Été"
 heading: '<span class="hide4phone">Ambiance </span>Rando / Vélo'
 slug: velo-randonnee-valloire
+seoTitle: "Vélo, randonnée et été à Valloire - Le Col Roulé"
+description: "Entre Télégraphe et Galibier : cols mythiques à vélo, VTT, randonnée, via ferrata et activités d'été, depuis notre appartement avec terrasse à Valloire."
+ogImage: /images/col-du-galibier.jpg
 menu:
   main:
     weight: 3

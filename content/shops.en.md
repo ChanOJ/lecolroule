@@ -1,6 +1,9 @@
 ---
 title: "Commodities"
 slug: valloire-shops
+seoTitle: "Shops and services in Valloire - Le Col Roulé"
+description: "Bakeries, restaurants, supermarkets, spa, ice rink, cinema: everything you will find in Valloire's centre, a 10-15 minute walk from the flat."
+ogImage: /images/vue_hiver1.jpg
 ---
 
 The village centre is just [a 10-15 minute walk (downhill)](https://www.viewgpx.com/route/bMjNJt5p) away. You will find everything on site, except for a hospital {{< icon name="smile-wink" style="regular" title=";-)" >}}

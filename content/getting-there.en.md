@@ -1,6 +1,9 @@
 ---
 title: "How to get there"
 slug: getting-to-valloire
+seoTitle: "Getting to Valloire by car, train or bus - Le Col Roulé"
+description: "Reach Valloire by car via the A43, or by TGV to Saint-Michel-de-Maurienne then by bus, taxi or carpooling: all the ways to get to the flat."
+ogImage: /images/vue_ete1.jpg
 ---
 
 {{< icon name="car" title="car" >}} {{< icon name="motorcycle" title="motorbike" >}} Valloire town hall likes to say it, to come by car or motorbike from anywhere there is only one traffic light! Indeed, the motorway leads to Saint-Michel-de-Maurienne, then after 25mn of ascent you have arrived.

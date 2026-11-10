@@ -1,6 +1,9 @@
 ---
 title: "The Flat"
 slug: valloire-apartment
+seoTitle: "3-star apartment for 8 people in Valloire - Le Col Roulé"
+description: "680 sqft duplex with 3 bedrooms, large covered terrace with a view of the valley, parking and EV charger, a 10-minute walk from Valloire's centre."
+ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 1

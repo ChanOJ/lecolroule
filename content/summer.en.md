@@ -2,6 +2,9 @@
 title: "Summer"
 heading: 'Hiking &amp; Biking<span class="hide4phone"> atmosphere</span>'
 slug: valloire-cycling-hiking
+seoTitle: "Cycling, hiking and summer in Valloire - Le Col Roulé"
+description: "Between the Télégraphe and the Galibier: legendary passes by bike, mountain biking, hiking, via ferrata and summer activities, from our flat in Valloire."
+ogImage: /images/col-du-galibier.jpg
 menu:
   main:
     weight: 3

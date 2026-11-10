@@ -1,6 +1,9 @@
 ---
 title: "The Blog"
 slug: blog
+seoTitle: "Le Col Roulé blog, holiday rental in Valloire"
+description: "What's new in the apartment, booking openings and our tips to make the most of Valloire: the latest news from Le Col Roulé."
+ogImage: /images/niveau_principal.jpg
 menu:
   main:
     weight: 4
