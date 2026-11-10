@@ -136,6 +136,11 @@ issued in the same apply.
 `tofu output` shows, per environment, the storage zone name, the pull zone id and the
 bunny.net hostname to use as DNS CNAME target.
 
+Caching (module option `cache`): `prod` uses `cdn`: the CDN caches every file and is purged on
+each deployment; browsers keep pages (HTML, sitemap, robots.txt) 5 minutes and other files as long
+as the origin says (stylesheets, scripts and images have a content fingerprint in their URL).
+`test` uses `none`: nothing is cached, so every deployment is visible at once.
+
 Other zones of the bunny.net account belong to other projects and are not managed here.
 
 **Secrets.** The state contains secrets (storage zone passwords, pull zone token auth key), so it is

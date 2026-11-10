@@ -25,6 +25,9 @@ module "test" {
   layout           = "hugo"
   legacy_redirects = local.legacy_redirects
 
+  # No cache at all: every deployment is visible at once.
+  cache = "none"
+
   name      = local.test_name
   hostname  = "test.lecolroule.fr"
   noindex   = true
