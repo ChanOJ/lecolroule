@@ -66,3 +66,12 @@ jobs:
           else
             python3 scripts/deploy.py
           fi
+
+      # The served pages must be the ones just deployed (upload + purge), and
+      # routing, headers and environment rules must hold.
+      - name: Smoke test
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          extra=""
+          if [ "$DEPLOY_ENV" = "prod" ]; then extra="--redirect-domains"; fi
+          python3 scripts/smoke_test.py --env "$DEPLOY_ENV" --expect-repo-content $extra

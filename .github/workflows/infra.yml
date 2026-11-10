@@ -107,3 +107,14 @@ jobs:
           git add terraform.tfstate
           git commit -m "Update encrypted OpenTofu state (run ${{ github.run_id }})"
           git push
+
+      # Edge rules, hostnames or TLS settings may have changed: check both sites.
+      - name: Smoke test (test)
+        if: steps.apply.outcome == 'success'
+        working-directory: .
+        run: python3 scripts/smoke_test.py --env test
+
+      - name: Smoke test (prod)
+        if: steps.apply.outcome == 'success'
+        working-directory: .
+        run: python3 scripts/smoke_test.py --env prod --redirect-domains
