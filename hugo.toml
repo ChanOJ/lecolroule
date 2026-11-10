@@ -37,6 +37,27 @@ enableGitInfo = true
   ogImage = "/images/vue_ete3.jpg"
   copyrightYears = "2021-2026"
 
+  # The holiday rental, for structured data (schema.org JSON-LD, see
+  # layouts/_partials/structured-data.html).
+  [params.lodging]
+    name = "Le Col Roulé"
+    email = "contact@lecolroule.fr"
+    streetAddress = "Route de l'Archaz"
+    postalCode = "73450"
+    locality = "Valloire"
+    region = "Savoie"
+    country = "FR"
+    latitude = 45.1631353
+    longitude = 6.4344565
+    map = "https://maps.app.goo.gl/ng9N1mwDaAWFdeH87"
+    stars = 3
+    occupancy = 8
+    bedrooms = 3
+    floorSizeM2 = 63
+    yearBuilt = 2010
+    petsAllowed = true
+    smokingAllowed = false
+
   # Social links: footer and booking page.
   [[params.social]]
     name = "linkedin"

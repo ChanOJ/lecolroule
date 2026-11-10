@@ -7,21 +7,6 @@ ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 1
-jsonld:
-  "@context": https://schema.org
-  "@type": Apartment
-  name: Le Col Roulé
-  hasMap: https://maps.app.goo.gl/ng9N1mwDaAWFdeH87
-  image: /images/vue_ete3.jpg
-  numberOfBedrooms: 3
-  numberOfFullBathrooms: 1
-  numberOfPartialBathrooms: 2
-  numberOfBathroomsTotal: 3
-  yearBuilt: 2010
-  occupancy: { "@type": QuantitativeValue, value: 8 }
-  floorSize: { "@type": QuantitativeValue, value: 63, unitCode: MTK }
-  petsAllowed: true
-  smokingAllowed: false
 ---
 
 ![Déjeuner avec vue depuis la terrasse de l'appartement en été](/images/vue_ete3.jpg)

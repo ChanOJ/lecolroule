@@ -1,0 +1,84 @@
+{{- /*
+  schema.org structured data (JSON-LD), from params.lodging in hugo.toml:
+  - home page: the holiday rental as a LodgingBusiness;
+  - apartment page: the Apartment (rooms, size, occupancy...);
+  - blog: the Blog and its posts.
+*/ -}}
+{{- $l := site.Params.lodging -}}
+{{- $home := site.Home -}}
+{{- $image := partial "asset-url.html" (or .Params.ogImage site.Params.ogImage) | absURL -}}
+{{- $address := dict
+    "@type" "PostalAddress"
+    "streetAddress" $l.streetAddress
+    "postalCode" $l.postalCode
+    "addressLocality" $l.locality
+    "addressRegion" $l.region
+    "addressCountry" $l.country -}}
+{{- $geo := dict "@type" "GeoCoordinates" "latitude" $l.latitude "longitude" $l.longitude -}}
+{{- $sameAs := slice site.Language.Params.airbnb -}}
+{{- range site.Params.social }}{{ if ne .name "google maps" }}{{ $sameAs = $sameAs | append .url }}{{ end }}{{ end -}}
+{{- $data := false -}}
+
+{{- if .IsHome -}}
+  {{- $data = dict
+      "@context" "https://schema.org"
+      "@type" "LodgingBusiness"
+      "@id" (print $home.Permalink "#lodging")
+      "name" $l.name
+      "description" .Description
+      "url" $home.Permalink
+      "image" $image
+      "email" $l.email
+      "address" $address
+      "geo" $geo
+      "hasMap" $l.map
+      "starRating" (dict "@type" "Rating" "ratingValue" $l.stars)
+      "numberOfRooms" $l.bedrooms
+      "petsAllowed" $l.petsAllowed
+      "inLanguage" site.Language.Lang
+      "sameAs" $sameAs -}}
+
+{{- else if eq .File.ContentBaseName "apartment" -}}
+  {{- $data = dict
+      "@context" "https://schema.org"
+      "@type" "Apartment"
+      "name" $l.name
+      "description" .Description
+      "url" .Permalink
+      "image" $image
+      "address" $address
+      "geo" $geo
+      "hasMap" $l.map
+      "numberOfRooms" $l.bedrooms
+      "numberOfBedrooms" $l.bedrooms
+      "numberOfFullBathrooms" 1
+      "numberOfPartialBathrooms" 2
+      "numberOfBathroomsTotal" 3
+      "occupancy" (dict "@type" "QuantitativeValue" "maxValue" $l.occupancy)
+      "floorSize" (dict "@type" "QuantitativeValue" "value" $l.floorSizeM2 "unitCode" "MTK")
+      "yearBuilt" $l.yearBuilt
+      "petsAllowed" $l.petsAllowed
+      "smokingAllowed" $l.smokingAllowed
+      "containedInPlace" (dict "@id" (print $home.Permalink "#lodging")) -}}
+
+{{- else if eq .Kind "section" -}}
+  {{- $posts := slice -}}
+  {{- range .Pages.ByDate.Reverse -}}
+    {{- $post := dict "@type" "BlogPosting" "headline" .Title "datePublished" (.Date.Format "2006-01-02") "inLanguage" site.Language.Lang "articleBody" (.Plain | strings.TrimSpace) -}}
+    {{- with .Params.image }}{{ $post = merge $post (dict "image" (partial "asset-url.html" .src | absURL)) }}{{ end -}}
+    {{- $posts = $posts | append $post -}}
+  {{- end -}}
+  {{- $data = dict
+      "@context" "https://schema.org"
+      "@type" "Blog"
+      "name" .Title
+      "description" .Description
+      "url" .Permalink
+      "inLanguage" site.Language.Lang
+      "publisher" (dict "@id" (print $home.Permalink "#lodging"))
+      "blogPost" $posts -}}
+{{- end -}}
+
+{{- with $data }}
+		<script type="application/ld+json">{{ . | jsonify | safeJS }}</script>
+{{- end }}

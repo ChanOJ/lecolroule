@@ -51,8 +51,4 @@
 				document.getElementsByTagName("head")[0].appendChild(mf);
 			})();
 		</script>
-		{{- with .Params.jsonld }}
-		{{- $ld := . }}
-		{{- with $ld.image }}{{ $ld = merge $ld (dict "image" (partial "asset-url.html" . | absURL)) }}{{ end }}
-		<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
-		{{- end }}
+		{{- partial "structured-data.html" . }}
