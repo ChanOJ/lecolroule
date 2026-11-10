@@ -31,7 +31,6 @@ enableGitInfo = true
 
 [params]
   googleAnalyticsID = "G-2MX2EV8ZZE"
-  mouseflowProject = "302dacdc-9d9f-47b0-8ae5-d8c5842c6361"
   recaptchaSiteKey = "6LflesIqAAAAAOjZvfGc0s_DN1VHLHQSiG2ePmSi"
   twitter = "@LeColRoule"
   ogImage = "/images/vue_ete3.jpg"

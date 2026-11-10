@@ -173,7 +173,7 @@ or `hugo` (one page per URL under `/<lang>/`, root redirected with a 302 by `Acc
 301 from the legacy URLs listed in `infra/legacy_redirects.json`). Both environments use `hugo`;
 `legacy` is kept until the switch is validated, then removed. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
-Content-Security-Policy blocks analytics (Google Analytics, Mouseflow) so that stats stay clean.
+Content-Security-Policy blocks analytics (Google Analytics) so that stats stay clean.
 Its DNS record is created by `dns.tf` before the environment, so that the TLS certificate can be
 issued in the same apply.
 `tofu output` shows, per environment, the storage zone name, the pull zone id and the

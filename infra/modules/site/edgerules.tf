@@ -12,15 +12,14 @@ locals {
     "https://www.googletagmanager.com",
     "https://*.google-analytics.com",
     "https://*.analytics.google.com",
-    "https://*.mouseflow.com",
   ]
   csp_directives = [
-    ["default-src", "'self'", "https://www.google.com", "https://*.mouseflow.com", "https://sibforms.com", "https://*.sibforms.com"],
-    ["img-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.mouseflow.com", "https://*.analytics.google.com"],
-    ["connect-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.mouseflow.com", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
-    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com", "https://*.mouseflow.com", "https://www.google.com", "https://www.gstatic.com", "https://sibforms.com", "https://*.sibforms.com"],
-    ["style-src", "'self'", "'unsafe-inline'", "https://fonts.bunny.net", "https://sibforms.com", "https://*.sibforms.com"],
-    ["font-src", "'self'", "https://assets.brevo.com", "https://fonts.bunny.net"],
+    ["default-src", "'self'", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["img-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com"],
+    ["connect-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com", "https://www.google.com", "https://www.gstatic.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["style-src", "'self'", "'unsafe-inline'", "https://sibforms.com", "https://*.sibforms.com"],
+    ["font-src", "'self'", "https://assets.brevo.com"],
     ["object-src", "'none'"],
   ]
   csp = join("; ", [
@@ -49,7 +48,7 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
     {
       type       = "SetResponseHeader"
       parameter1 = "Access-Control-Allow-Origin"
-      parameter2 = "${local.base_url}, *.mouseflow.com"
+      parameter2 = local.base_url
     },
     {
       type       = "SetResponseHeader"
