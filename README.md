@@ -18,7 +18,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
 - `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
 
-Local preview: `hugo server`, then http://localhost:1313/fr/.
+Local preview: `hugo server --renderToMemory` (keeps `dist/` untouched), then http://localhost:1313/fr/.
 
 ## Editing content
 
