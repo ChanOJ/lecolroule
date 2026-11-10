@@ -8,6 +8,9 @@ name: Deploy website
 # Per-environment secrets (GitHub Environments "test" and "prod"):
 #   BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD, BUNNY_PULLZONE_ID
 # Repository secrets shared by both: BUNNY_API_KEY, BUNNY_STORAGE_ENDPOINT
+#
+# The site is built with Hugo (version pinned below) into dist/, which is what
+# gets deployed.
 
 on:
   push:
@@ -31,12 +34,15 @@ on:
 permissions:
   contents: read
 
+env:
+  HUGO_VERSION: "0.169.0"
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
-      url: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment || 'test') == 'prod' && 'https://www.lecolroule.fr/valloire/' || 'https://test.lecolroule.fr/valloire/' }}
+      url: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment || 'test') == 'prod' && 'https://www.lecolroule.fr/' || 'https://test.lecolroule.fr/' }}
     concurrency:
       group: deploy-${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
       cancel-in-progress: false
@@ -49,6 +55,16 @@ jobs:
       BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
     steps:
       - uses: actions/checkout@v7
+
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb
+          hugo version
+
+      # Warnings (e.g. deprecations) fail the build so they get fixed early.
+      - name: Build
+        run: hugo --panicOnWarning
 
       # Guard against a missing environment secret silently falling back to
       # another environment's storage zone.

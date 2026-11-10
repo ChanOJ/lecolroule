@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Synchronise the files tracked by git to a bunny.net storage zone.
+"""Synchronise the built website (Hugo output, dist/ by default) to a bunny.net storage zone.
 
-- Source: files tracked by git (`git ls-files`), minus DEPLOY_EXCLUDE.
+- Source: every file of the build directory (--source, default dist/).
 - Uploads only new or changed files (SHA-256 comparison).
 - Deletes remote files that are not in the repository (orphans), except PROTECTED.
 - Purges the pull zone cache when something changed.
@@ -17,8 +17,8 @@ Environment variables:
   DEPLOY_ENV              optional environment label shown in the summary (test, prod)
 
 Usage:
-  python3 scripts/deploy.py --dry-run     # show the plan without changing anything
-  python3 scripts/deploy.py               # deploy and purge
+  hugo && python3 scripts/deploy.py --dry-run   # show the plan without changing anything
+  hugo && python3 scripts/deploy.py             # deploy and purge
 """
 
 from __future__ import annotations
@@ -28,7 +28,6 @@ import fnmatch
 import hashlib
 import json
 import os
-import subprocess
 import sys
 import time
 import urllib.error
@@ -37,17 +36,8 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-# Repository files that are not part of the website (fnmatch patterns, relative paths).
-DEPLOY_EXCLUDE = [
-    ".gitignore",
-    ".github/*",
-    ".claude/*",
-    "infra/*",
-    "scripts/*",
-    "CLAUDE.md",
-    "README.md",
-    "*.DS_Store",
-]
+# Files of the build directory never uploaded.
+SKIP = ["*.DS_Store"]
 
 # Remote paths never deleted, even if they are not in the repository
 # (fnmatch patterns, e.g. "folder/*").
@@ -82,28 +72,15 @@ def sha256_file(path: Path) -> str:
 
 # --------------------------------------------------------------------------- local
 
-def local_files(allow_dirty: bool) -> dict[str, Path]:
-    out = subprocess.run(
-        ["git", "ls-files", "-z"], cwd=REPO_ROOT, check=True, capture_output=True
-    ).stdout.decode()
-    files = {}
-    for rel in filter(None, out.split("\0")):
-        if matches(rel, DEPLOY_EXCLUDE):
-            continue
-        p = REPO_ROOT / rel
-        if p.is_file():  # skip files deleted but not committed yet
-            files[rel] = p
-
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain", "--", *files.keys()],
-        cwd=REPO_ROOT, check=True, capture_output=True, text=True,
-    ).stdout.strip()
-    if dirty and not allow_dirty:
-        sys.exit(
-            "Website files have uncommitted changes:\n"
-            f"{dirty}\nCommit them or run again with --allow-dirty."
-        )
-    return files
+def local_files(source: Path) -> dict[str, Path]:
+    """Every file of the build directory, keyed by its path relative to it."""
+    if not source.is_dir():
+        sys.exit(f"Build directory {source} not found: run `hugo` first.")
+    return {
+        p.relative_to(source).as_posix(): p
+        for p in sorted(source.rglob("*"))
+        if p.is_file() and not matches(p.name, SKIP)
+    }
 
 
 # -------------------------------------------------------------------------- remote
@@ -215,8 +192,8 @@ def main() -> int:
     ap.add_argument("--no-delete", action="store_true", help="do not delete orphans")
     ap.add_argument("--no-purge", action="store_true", help="do not purge the pull zone")
     ap.add_argument("--force-purge", action="store_true", help="purge even without changes")
-    ap.add_argument("--allow-dirty", action="store_true",
-                    help="allow uncommitted changes (local use)")
+    ap.add_argument("--source", type=Path, default=REPO_ROOT / "dist",
+                    help="build directory to deploy (default: dist/)")
     ap.add_argument("--allow-mass-delete", action="store_true",
                     help="disable the guard on the number of deletions")
     args = ap.parse_args()
@@ -233,7 +210,7 @@ def main() -> int:
         sys.exit("BUNNY_API_KEY and BUNNY_PULLZONE_ID are required to purge "
                  "(or use --no-purge).")
 
-    local = local_files(args.allow_dirty)
+    local = local_files(args.source)
     if not local:
         sys.exit("No local file to deploy: aborting.")
 

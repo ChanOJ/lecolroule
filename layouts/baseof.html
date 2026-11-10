@@ -17,7 +17,7 @@
 				<!-- TopBar: links to this page in the other languages -->
 					<div id="topbar">
 						{{- range .Translations }}
-						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate"><img class="lozad" data-src="{{ .Language.Params.flag }}" alt="{{ .Language.LanguageName }}" /></a></span>
+						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate"><img class="lozad" data-src="{{ .Language.Params.flag }}" alt="{{ .Language.Label }}" /></a></span>
 						{{- end }}
 					</div>
 

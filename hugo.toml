@@ -54,8 +54,8 @@ enableRobotsTXT = true
 [languages]
   [languages.fr]
     weight = 1
-    languageName = "Français"
-    languageCode = "fr-FR"
+    label = "Français"
+    locale = "fr-FR"
     [languages.fr.params]
       flag = "/images/fr.gif"
       ogLocale = "fr_FR"
@@ -64,8 +64,8 @@ enableRobotsTXT = true
 
   [languages.en]
     weight = 2
-    languageName = "English"
-    languageCode = "en-GB"
+    label = "English"
+    locale = "en-GB"
     [languages.en.params]
       flag = "/images/uk.gif"
       ogLocale = "en_GB"
