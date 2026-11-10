@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Smoke test of a deployed environment of the website (Hugo layout).
 
-Checks the language home pages and a deep page per language, the root redirect
-by browser language and by language cookie (language menu), the 301 of every legacy /valloire/... URL
+Checks the language home pages and a deep page per language, the root language
+page (its script picks the language), the 301 of every legacy /valloire/... URL
 (infra/legacy_redirects.json), HTTP -> HTTPS, the 404 page, security headers
 and environment-specific rules (noindex and analytics on test, no noindex on
 prod). Optionally:
@@ -52,32 +52,7 @@ PAGES = {
     "/de/ferienwohnung-valloire/": "de",
     "/it/appartamento-valloire/": "it",
 }
-# Root redirect: Accept-Language header -> expected language (None: no header).
-ROOT_LANGUAGES = {
-    "fr-FR,fr;q=0.9,en;q=0.8": "fr",
-    "fr-BE,fr;q=0.9": "fr",
-    "en-GB,en;q=0.9": "en",
-    "nl-BE,nl;q=0.9,fr;q=0.8": "nl",
-    "de-CH,de;q=0.9": "de",
-    "it-IT,it;q=0.9": "it",
-    "es-ES,es;q=0.9": "en",
-    # First language wins, other accepted languages only as a fallback.
-    "en-GB,en;q=0.9,fr;q=0.8": "en",
-    "it-IT,it;q=0.9,de;q=0.8": "it",
-    "es-ES,es;q=0.9,de;q=0.8": "de",
-    "fr,en-US;q=0.7,en;q=0.3": "fr",
-    "it": "it",
-    None: "en",
-}
-# Root redirect with the language menu cookie: (Cookie, Accept-Language) ->
-# expected language. The cookie prevails; an unknown value is ignored.
-ROOT_COOKIES = {
-    ("lcr_lang=fr", "en-GB,en;q=0.9"): "fr",
-    ("lcr_lang=en", "fr-FR,fr;q=0.9"): "en",
-    ("_ga=GA1.1.1; lcr_lang=fr", None): "fr",
-    ("lcr_lang=xx", "fr-FR,fr;q=0.9"): "fr",
-    ("lcr_lang=it", "de-CH,de;q=0.9"): "it",
-}
+LANGUAGES = sorted(set(PAGES.values()))
 
 ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com"]
 
@@ -204,15 +179,21 @@ def main() -> int:
     for path, lang in PAGES.items():
         report.check(f"Page {path}", expect_page(base + path, lang))
 
-    # Root: browser language (302), and HTTP -> HTTPS (301).
-    for accept, lang in ROOT_LANGUAGES.items():
-        headers = {"Accept-Language": accept} if accept else None
-        report.check(f"Root, Accept-Language {accept or '(none)'}",
-                     expect_redirect(f"{base}/", f"{base}/{lang}/", 302, headers))
-    for (cookie, accept), lang in ROOT_COOKIES.items():
-        headers = {"Cookie": cookie, **({"Accept-Language": accept} if accept else {})}
-        report.check(f"Root, Cookie {cookie}, Accept-Language {accept or '(none)'}",
-                     expect_redirect(f"{base}/", f"{base}/{lang}/", 302, headers))
+    # Root: the language page (layouts/alias.html), whose script sends the
+    # visitor to their language. Not tested here (JavaScript): its content is.
+    def root():
+        r = fetch(f"{base}/")
+        if r.status == 302 and re.fullmatch(rf"{base}/({'|'.join(LANGUAGES)})/", r.header("Location")):
+            # Root language edge rules not removed yet (infra applied after the deployment).
+            return f"302 → {r.header('Location')} (edge rule)"
+        expect_status(r, 200)
+        body = r.body.decode()
+        assert "lcr_lang" in body and "location.replace" in body, "no language script"
+        assert re.search(r'<meta name="?robots"? content="?noindex', body), "not noindex"
+        missing = [l for l in LANGUAGES if not re.search(rf'href="?/{l}/"?[ >]', body)]
+        assert not missing, "no link to " + ", ".join(missing)
+        return f"200, language page ({', '.join(LANGUAGES)})"
+    report.check("Root: language page", root)
     report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/fr/", f"{base}/fr/"))
 
     # Legacy URLs: 301 to their new address, unknown ones: 404.
