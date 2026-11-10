@@ -50,8 +50,8 @@ E se tutto questo non vi bastasse, la partenza della cabinovia per [Les 3 Vallé
 #### a meno di un'ora
 
 - {{< icon name="child" title="bambino" >}} [Parco divertimenti Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25 min)
-- {{< icon name="skiing" title="sci" >}} [Orelle - Val Thorens - Les 3 Vallées](https://orelle.net/ski-resort/ski-area) (35 min)
-- {{< icon name="landmark" title="museo" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35 min)
+- {{< icon name="skiing" title="sci" >}} [Orelle - Val Thorens - Les 3 Vallées](https://orelle.net/stazione-sciistica/compresorio-sciistico) (35 min)
+- {{< icon name="landmark" title="museo" >}} [Espace Alu](https://espacealu.fr/Visita-in-italiano.htm) (35 min)
 - {{< icon name="landmark" title="museo" >}} [Museo Opinel](https://www.opinel.com/it-int/il-museo) (45 min)
 - {{< icon name="sleigh" title="slittino" >}} [Norma Loops (slittino 4 stagioni)](https://normaloops.fr/) (55 min)
 - {{< icon name="angle-double-right" title="e altro" >}} e decine di altre attività!

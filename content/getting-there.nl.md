@@ -10,7 +10,7 @@ ogImage: /images/vue_ete1.jpg
 
 {{< icon name="train" title="trein" >}} {{< icon name="bus" title="bus" >}} Met trein en bus neemt u de TGV tot Saint-Michel-de-Maurienne (ook Saint-Michel Valloire genoemd) en daarna een bus tot Valloire (vooraf reserveren!):
 
-- [TicTacTrip](https://www.tictactrip.eu/) (reserveer trein en bus in één keer)
+- [TicTacTrip](https://www.tictactrip.eu/nl) (reserveer trein en bus in één keer)
 - [Transdev](https://www.valloire.net/nl/commerces-et-services/transdev-savoie-liaison-autobus-depuis-la-gare-st-michel-valloire-372299/)
 - [Oùra](https://boutique.oura.com/en/travel) (voorheen Cars Région Savoie)
 - [Altibus](https://www.altibus.com/en/)

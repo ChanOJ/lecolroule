@@ -10,7 +10,7 @@ ogImage: /images/vue_ete1.jpg
 
 {{< icon name="train" title="treno" >}} {{< icon name="bus" title="autobus" >}} In treno e autobus basta arrivare a Saint-Michel-de-Maurienne (chiamata anche Saint-Michel Valloire) in TGV, poi prendere un autobus fino a Valloire (da prenotare in anticipo!):
 
-- [TicTacTrip](https://www.tictactrip.eu/) (prenotate treno e autobus in una sola volta)
+- [TicTacTrip](https://www.tictactrip.eu/it) (prenotate treno e autobus in una sola volta)
 - [Transdev](https://www.valloire.net/it/commerces-et-services/transdev-savoie-liaison-autobus-depuis-la-gare-st-michel-valloire-372299/)
 - [Oùra](https://boutique.oura.com/en/travel) (ex Cars Région Savoie)
 - [Altibus](https://www.altibus.com/en/)

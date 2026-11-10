@@ -84,7 +84,7 @@ Per lo più in pieno paese, 3 vie ferrate e centinaia di vie di arrampicata sapr
 
 - {{< icon name="child" title="bambino" >}} [Parco divertimenti Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25 min)
 - {{< icon name="swimming-pool" title="piscina" >}} [Terme di Le Monêtier-les-Bains](https://lesgrandsbainsdumonetier.fr/it) (55 min)
-- {{< icon name="landmark" title="museo" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35 min)
+- {{< icon name="landmark" title="museo" >}} [Espace Alu](https://espacealu.fr/Visita-in-italiano.htm) (35 min)
 - {{< icon name="landmark" title="museo" >}} [Museo Opinel](https://www.opinel.com/it-int/il-museo) (45 min)
 - {{< icon name="sleigh" title="slittino" >}} [Norma Loops (slittino 4 stagioni)](https://normaloops.fr/) (55 min)
 - {{< icon name="tree" title="albero" >}} [Parcobranche du Diable (parco avventura, zipline giganti)](https://www.parcdudiable.fr/) (55 min)
@@ -95,7 +95,7 @@ Per lo più in pieno paese, 3 vie ferrate e centinaia di vie di arrampicata sapr
 
 - {{< icon name="water" title="acqua" >}} [Wam Park Savoie - Montailleur (sci nautico a fune, wakeboard, parco avventura, giochi d'acqua, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1 h 15)
 - {{< icon name="water" title="acqua" >}} [EXO 73 (sci nautico a fune, wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1 h 15)
-- {{< icon name="water" title="acqua" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1 h 25)
+- {{< icon name="water" title="acqua" >}} [Rafting Serre Chevalier](https://www.serre-chevalier.com/it/rafting-5216501) (1 h 25)
 - {{< icon name="bicycle" title="bici" >}} [Mountain bike elettriche](https://serre-chevalier.bike/) (1 h 40)
 - {{< icon name="mountain" title="montagna" >}} [Zipline gigante - Serre Chevalier](https://www.serre-chevalier.com/it/dominio-altitudine/tyrolienne-geante) (2 h)
 - {{< icon name="angle-double-right" title="e altro" >}} e decine di altre attività!

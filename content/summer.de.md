@@ -84,7 +84,7 @@ Meist mitten im Dorf erfüllen 3 Klettersteige und Hunderte von Kletterrouten al
 
 - {{< icon name="child" title="Kind" >}} [Freizeitpark Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25 Min.)
 - {{< icon name="swimming-pool" title="Schwimmbad" >}} [Thermalbad Le Monêtier-les-Bains](https://lesgrandsbainsdumonetier.fr/en) (55 Min.)
-- {{< icon name="landmark" title="Museum" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35 Min.)
+- {{< icon name="landmark" title="Museum" >}} [Espace Alu](https://espacealu.fr/Besuch-auf-Deutsch.htm) (35 Min.)
 - {{< icon name="landmark" title="Museum" >}} [Opinel-Museum](https://www.opinel.com/de-int/das-museum) (45 Min.)
 - {{< icon name="sleigh" title="Rodel" >}} [Norma Loops (Rodelbahn, 4 Jahreszeiten)](https://normaloops.fr/) (55 Min.)
 - {{< icon name="tree" title="Baum" >}} [Parcobranche du Diable (Seilpark, Riesen-Ziplines)](https://www.parcdudiable.fr/) (55 Min.)

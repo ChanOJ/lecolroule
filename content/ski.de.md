@@ -51,7 +51,7 @@ Und wenn Ihnen das alles nicht genügt: Die Talstation der Gondelbahn in [Les 3 
 
 - {{< icon name="child" title="Kind" >}} [Freizeitpark Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25 Min.)
 - {{< icon name="skiing" title="Ski" >}} [Orelle - Val Thorens - Les 3 Vallées](https://orelle.net/ski-resort/ski-area) (35 Min.)
-- {{< icon name="landmark" title="Museum" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35 Min.)
+- {{< icon name="landmark" title="Museum" >}} [Espace Alu](https://espacealu.fr/Besuch-auf-Deutsch.htm) (35 Min.)
 - {{< icon name="landmark" title="Museum" >}} [Opinel-Museum](https://www.opinel.com/de-int/das-museum) (45 Min.)
 - {{< icon name="sleigh" title="Rodel" >}} [Norma Loops (Rodelbahn, 4 Jahreszeiten)](https://normaloops.fr/) (55 Min.)
 - {{< icon name="angle-double-right" title="und mehr" >}} und Dutzende weitere Aktivitäten!
