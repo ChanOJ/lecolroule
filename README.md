@@ -29,7 +29,7 @@ DNS is managed at Infomaniak (not in this repository).
   answered with `/error.html`, through the storage zone "404 File path" setting: that file must not
   be renamed or removed.
 - URL mapping (`/valloire/*` → `indexfr.html`, `/valloire/en/*` → `indexen.html`, root → `/valloire/`)
-  is done by **pull zone edge rules**, defined in `infra/edgerules.tf`.
+  is done by **pull zone edge rules**, defined in `infra/modules/site/edgerules.tf`.
 
 ## Deployment
 
@@ -56,11 +56,16 @@ Files are deployed as is, at the same path, to the storage zone.
 
 | File | Content |
 |---|---|
-| `storage.tf` | storage zone `le-col-roule` (DE + UK replication, 404 → `/error.html`) |
-| `pullzone.tf` | pull zone `le-col-roule` and the `www.lecolroule.fr` hostname |
-| `edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
+| `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`) |
+| `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
+| `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
+| `moved.tf` | state moves from the former flat layout (removable once applied) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
+
+Environments are named `prod` and `test` (the latter is planned, on `test.lecolroule.fr`).
+`tofu output` shows, per environment, the storage zone name, the pull zone id and the
+bunny.net hostname to use as DNS CNAME target.
 
 Other zones of the bunny.net account belong to other projects and are not managed here.
 
