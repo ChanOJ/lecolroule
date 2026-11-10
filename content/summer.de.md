@@ -94,7 +94,6 @@ Meist mitten im Dorf erfüllen 3 Klettersteige und Hunderte von Kletterrouten al
 #### in weniger als zwei Stunden
 
 - {{< icon name="water" title="Wasser" >}} [Wam Park Savoie - Montailleur (Wasserskilift, Wakeboard, Seilpark, Wasserspiele, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1 Std. 15)
-- {{< icon name="water" title="Wasser" >}} [EXO 73 (Wasserskilift, Wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1 Std. 15)
 - {{< icon name="water" title="Wasser" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1 Std. 25)
 - {{< icon name="bicycle" title="Fahrrad" >}} [Elektro-Mountainbikes](https://serre-chevalier.bike/) (1 Std. 40)
 - {{< icon name="mountain" title="Berg" >}} [Riesen-Zipline - Serre Chevalier](https://www.serre-chevalier.com/en/altitude-area/giant-zipline-summer) (2 Std.)

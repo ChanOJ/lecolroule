@@ -94,7 +94,6 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 #### à moins de deux heures
 
 - {{< icon name="water" title="eau" >}} [Wam Park Savoie - Montailleur (Teleski, Wakeboard, Accrobranche, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
-- {{< icon name="water" title="eau" >}} [EXO 73 (Teleski, Wakeboard, ...)](https://www.exoloisirs.com/fr/content/exo-73-tns-73-0) (1h15)
 - {{< icon name="water" title="eau" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/) (1h25)
 - {{< icon name="bicycle" title="vélo" >}} [VTT / MTB électriques](https://serre-chevalier.bike/) (1h40)
 - {{< icon name="mountain" title="montagne" >}} [Tyrolienne géante - Serre Chevalier](https://www.serre-chevalier.com/fr/domaine-altitude/tyrolienne-geante-ete) (2h)

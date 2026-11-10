@@ -23,7 +23,7 @@ ogImage: /images/vue_ete1.jpg
 - [Valloire Taxi](https://www.valloire.net/commerces-et-services/valloire-taxi-532906/)
 - [Stéphanie Taxis](https://www.taxi-maurienne-73.fr/)
 - [Hirondelle 73 (taxi)](https://www.taxi-hirondelle-73.fr/)
-- [Covoiturage BlaBlaCar](https://www.blablacar.fr/ride-sharing/valloire/)
+- [Covoiturage BlaBlaCar](https://www.blablacar.fr/carpool/destinations/valloire)
 - [Facebook - Covoiturages en Maurienne](https://www.facebook.com/groups/1009837839962040/)
 - [Facebook - Co-voiturage Vallée de Maurienne](https://www.facebook.com/groups/426808132285567/)
 - [Facebook - Infos Services - VALLOIRE](https://www.facebook.com/groups/379389857190261/)

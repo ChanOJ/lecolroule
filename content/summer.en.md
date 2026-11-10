@@ -94,7 +94,6 @@ For the most part in the village, 3 via ferrata and hundreds of climbing routes 
 #### less than two hours away
 
 - {{< icon name="water" title="water" >}} [Wam Park Savoie - Montailleur (Teleski, Wakeboard, Tree climbing, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
-- {{< icon name="water" title="water" >}} [EXO 73 (Teleski, Wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1h15)
 - {{< icon name="water" title="water" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1h25)
 - {{< icon name="bicycle" title="bike" >}} [Electric VTT / MTB](https://serre-chevalier.bike/) (1h40)
 - {{< icon name="mountain" title="mountain" >}} [Giant Zipline - Serre Chevalier](https://www.serre-chevalier.com/en/altitude-area/giant-zipline-summer) (2h)

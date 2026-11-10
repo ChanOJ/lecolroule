@@ -94,7 +94,6 @@ Grotendeels midden in het dorp beantwoorden 3 via ferrata's en honderden klimrou
 #### op minder dan twee uur
 
 - {{< icon name="water" title="water" >}} [Wam Park Savoie - Montailleur (waterskilift, wakeboard, boomklimpark, waterspelen, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1u15)
-- {{< icon name="water" title="water" >}} [EXO 73 (waterskilift, wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1u15)
 - {{< icon name="water" title="water" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1u25)
 - {{< icon name="bicycle" title="fiets" >}} [Elektrische mountainbikes](https://serre-chevalier.bike/) (1u40)
 - {{< icon name="mountain" title="berg" >}} [Reuzenzipline - Serre Chevalier](https://www.serre-chevalier.com/en/altitude-area/giant-zipline-summer) (2u)

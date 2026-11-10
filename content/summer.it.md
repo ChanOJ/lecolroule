@@ -94,7 +94,6 @@ Per lo più in pieno paese, 3 vie ferrate e centinaia di vie di arrampicata sapr
 #### a meno di due ore
 
 - {{< icon name="water" title="acqua" >}} [Wam Park Savoie - Montailleur (sci nautico a fune, wakeboard, parco avventura, giochi d'acqua, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1 h 15)
-- {{< icon name="water" title="acqua" >}} [EXO 73 (sci nautico a fune, wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1 h 15)
 - {{< icon name="water" title="acqua" >}} [Rafting Serre Chevalier](https://www.serre-chevalier.com/it/rafting-5216501) (1 h 25)
 - {{< icon name="bicycle" title="bici" >}} [Mountain bike elettriche](https://serre-chevalier.bike/) (1 h 40)
 - {{< icon name="mountain" title="montagna" >}} [Zipline gigante - Serre Chevalier](https://www.serre-chevalier.com/it/dominio-altitudine/tyrolienne-geante) (2 h)
