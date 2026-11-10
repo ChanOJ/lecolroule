@@ -10,6 +10,8 @@ dist/
 *.tfstate.*
 crash.log
 
+# Lock files of tools (Hugo build lock, ...). Not .terraform.lock.hcl, which is committed.
+*.lock
+
 # Hugo
-.hugo_build.lock
 /resources/_gen/
