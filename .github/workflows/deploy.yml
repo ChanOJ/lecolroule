@@ -1,0 +1,42 @@
+name: Deploy to bunny.net
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run (affiche le plan sans rien modifier)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Les push ne déploient que si la variable de dépôt DEPLOY_ENABLED vaut "true".
+    # Le lancement manuel (workflow_dispatch) est toujours possible.
+    if: github.event_name == 'workflow_dispatch' || vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync vers la Storage Zone et purge du cache
+        env:
+          BUNNY_STORAGE_ZONE: ${{ secrets.BUNNY_STORAGE_ZONE }}
+          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+          BUNNY_STORAGE_ENDPOINT: ${{ secrets.BUNNY_STORAGE_ENDPOINT }}
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+          BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
+        run: |
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
+            python3 scripts/deploy.py --dry-run
+          else
+            python3 scripts/deploy.py
+          fi
