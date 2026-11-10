@@ -61,12 +61,6 @@ BOT_PROTECTED = [
     "youtube.com",
 ]
 
-# Links that redirect on purpose (custom short links): a redirect is fine.
-EXPECTED_REDIRECTS = [
-    "airbnb.fr/h/",
-    "airbnb.com/h/",
-]
-
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Safari/605.1.15"
 LINK_RE = re.compile(r'(?:href|src|data-src)="(https?://[^"]+)"')
 
@@ -112,8 +106,6 @@ def check(url: str):
     if 200 <= status < 300:
         return "ok", str(status)
     if 300 <= status < 400:
-        if any(r in url for r in EXPECTED_REDIRECTS):
-            return "ok", f"{status} → {location} (expected)"
         if protected:
             return "protected", f"{status} → {location}"
         try:
