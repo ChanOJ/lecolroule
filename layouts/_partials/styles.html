@@ -1,15 +1,23 @@
 {{- /* Stylesheets, minified and fingerprinted. main.css is the theme file, left
-       untouched: its @imports (Font Awesome, Source Sans Pro from a font CDN,
-       now served by the site itself, see site.css) and its image URLs are
-       rewritten here. */ -}}
+       untouched and rewritten here:
+       - its @imports are dropped: Font Awesome (linked below) and Source Sans
+         Pro from a font CDN (now served by the site itself, see site.css);
+       - its intro no longer unfolds the header text (animated height and
+         padding move the whole page while it loads: layout shift); the text
+         only fades in;
+       - its image URLs point to the fingerprinted files. */ -}}
 {{- $main := resources.Get "css/main.css" -}}
 {{- $css := $main.Content -}}
-{{- range slice "@import url(fontawesome-all.min.css);" `@import url("https://fonts.bunny.net/css?family=Source+Sans+Pro:300italic,600italic,300,600");` -}}
-  {{- if not (strings.Contains $css .) }}{{ errorf "styles.html: %q not found in main.css" . }}{{ end -}}
-  {{- $css = replace $css . "" -}}
-{{- end -}}
-{{- range slice "/images/bg.jpg" "/images/overlay.png" -}}
-  {{- $css = replace $css . (partial "asset-url.html" .) -}}
+{{- $rewrites := dict
+  "@import url(fontawesome-all.min.css);" ""
+  `@import url("https://fonts.bunny.net/css?family=Source+Sans+Pro:300italic,600italic,300,600");` ""
+  "body.is-preload #header .content .inner {\n\t\t\t\tmax-height: 0;\n\t\t\t\tpadding-top: 0;\n\t\t\t\tpadding-bottom: 0;\n" "body.is-preload #header .content .inner {\n"
+  "/images/bg.jpg" (partial "asset-url.html" "/images/bg.jpg")
+  "/images/overlay.png" (partial "asset-url.html" "/images/overlay.png")
+-}}
+{{- range $from, $to := $rewrites -}}
+  {{- if not (strings.Contains $css $from) }}{{ errorf "styles.html: %q not found in main.css" $from }}{{ end -}}
+  {{- $css = replace $css $from $to -}}
 {{- end -}}
 {{- $main = $css | resources.FromString "css/main.css" | minify | fingerprint "md5" }}
 		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/fontawesome-all.min.css" }}" />

@@ -22,12 +22,6 @@
 			return $main.children('article');
 		}
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
 
 	// Nav.
 		var $nav = $header.children('nav'),
@@ -442,12 +436,37 @@
 				$main.hide();
 				articles().hide();
 
-			// Show the article of this page, if any.
-				if (articles().length > 0) {
-					$window.on('load', function() {
+			// Intro: show the article of this page, if any, then play the initial
+			// animations (background fade-in, header). They start as soon as the
+			// page and its background image (preloaded by the <head>) are ready,
+			// not on window "load", which also waits for analytics.
+				var introPlayed = false;
+
+				function playIntro() {
+
+					if (introPlayed)
+						return;
+					introPlayed = true;
+
+					if (articles().length > 0)
 						$main._show(articles().first().attr('id'), true);
-					});
+
+					window.setTimeout(function() {
+						$body.removeClass('is-preload');
+					}, 100);
+
 				}
+
+				$(function() {
+					var bg = document.querySelector('link[rel="preload"][as="image"]');
+					if (!bg)
+						return;
+					var img = new Image();
+					img.onload = img.onerror = playIntro;
+					img.src = bg.href;
+				});
+
+				$window.on('load', playIntro);
 
 			// The current page and its home page are known: no need to fetch them again.
 				pages[location.pathname] = Promise.resolve(document.cloneNode(true));

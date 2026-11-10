@@ -117,6 +117,9 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
 - Font Source Sans Pro served by the site (`static/webfonts/source-sans-pro-*`, `@font-face` in
   `assets/css/site.css`, latin subset, preloaded): no third-party font CDN. The theme's `@import`
   of a font CDN is removed when `main.css` is built.
+- Intro (`main.js`): the theme's animations start once the page and its preloaded background
+  image are ready, not on window `load` (which also waits for Google Analytics); the header text
+  fades in without unfolding (an animated height moves the page: layout shift).
 - Logo resized and converted to WebP at build time (`img.html` option `resize`); language flags
   are SVG.
 - Icons (`layouts/_partials/favicon.html`, also used by the 404 page): `/favicon.ico` (16 and
