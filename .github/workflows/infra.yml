@@ -88,9 +88,13 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Apply
+        id: apply
         run: tofu apply -input=false -no-color tfplan
 
+      # Runs even when the apply fails: a partial apply still creates resources
+      # and records them in the state, which must not be lost.
       - name: Commit the encrypted state
+        if: always() && steps.apply.outcome != 'skipped'
         run: |
           # Refuse to commit anything that is not an encrypted state.
           python3 -c 'import json,sys; d=json.load(open("terraform.tfstate")); sys.exit("state is not encrypted" if "resources" in d or "encrypted_data" not in d else 0)'
