@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""Smoke test of a deployed environment of the website.
+"""Smoke test of a deployed environment of the website (Hugo layout).
 
-Checks pages, deep links, the root redirect, the 404 page, security headers
+Checks the language home pages and a deep page per language, the root redirect
+by browser language, the 301 of every legacy /valloire/... URL
+(infra/legacy_redirects.json), HTTP -> HTTPS, the 404 page, security headers
 and environment-specific rules (noindex and analytics on test, no noindex on
 prod). Optionally:
-  --expect-repo-content  the HTML served by the CDN must be byte-identical to
-                         the files of the current checkout (run right after a
+  --expect-repo-content  every page of the build (dist/) must be served
+                         byte-identical by the CDN (run right after a
                          deployment: proves both the upload and the purge);
   --redirect-domains     the alternative domains (Infomaniak web redirection)
-                         must answer 301 to https://www.lecolroule.fr/valloire/.
+                         must answer 301 to the prod site.
 
 Writes a Markdown report to $GITHUB_STEP_SUMMARY when set, exits 1 on failure.
 Standard library only (Python >= 3.9).
 
 Usage:
-  python3 scripts/smoke_test.py --env test --expect-repo-content
+  hugo && python3 scripts/smoke_test.py --env test --expect-repo-content
   python3 scripts/smoke_test.py --env prod --redirect-domains
 """
 
@@ -22,21 +24,36 @@ from __future__ import annotations
 
 import argparse
 import http.client
+import json
 import os
+import re
 import sys
 import time
 import urllib.parse
 from pathlib import Path
 
 HOSTS = {"test": "test.lecolroule.fr", "prod": "www.lecolroule.fr"}
-PROD_HOME = "https://www.lecolroule.fr/valloire/"
 
-# Alternative domains redirected to the prod home page by Infomaniak.
+# Alternative domains redirected to the prod site by Infomaniak, and the
+# targets accepted for them (the former home page still 301s to /fr/).
 REDIRECT_DOMAINS = ["lecolroule.fr", "lecolroule.com", "lecolroulé.com", "lecolroulé.fr"]
+REDIRECT_TARGETS = ["https://www.lecolroule.fr/", "https://www.lecolroule.fr/valloire/"]
+
+# Language home pages and one deep page per language.
+PAGES = {
+    "/fr/": "fr",
+    "/en/": "en",
+    "/fr/appartement-valloire/": "fr",
+    "/en/valloire-apartment/": "en",
+}
+# Root redirect: Accept-Language header -> expected language (None: no header).
+ROOT_LANGUAGES = {"fr-FR,fr;q=0.9,en;q=0.8": "fr", "en-GB,en;q=0.9": "en", "de-DE,de;q=0.9": "en", None: "en"}
 
 ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com", "mouseflow.com"]
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+DIST = REPO_ROOT / "dist"
+LEGACY_REDIRECTS = REPO_ROOT / "infra" / "legacy_redirects.json"
 USER_AGENT = "lecolroule-smoke-test"
 
 
@@ -48,13 +65,14 @@ class Response:
         return self.headers.get(name, "")
 
 
-def fetch(url: str) -> Response:
+def fetch(url: str, headers: dict | None = None) -> Response:
     """GET without following redirects; TLS certificates are verified."""
     u = urllib.parse.urlsplit(url)
     conn_cls = http.client.HTTPSConnection if u.scheme == "https" else http.client.HTTPConnection
     conn = conn_cls(u.hostname.encode("idna").decode(), u.port, timeout=20)
+    path = (u.path or "/") + (f"?{u.query}" if u.query else "")
     try:
-        conn.request("GET", u.path or "/", headers={"User-Agent": USER_AGENT, "Accept": "*/*"})
+        conn.request("GET", path, headers={"User-Agent": USER_AGENT, "Accept": "*/*", **(headers or {})})
         r = conn.getresponse()
         return Response(r.status, r.headers, r.read())
     finally:
@@ -95,12 +113,14 @@ def expect_status(r: Response, status: int) -> None:
     assert r.status == status, f"HTTP {r.status}, expected {status}"
 
 
-def expect_redirect(url: str, target: str):
+def expect_redirect(url: str, targets, status: int = 301, headers: dict | None = None):
+    targets = [targets] if isinstance(targets, str) else targets
+
     def run():
-        r = fetch(url)
-        expect_status(r, 301)
-        assert r.header("Location") == target, f"Location {r.header('Location')!r}, expected {target!r}"
-        return f"301 → {target}"
+        r = fetch(url, headers)
+        expect_status(r, status)
+        assert r.header("Location") in targets, f"Location {r.header('Location')!r}, expected {targets[0]!r}"
+        return f"{status} → {r.header('Location')}"
     return run
 
 
@@ -113,19 +133,24 @@ def expect_page(url: str, lang: str):
     return run
 
 
-def expect_repo_content(url: str, rel: str, wait: int):
-    """Byte-identical to the checkout; retried while the CDN purge propagates."""
-    expected = (REPO_ROOT / rel).read_bytes()
+def expect_build_content(base: str, wait: int):
+    """Every page of dist/ served byte-identical; retried while the purge propagates."""
+    pages = sorted(p for p in DIST.rglob("index.html") if p.parent != DIST)
+    assert pages, f"no page in {DIST}: run `hugo` first"
 
     def run():
         deadline = time.monotonic() + wait
         while True:
-            r = fetch(url)
-            if r.status == 200 and r.body == expected:
-                return f"identical to {rel}"
+            differing = []
+            for p in pages:
+                path = "/" + p.parent.relative_to(DIST).as_posix() + "/"
+                r = fetch(base + path)
+                if r.status != 200 or r.body != p.read_bytes():
+                    differing.append(f"{path} (HTTP {r.status})")
+            if not differing:
+                return f"{len(pages)} pages identical to the build"
             if time.monotonic() >= deadline:
-                assert r.status == 200, f"HTTP {r.status}"
-                raise AssertionError(f"differs from {rel} ({len(r.body)} vs {len(expected)} bytes)")
+                raise AssertionError("differs from the build: " + ", ".join(differing))
             time.sleep(5)
     return run
 
@@ -134,7 +159,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--env", choices=sorted(HOSTS), required=True)
     ap.add_argument("--expect-repo-content", action="store_true",
-                    help="served HTML must match the checkout (right after a deployment)")
+                    help="every page of dist/ must be served identically (right after a deployment)")
     ap.add_argument("--redirect-domains", action="store_true",
                     help="also check the alternative domains redirections")
     ap.add_argument("--wait", type=int, default=90,
@@ -143,39 +168,56 @@ def main() -> int:
 
     host = HOSTS[args.env]
     base = f"https://{host}"
-    home = f"{base}/valloire/"
     report = Report(f"Smoke test of {args.env} ({host})")
 
-    # Pages and routing (edge rules + client-side routing).
-    report.check("FR home page", expect_page(home, "fr"))
-    report.check("EN home page", expect_page(f"{base}/valloire/en/", "en"))
-    report.check("FR deep link /valloire/appartement", expect_page(f"{base}/valloire/appartement", "fr"))
-    report.check("EN deep link /valloire/en/apartment", expect_page(f"{base}/valloire/en/apartment", "en"))
-    report.check("Root redirects to /valloire/", expect_redirect(f"{base}/", home))
-    report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/valloire/", home))
+    # Pages.
+    for path, lang in PAGES.items():
+        report.check(f"Page {path}", expect_page(base + path, lang))
 
-    def asset():
-        r = fetch(f"{base}/assets/css/main.css")
-        expect_status(r, 200)
-        assert r.header("Content-Type").startswith("text/css"), f"Content-Type {r.header('Content-Type')!r}"
-        return "200 text/css"
-    report.check("Stylesheet", asset)
+    # Root: browser language (302), and HTTP -> HTTPS (301).
+    for accept, lang in ROOT_LANGUAGES.items():
+        headers = {"Accept-Language": accept} if accept else None
+        report.check(f"Root, Accept-Language {accept or '(none)'}",
+                     expect_redirect(f"{base}/", f"{base}/{lang}/", 302, headers))
+    report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/fr/", f"{base}/fr/"))
+
+    # Legacy URLs: 301 to their new address, unknown ones: 404.
+    legacy = {k: v for k, v in json.loads(LEGACY_REDIRECTS.read_text()).items() if not k.startswith("_")}
+    for new, olds in legacy.items():
+        for old in olds:
+            report.check(f"Legacy {old}", expect_redirect(base + old, base + new))
+    report.check("Legacy URL with a query string",
+                 expect_redirect(f"{base}/valloire/appartement?utm_source=x", f"{base}/fr/appartement-valloire/"))
+
+    def legacy_unknown():
+        r = fetch(f"{base}/valloire/unknown-page")
+        expect_status(r, 404)
+        return "404"
+    report.check("Unknown legacy URL", legacy_unknown)
+
+    def assets():
+        # Every stylesheet, script and image referenced by a page (fingerprinted
+        # URLs: their names change with their content).
+        body = fetch(f"{base}/fr/appartement-valloire/").body.decode()
+        urls = sorted(set(re.findall(r'(?:href|src|data-src)="(/(?:css|js|images)/[^"]+)"', body)))
+        assert urls, "no stylesheet, script or image found in the page"
+        broken = [u for u in urls if fetch(base + u).status != 200]
+        assert not broken, "not served: " + ", ".join(broken)
+        return f"{len(urls)} files served"
+    report.check("Stylesheets, scripts and images", assets)
 
     def not_found():
-        r = fetch(f"{base}/404.html")
+        r = fetch(f"{base}/fr/page-that-does-not-exist/")
         expect_status(r, 404)
-        assert b'name="error"' in r.body, "body is not error.html"
-        return "404 with error.html"
-    report.check("Unknown URL serves error.html", not_found)
+        assert b"<title>Erreur 404" in r.body, "body is not 404.html"
+        return "404 with 404.html"
+    report.check("Unknown URL serves 404.html", not_found)
 
     if args.expect_repo_content:
-        report.check("FR page matches the repository",
-                     expect_repo_content(home, "valloire/indexfr.html", args.wait))
-        report.check("EN page matches the repository",
-                     expect_repo_content(f"{base}/valloire/en/", "valloire/indexen.html", args.wait))
+        report.check("Pages match the build", expect_build_content(base, args.wait))
 
     # Headers (set by the "security_headers" edge rule).
-    page = fetch(home)
+    page = fetch(f"{base}/fr/")
 
     def headers():
         expected = {
@@ -220,7 +262,7 @@ def main() -> int:
                 if h == HOSTS["prod"]:
                     continue  # the site itself, not a redirection
                 for scheme in ("http", "https"):
-                    report.check(f"{scheme}://{h}/", expect_redirect(f"{scheme}://{h}/", PROD_HOME))
+                    report.check(f"{scheme}://{h}/", expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGETS))
 
     report.write()
     print(f"\n{len(report.rows) - report.failed}/{len(report.rows)} checks passed.")

@@ -1,0 +1,36 @@
+name: "Monitoring: weekly link check"
+
+# Checks every external link of the built site (scripts/check_links.py):
+# broken links fail the run (GitHub then sends its "run failed" e-mail),
+# redirects are listed in the run summary with the URL to use instead.
+# Internal links need no check: Hugo fails the build on unknown pages/images.
+
+on:
+  schedule:
+    - cron: "23 6 * * 1" # every Monday at 06:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: "0.169.0"
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # git history: page lastmod dates (Hugo GitInfo)
+
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb
+
+      - name: Build
+        run: hugo --panicOnWarning
+
+      - name: Check external links
+        run: python3 scripts/check_links.py

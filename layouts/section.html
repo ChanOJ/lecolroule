@@ -1,0 +1,27 @@
+{{- /* Blog: newsletter form, then every post (newest first). */ -}}
+{{ define "head" }}
+		{{- partial "brevo-head.html" . }}
+{{ end }}
+{{ define "main" }}
+						{{- /* data-full-load: the newsletter form (Brevo, reCAPTCHA) only works on a
+						       real page load, so in-site navigation reloads this page. */}}
+						<article id="{{ .Section }}" data-full-load>
+							<h2 class="major">{{ .Title }}</h2>
+							{{- partial "newsletter.html" . }}
+							<hr/>
+							{{ .Content }}
+							{{- range .Pages.ByDate.Reverse }}
+							<section class="post">
+								<h3>[{{ .Date.Format "2006-01-02" }}] {{ .Title }}</h3>
+								{{ .Content }}
+								{{- with .Params.image }}
+								<span class="image main">{{ partial "img.html" (dict "src" .src "alt" .alt) }}{{ .caption | default .alt }}</span>
+								{{- end }}
+							</section>
+							<hr/>
+							{{- end }}
+						</article>
+{{ end }}
+{{ define "scripts" }}
+		{{- partial "brevo-scripts.html" . }}
+{{ end }}

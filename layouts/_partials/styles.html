@@ -1,0 +1,13 @@
+{{- /* Stylesheets, fingerprinted. main.css is the theme file, left untouched:
+       its @import of Font Awesome and its image URLs are rewritten here. */ -}}
+{{- $main := resources.Get "css/main.css" -}}
+{{- $css := $main.Content -}}
+{{- $css = replace $css "@import url(fontawesome-all.min.css);" "" -}}
+{{- range slice "/images/bg.jpg" "/images/overlay.png" -}}
+  {{- $css = replace $css . (partial "asset-url.html" .) -}}
+{{- end -}}
+{{- $main = $css | resources.FromString "css/main.css" | fingerprint "md5" }}
+		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/fontawesome-all.min.css" }}" />
+		<link rel="stylesheet" href="{{ $main.RelPermalink }}" />
+		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/site.css" }}" />
+		<noscript><link rel="stylesheet" href="{{ partial "asset-url.html" "css/noscript.css" }}" /></noscript>

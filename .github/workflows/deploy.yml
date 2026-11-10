@@ -8,6 +8,9 @@ name: "Website: deploy (test auto, prod manual)"
 # Per-environment secrets (GitHub Environments "test" and "prod"):
 #   BUNNY_STORAGE_ZONE, BUNNY_STORAGE_PASSWORD, BUNNY_PULLZONE_ID
 # Repository secrets shared by both: BUNNY_API_KEY, BUNNY_STORAGE_ENDPOINT
+#
+# The site is built with Hugo (version pinned below) into dist/, which is what
+# gets deployed.
 
 on:
   push:
@@ -27,16 +30,27 @@ on:
         description: "Dry run (show the plan without changing anything)"
         type: boolean
         default: true
+      allow_mass_delete:
+        description: "Allow deleting more than 25 % of the remote files (e.g. after renaming many files)"
+        type: boolean
+        default: false
+      no_delete:
+        description: "Upload only, keep remote files missing from the build (e.g. old site during a switch); skips the smoke test"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+
+env:
+  HUGO_VERSION: "0.169.0"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
-      url: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment || 'test') == 'prod' && 'https://www.lecolroule.fr/valloire/' || 'https://test.lecolroule.fr/valloire/' }}
+      url: ${{ (github.event_name == 'workflow_dispatch' && inputs.environment || 'test') == 'prod' && 'https://www.lecolroule.fr/' || 'https://test.lecolroule.fr/' }}
     concurrency:
       group: deploy-${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
       cancel-in-progress: false
@@ -49,6 +63,18 @@ jobs:
       BUNNY_PULLZONE_ID: ${{ secrets.BUNNY_PULLZONE_ID }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # git history: page lastmod dates (Hugo GitInfo)
+
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb
+          hugo version
+
+      # Warnings (e.g. deprecations) fail the build so they get fixed early.
+      - name: Build
+        run: hugo --panicOnWarning
 
       # Guard against a missing environment secret silently falling back to
       # another environment's storage zone.
@@ -61,16 +87,25 @@ jobs:
 
       - name: Sync to the storage zone and purge the cache
         run: |
+          args=""
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.allow_mass_delete }}" = "true" ]; then
+            args="--allow-mass-delete"
+          fi
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.no_delete }}" = "true" ]; then
+            args="$args --no-delete"
+          fi
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
-            python3 scripts/deploy.py --dry-run
+            python3 scripts/deploy.py --dry-run $args
           else
-            python3 scripts/deploy.py
+            python3 scripts/deploy.py $args
           fi
 
       # The served pages must be the ones just deployed (upload + purge), and
       # routing, headers and environment rules must hold.
+      # Skipped on dry runs, and on upload-only runs (the site is then only
+      # partly in place, e.g. during the switch from the legacy site).
       - name: Smoke test
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.no_delete)) }}
         run: |
           extra=""
           if [ "$DEPLOY_ENV" = "prod" ]; then extra="--redirect-domains"; fi

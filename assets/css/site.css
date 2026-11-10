@@ -1,0 +1,12 @@
+/* Additions to the Dimension theme (main.css is left untouched). */
+
+/* Space between a list item's leading icon and its text. */
+li > .icon:first-child {
+	margin-right: 0.5em;
+}
+
+/* Images carry their real width and height (no layout shift while loading):
+   keep the ratio when the theme stretches them to the full width. */
+.image img {
+	height: auto;
+}

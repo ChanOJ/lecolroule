@@ -1,0 +1,51 @@
+{{- /* Not found page (404.html), bilingual since the visitor's language is unknown. */ -}}
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="robots" content="noindex">
+		<title>Erreur 404 - Error 404</title>
+		{{- partial "styles.html" . }}
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+		<link rel="manifest" href="/images/favicon/site.webmanifest">
+	</head>
+	<body class="is-preload" data-home="/" data-home-title="{{ site.Title }}">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							<span class="icon solid fa-exclamation"></span>
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>Une erreur s'est produite</h1>
+								<h2>Le document que vous cherchez n'existe pas.</h2>
+								<p lang="en">An error occurred: the page you are looking for does not exist.</p>
+								<p><a href="/">Revenir sur le site / Back to the website</a></p>
+							</div>
+						</div>
+					</header>
+
+				{{- partial "footer.html" . }}
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			{{- partial "scripts.html" . }}
+
+	</body>
+</html>

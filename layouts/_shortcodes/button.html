@@ -1,0 +1,21 @@
+{{- /*
+  One button, inside {{< buttons >}}. Parameters:
+    page="/apartment"  link to a page of the site (current language), or
+    href="https://..." external link (new tab) / "mailto:..."
+    href="airbnb:"     the Airbnb page of the current language (hugo.toml)
+    icon="skiing"      Font Awesome icon (solid)
+    primary=true       highlighted button
+    fit=true           full width
+    title="..."        tooltip
+*/ -}}
+{{- $href := .Get "href" -}}
+{{- if eq $href "airbnb:" }}{{ $href = site.Language.Params.airbnb }}{{ end -}}
+{{- with .Get "page" -}}
+  {{- with $.Page.GetPage . }}{{ $href = .RelPermalink }}{{ else }}{{ errorf "%s: button to unknown page %q" $.Page.File.Path . }}{{ end -}}
+{{- end -}}
+{{- $external := or (hasPrefix $href "http://") (hasPrefix $href "https://") -}}
+{{- $classes := slice "button" -}}
+{{- if .Get "primary" }}{{ $classes = $classes | append "primary" }}{{ end -}}
+{{- with .Get "icon" }}{{ $classes = $classes | append "icon" "solid" (printf "fa-%s" .) }}{{ end -}}
+{{- if .Get "fit" }}{{ $classes = $classes | append "fit" }}{{ end -}}
+<li><a href="{{ $href | safeURL }}" class="{{ delimit $classes " " }}"{{ with .Get "title" }} title="{{ . }}"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>{{ .Inner | strings.TrimSpace }}</a></li>

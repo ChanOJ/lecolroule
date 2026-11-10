@@ -1,36 +1,75 @@
 # Le Col Roulé — static website
 
-Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/valloire/
-Built on the "Dimension" theme by HTML5 UP (jQuery), hosted on bunny.net (Storage Zone + Pull Zone).
-DNS is managed at Infomaniak (not in this repository).
+Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/
+Generated with [Hugo](https://gohugo.io) on the "Dimension" theme by HTML5 UP (jQuery), hosted on
+bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 
 ## Layout
 
-- `valloire/indexfr.html`, `valloire/indexen.html`: **all the content** of the site, one page per
-  language, maintained by hand (no template yet). Any content change must be made in both files.
-- `assets/`: theme CSS/JS/webfonts. `assets/js/main.js` holds the client-side routing.
-- `images/`: images used by the pages (`images/blog/` for blog posts, `images/favicon/`).
-- `error.html`: error page (carries `<meta name="error" content="true">`, read by main.js).
-- `index.html` (root): placeholder; the root URL is redirected to `/valloire/` by an edge rule.
-- `robots.txt`, `sitemap.xml`, `favicon.ico`, `bimi.svg`: served as is.
+- `hugo.toml`: site configuration, languages and their settings (flag, Brevo form, keywords).
+- `content/`: **the texts**, one Markdown file per page and per language (see "Editing content").
+- `i18n/<lang>.yaml`: interface strings (newsletter form, close button, ...).
+- `layouts/`: HTML templates shared by all languages (`baseof.html`, `page.html`, `section.html`
+  for the blog, `_partials/`), Markdown render hooks (`_markup/`) and shortcodes (`_shortcodes/`).
+- `static/`: files copied as is: `assets/` (theme CSS/JS/webfonts, `assets/css/site.css` for our
+  additions), `webfonts/`, `images/favicon/`, `favicon.ico`, `bimi.svg` (fixed URLs).
+- `dist/`: build output (`hugo`), not committed.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
-- `infra/`: bunny.net configuration as code (OpenTofu, see below).
+- `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
+
+Local preview: `hugo server --renderToMemory` (keeps `dist/` untouched), then http://localhost:1313/fr/.
+
+## Editing content
+
+Each page is `content/<page>.<lang>.md` (`apartment`, `shops`, `getting-there`, `ski`, `summer`,
+`booking`; `_index` is the home page). Its URL is `/<lang>/<slug>/`, the slug being set in the
+front matter (the block between `---` lines), together with the title and the menu position.
+Adding a language = adding it in `hugo.toml` and `i18n/`, then translating the files.
+
+Text is Markdown: `**bold**`, `*italic*`, `- list item`, `### Heading`, `[link](https://...)`.
+On top of it:
+
+| Need | Write |
+|---|---|
+| Link to another page of the site (current language) | `[winter](/ski)` |
+| External link (opens in a new tab) | `[Valloire](https://www.valloire.net/)` |
+| Airbnb page of the current language (`airbnb` in `hugo.toml`) | `[Airbnb](airbnb:)`, `{{< button href="airbnb:" >}}Book{{< /button >}}` |
+| Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
+| Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
+| Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
+| Embedded Google map | `{{< map src="https://www.google.com/maps/embed?..." height="350" >}}` |
+| Social network icons | `{{< social >}}` |
+
+**Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
+
+```markdown
+---
+title: "Post title"
+date: 2026-01-31
+image: { src: /images/blog/2026-01-31-photo.jpg, alt: Alt text, caption: Optional caption }
+---
+
+Post text in Markdown.
+```
+
+Posts are listed on the blog page, newest first.
 
 ## How it works (do not break)
 
-- Each page contains several `<article id="…">`. `main.js` reads `location.pathname`, strips
-  `/valloire/` then a `xx/` language prefix, and shows the article with the matching id
-  (e.g. `/valloire/appartement`, `/valloire/en/apartment`). Ids are **translated**:
-  `appartement`↔`apartment`, `appartement-commerces`↔`apartment-shops`,
-  `appartement-trajet`↔`apartment-route`, `appartement-ski`↔`ski-apartment`,
-  `appartement-rando-velo`↔`biking-hiking-apartment`, `contact-reservation`↔`booking-contact`.
-  Internal links are relative (`./slug`) and must match an article id of the same page.
-- An unknown id redirects to `/404.html` (a file that intentionally does not exist). Every 404 is
-  answered with `/error.html`, through the storage zone "404 File path" setting: that file must not
-  be renamed or removed.
-- URL mapping (`/valloire/*` → `indexfr.html`, `/valloire/en/*` → `indexen.html`, root → `/valloire/`)
-  is done by **pull zone edge rules**, defined in `infra/modules/site/edgerules.tf`.
+- One HTML page per URL and per language. Each page holds the header (with the menu) and at most one
+  `<article>`; `main.js` shows that article over the header on load.
+- In-site navigation (`assets/js/main.js`, "In-site navigation"): links to pages of the current
+  language are followed without reloading. The target page is fetched (and preloaded on hover),
+  its article swapped in with the theme's animation, and the title, meta tags, `hreflang` links and
+  language switcher are updated; back/forward work the same way. The background is never reloaded,
+  so its fade-in only plays on the first page. A normal page load happens for another language, on a
+  fetch error, or when the target page needs stylesheets/scripts the current one lacks; the blog
+  (`data-full-load`) always reloads because the Brevo newsletter form only works on a real load.
+- Every 404 is answered with `/404.html` (`content/not-found.fr.md`), through the storage zone "404 File path" setting: that
+  file must not be renamed or removed.
+- Edge rules (`infra/modules/site/edgerules.tf`): root redirect, security headers and, for the
+  legacy single-page layout, the `/valloire/*` rewrites.
 
 ## Deployment
 
@@ -57,14 +96,28 @@ Files are deployed as is, at the same path, to the storage zone.
 - Locally: export the same variables, then `python3 scripts/deploy.py --dry-run`.
 - Plain Python 3, no dependencies.
 
+## SEO
+
+- Each page: `seoTitle` (<title>, ~60 characters max), `description` (~150 characters) and
+  `ogImage` (share image) in its front matter; canonical URL, `hreflang` alternates (fr, en,
+  x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
+- Structured data (schema.org JSON-LD, `layouts/_partials/structured-data.html`) from
+  `params.lodging` in `hugo.toml`: LodgingBusiness (home), Apartment (apartment page), Blog with
+  its posts (blog page).
+- Sitemap per language with the same `hreflang` alternates and `lastmod` from git.
+- Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
+  image of a page loaded at once.
+
 ## Smoke tests
 
-`scripts/smoke_test.py --env test|prod` checks a deployed environment: FR/EN pages and deep links,
-root and HTTP→HTTPS redirects, `error.html` on unknown URLs, security headers, and the environment
-rules (test: `noindex` and analytics blocked; prod: indexable, analytics allowed). Options:
-`--expect-repo-content` (served HTML byte-identical to the checkout, proving upload and purge) and
-`--redirect-domains` (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and
-without `www`, over HTTP and HTTPS, must answer 301 to `https://www.lecolroule.fr/valloire/`).
+`scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
+deep page per language, root redirect by browser language (302), HTTP→HTTPS, the 301 of every legacy
+`/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `404.html` on
+unknown URLs, security headers, and the environment rules (test: `noindex` and analytics blocked;
+prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
+byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
+(`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and without `www`, over
+HTTP and HTTPS, must answer 301 to the prod site).
 
 It runs:
 
@@ -76,6 +129,15 @@ It runs:
 
 Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 
+## Link check
+
+- Internal links and images: Hugo fails the build on a link to an unknown page or a missing image.
+- External links: `scripts/check_links.py` (after `hugo`) requests every external link of `dist/`
+  without following redirects. Broken links (4xx, 5xx, unreachable) fail; redirects are listed with
+  the final URL to use instead; sites blocking robots or asking for a login (Facebook, LinkedIn,
+  BlaBlaCar, Google Maps, ...) are only listed. Runs every Monday (`links.yml`, "Monitoring: weekly
+  link check") and manually.
+
 ## Infrastructure (bunny.net, OpenTofu)
 
 `infra/` describes the bunny.net resources of the site with the official
@@ -84,7 +146,7 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | File | Content |
 |---|---|
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
-| `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
+| `modules/site/main.tf` | one environment: storage zone (404 → `not_found_page`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
 | `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
@@ -144,7 +206,7 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 1. Clean up unused files now that automated deployment is validated.
 2. Rework: a single HTML template + FR/EN translation files, blog posts as data, build to `dist/` in CI.
 3. SEO: one URL = its own content (today every URL serves the whole page → duplicate content).
-4. PR checks for the website (broken links, FR/EN parity).
+4. PR checks for the website (FR/EN parity).
 5. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
    semver in the path, e.g. `main.3f2a1c.css`) so they never need purging; only HTML pages would.
 6. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,

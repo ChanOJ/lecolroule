@@ -1,0 +1,12 @@
+{{- /*
+  <img> of a file of assets/images/ (fingerprinted URL, real width and height
+  so that the page does not jump while loading, native lazy loading).
+  Usage: {{ partial "img.html" (dict "src" "/images/x.jpg" "alt" "..." "eager" false) }}
+*/ -}}
+{{- $path := strings.TrimPrefix "/" .src -}}
+{{- $res := resources.Get $path -}}
+{{- if not $res }}{{ errorf "image %q not found in assets/" $path }}{{ end -}}
+<img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
+	{{- with $res.Width }} width="{{ . }}" height="{{ $res.Height }}"{{ end }}
+	{{- if not .eager }} loading="lazy"{{ end }} decoding="async" />
+{{- /* */ -}}

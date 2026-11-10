@@ -1,0 +1,2 @@
+{{- /* Browser/SEO title of a page: front matter "seoTitle", else "<title> - <site>". */ -}}
+{{- with .Params.seoTitle }}{{ . }}{{ else }}{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} - {{ site.Title }}{{ end }}{{ end -}}

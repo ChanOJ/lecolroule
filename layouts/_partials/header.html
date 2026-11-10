@@ -1,0 +1,22 @@
+<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							{{ partial "img.html" (dict "src" "/images/logo-256-noborder.png" "alt" (i18n "logoAlt") "eager" true) }}
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>{{ site.Title }}</h1>
+								{{- with site.Home }}
+								<h2>{{ .Params.tagline }}</h2>
+								<p>{{ .Params.intro }}</p>
+								{{- end }}
+							</div>
+						</div>
+						<nav>
+							<ul>
+								{{- range site.Menus.main }}
+								<li><a href="{{ .URL }}">{{ .Name }}</a></li>
+								{{- end }}
+							</ul>
+						</nav>
+					</header>

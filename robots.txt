@@ -1,5 +1,0 @@
-Sitemap: https://www.lecolroule.fr/sitemap.xml
-User-agent: *
-Disallow: /error.html
-Disallow: /valloire/index.html
-Disallow: /valloire/indexen.html

@@ -1,0 +1,54 @@
+<!-- Meta -->
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<title>{{ partial "title.html" . }}</title>
+		<meta name="description" content="{{ .Description }}" />
+		<link rel="canonical" href="{{ .Permalink }}" />
+		{{- range .AllTranslations }}
+		<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" />
+		{{- end }}
+		{{- range first 1 (where .AllTranslations "Language.Lang" "en") }}
+		<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}" />
+		{{- end }}
+
+		<meta property="og:locale" content="{{ site.Language.Params.ogLocale }}" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="{{ partial "title.html" . }}" />
+		<meta property="og:description" content="{{ .Description }}" />
+		<meta property="og:url" content="{{ .Permalink }}" />
+		<meta property="og:image" content="{{ partial "asset-url.html" (or .Params.ogImage site.Params.ogImage) | absURL }}" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="{{ site.Params.twitter }}" />
+		<meta name="twitter:image:alt" content="{{ site.Title }} - Valloire" />
+
+
+		<!-- Styles -->
+		{{- partial "styles.html" . }}
+		<!-- Favicon -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+		<link rel="manifest" href="/images/favicon/site.webmanifest">
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.Params.googleAnalyticsID }}"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', '{{ site.Params.googleAnalyticsID }}');
+
+			gtag('event', 'page_view', {
+				page_path: location.pathname
+			});
+		</script>
+		<script type="text/javascript">
+			window._mfq = window._mfq || [];
+			(function() {
+				var mf = document.createElement("script");
+				mf.type = "text/javascript"; mf.defer = true;
+				mf.src = "//cdn.mouseflow.com/projects/{{ site.Params.mouseflowProject }}.js";
+				document.getElementsByTagName("head")[0].appendChild(mf);
+			})();
+		</script>
+		{{- partial "structured-data.html" . }}
