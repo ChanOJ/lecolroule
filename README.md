@@ -82,13 +82,23 @@ pass-cli run --env-file secrets.env -- tofu plan
 Only the pull zone settings written in `pullzone.tf` are managed; the other settings are left as
 they are in the dashboard.
 
+**CI** (`.github/workflows/infra.yml`):
+
+- pull request touching `infra/`: `fmt -check`, `validate` and `plan`, shown in the run summary;
+- push to `main` touching `infra/`: plan only (spots drift or a forgotten apply);
+- manual run (Actions → Infrastructure (OpenTofu) → Run workflow → `apply`, from `main`): plan,
+  apply, then commit of the updated encrypted state by `github-actions[bot]`.
+  Pull `main` afterwards before working on `infra/` locally.
+
+GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`) and `TF_VAR_STATE_PASSPHRASE`
+(exposed as `TF_VAR_state_passphrase`).
+
 ## Planned work
 
 1. Clean up unused files now that automated deployment is validated.
 2. Rework: a single HTML template + FR/EN translation files, blog posts as data, build to `dist/` in CI.
 3. SEO: one URL = its own content (today every URL serves the whole page → duplicate content).
-4. Run OpenTofu in GitHub Actions (plan on PR, manual apply) with the encrypted state;
-   PR checks (broken links, FR/EN parity).
+4. PR checks for the website (broken links, FR/EN parity).
 5. Automated smoke test of the deployed site after each deployment (FR/EN pages, deep links, 404,
    assets) — currently done by hand.
 6. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or

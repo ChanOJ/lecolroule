@@ -17,6 +17,9 @@ resource "bunnynet_pullzone" "site" {
 
   block_no_referer = true
   log_anonymized   = true
+
+  # Obsolete TLS 1.0 / 1.1 disabled: only TLS 1.2+ is accepted.
+  tls_support = []
 }
 
 resource "bunnynet_pullzone_hostname" "www" {
