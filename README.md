@@ -188,7 +188,8 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 Environments are named `prod` and `test`. The module option `layout` selects the edge rules:
 `legacy` (single page per language under `/valloire/`, rewrites to `indexfr.html`/`indexen.html`)
 or `hugo` (one page per URL under `/<lang>/`, root redirected with a 302 by the `lcr_lang`
-cookie, else by `Accept-Language`,
+cookie, else by the browser's first language in `Accept-Language` (anchored Lua pattern,
+`pattern:^fr`), else by any language it accepts,
 301 from the legacy URLs listed in `infra/legacy_redirects.json`). Both environments use `hugo`;
 `legacy` is kept until the switch is validated, then removed. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
