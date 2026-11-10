@@ -207,11 +207,11 @@ def main() -> int:
     report.check("Stylesheets, scripts and images", assets)
 
     def not_found():
-        r = fetch(f"{base}/404.html")
+        r = fetch(f"{base}/fr/page-that-does-not-exist/")
         expect_status(r, 404)
-        assert b"<title>Erreur 404" in r.body, "body is not error.html"
-        return "404 with error.html"
-    report.check("Unknown URL serves error.html", not_found)
+        assert b"<title>Erreur 404" in r.body, "body is not 404.html"
+        return "404 with 404.html"
+    report.check("Unknown URL serves 404.html", not_found)
 
     if args.expect_repo_content:
         report.check("Pages match the build", expect_build_content(base, args.wait))

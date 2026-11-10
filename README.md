@@ -12,7 +12,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `layouts/`: HTML templates shared by all languages (`baseof.html`, `page.html`, `section.html`
   for the blog, `_partials/`), Markdown render hooks (`_markup/`) and shortcodes (`_shortcodes/`).
 - `static/`: files copied as is: `assets/` (theme CSS/JS/webfonts, `assets/css/site.css` for our
-  additions), `images/`, `error.html`, `favicon.ico`, `bimi.svg`.
+  additions), `webfonts/`, `images/favicon/`, `favicon.ico`, `bimi.svg` (fixed URLs).
 - `dist/`: build output (`hugo`), not committed.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
@@ -66,7 +66,7 @@ Posts are listed on the blog page, newest first.
   so its fade-in only plays on the first page. A normal page load happens for another language, on a
   fetch error, or when the target page needs stylesheets/scripts the current one lacks; the blog
   (`data-full-load`) always reloads because the Brevo newsletter form only works on a real load.
-- Every 404 is answered with `/error.html`, through the storage zone "404 File path" setting: that
+- Every 404 is answered with `/404.html` (`content/not-found.fr.md`), through the storage zone "404 File path" setting: that
   file must not be renamed or removed.
 - Edge rules (`infra/modules/site/edgerules.tf`): root redirect, security headers and, for the
   legacy single-page layout, the `/valloire/*` rewrites.
@@ -100,7 +100,7 @@ Files are deployed as is, at the same path, to the storage zone.
 
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
 deep page per language, root redirect by browser language (302), HTTP→HTTPS, the 301 of every legacy
-`/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `error.html` on
+`/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `404.html` on
 unknown URLs, security headers, and the environment rules (test: `noindex` and analytics blocked;
 prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
 byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
@@ -134,7 +134,7 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | File | Content |
 |---|---|
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
-| `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
+| `modules/site/main.tf` | one environment: storage zone (404 → `not_found_page`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
 | `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
