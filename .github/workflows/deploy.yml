@@ -30,6 +30,10 @@ on:
         description: "Dry run (show the plan without changing anything)"
         type: boolean
         default: true
+      allow_mass_delete:
+        description: "Allow deleting more than 25 % of the remote files (e.g. after renaming many files)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -77,10 +81,14 @@ jobs:
 
       - name: Sync to the storage zone and purge the cache
         run: |
+          args=""
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.allow_mass_delete }}" = "true" ]; then
+            args="--allow-mass-delete"
+          fi
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
-            python3 scripts/deploy.py --dry-run
+            python3 scripts/deploy.py --dry-run $args
           else
-            python3 scripts/deploy.py
+            python3 scripts/deploy.py $args
           fi
 
       # The served pages must be the ones just deployed (upload + purge), and
