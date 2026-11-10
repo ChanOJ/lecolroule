@@ -61,6 +61,10 @@ ROOT_LANGUAGES = {
     "de-CH,de;q=0.9": "de",
     "it-IT,it;q=0.9": "it",
     "es-ES,es;q=0.9": "en",
+    # First language wins, other accepted languages only as a fallback.
+    "en-GB,en;q=0.9,fr;q=0.8": "en",
+    "it-IT,it;q=0.9,de;q=0.8": "it",
+    "es-ES,es;q=0.9,de;q=0.8": "de",
     None: "en",
 }
 # Root redirect with the language menu cookie: (Cookie, Accept-Language) ->
