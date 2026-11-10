@@ -64,3 +64,28 @@ variable "legacy_redirects" {
   type        = map(list(string))
   default     = {}
 }
+
+variable "cache" {
+  description = <<-EOT
+    Caching policy:
+    - "cdn": the CDN caches every file (purged by scripts/deploy.py on each
+      deployment); browsers cache files as told by the origin (long), except
+      pages (HTML, sitemap, robots.txt) cached html_browser_cache_seconds only.
+      Long browser caching is safe for stylesheets, scripts and images because
+      their URLs carry a content fingerprint (Hugo).
+    - "none": nothing is cached, neither by the CDN nor by browsers (test).
+  EOT
+  type        = string
+  default     = "cdn"
+
+  validation {
+    condition     = contains(["cdn", "none"], var.cache)
+    error_message = "cache must be \"cdn\" or \"none\"."
+  }
+}
+
+variable "html_browser_cache_seconds" {
+  description = "\"cdn\" cache: browser cache time of pages, so that a new version is seen quickly."
+  type        = number
+  default     = 300
+}
