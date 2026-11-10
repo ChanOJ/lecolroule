@@ -3,13 +3,15 @@
 locals {
   trigger_defaults = { parameter1 = null, parameter2 = null }
   action_defaults  = { parameter1 = null, parameter2 = null, parameter3 = null }
+
+  base_url = "https://${var.hostname}"
 }
 
 # Edge rules of the pull zone. Lower priority values run first.
 
 # Security headers on every GET response.
-resource "bunnynet_pullzone_edgerule" "cors_header" {
-  pullzone    = bunnynet_pullzone.site.id
+resource "bunnynet_pullzone_edgerule" "security_headers" {
+  pullzone    = bunnynet_pullzone.this.id
   description = "Response Headers"
   enabled     = true
   priority    = 0
@@ -25,7 +27,7 @@ resource "bunnynet_pullzone_edgerule" "cors_header" {
     {
       type       = "SetResponseHeader"
       parameter1 = "Access-Control-Allow-Origin"
-      parameter2 = "https://www.lecolroule.fr, *.mouseflow.com"
+      parameter2 = "${local.base_url}, *.mouseflow.com"
     },
     {
       type       = "SetResponseHeader"
@@ -68,9 +70,9 @@ resource "bunnynet_pullzone_edgerule" "cors_header" {
   ] : merge(local.action_defaults, a)]
 }
 
-# https://www.lecolroule.fr/ -> /valloire/
+# Root URL -> /valloire/
 resource "bunnynet_pullzone_edgerule" "redirect_root" {
-  pullzone    = bunnynet_pullzone.site.id
+  pullzone    = bunnynet_pullzone.this.id
   description = ""
   enabled     = true
   priority    = 1
@@ -79,19 +81,19 @@ resource "bunnynet_pullzone_edgerule" "redirect_root" {
   triggers = [for t in [{
     type       = "Url"
     match_type = "MatchAny"
-    patterns   = ["https://www.lecolroule.fr/"]
+    patterns   = ["${local.base_url}/"]
   }] : merge(local.trigger_defaults, t)]
 
   actions = [for a in [{
     type       = "Redirect"
-    parameter1 = "https://www.lecolroule.fr/valloire/"
+    parameter1 = "${local.base_url}/valloire/"
     parameter2 = "301"
   }] : merge(local.action_defaults, a)]
 }
 
 # /valloire/en/* is served by the English page (client-side routing in main.js).
 resource "bunnynet_pullzone_edgerule" "rewrite_en" {
-  pullzone    = bunnynet_pullzone.site.id
+  pullzone    = bunnynet_pullzone.this.id
   description = "Default EN Page"
   enabled     = true
   priority    = 2
@@ -100,19 +102,19 @@ resource "bunnynet_pullzone_edgerule" "rewrite_en" {
   triggers = [for t in [{
     type       = "Url"
     match_type = "MatchAny"
-    patterns   = ["https://www.lecolroule.fr/valloire/en/*"]
+    patterns   = ["${local.base_url}/valloire/en/*"]
   }] : merge(local.trigger_defaults, t)]
 
   actions = [for a in [{
     type       = "OriginUrl"
-    parameter1 = "https://www.lecolroule.fr/valloire/indexen.html"
+    parameter1 = "${local.base_url}/valloire/indexen.html"
   }] : merge(local.action_defaults, a)]
 }
 
 # Any other /valloire/* path is served by the French page, except index* files
 # and the English section.
 resource "bunnynet_pullzone_edgerule" "rewrite_fr" {
-  pullzone    = bunnynet_pullzone.site.id
+  pullzone    = bunnynet_pullzone.this.id
   description = "Default FR Page"
   enabled     = true
   priority    = 3
@@ -122,17 +124,17 @@ resource "bunnynet_pullzone_edgerule" "rewrite_fr" {
     {
       type       = "Url"
       match_type = "MatchAny"
-      patterns   = ["https://www.lecolroule.fr/valloire/*"]
+      patterns   = ["${local.base_url}/valloire/*"]
     },
     {
       type       = "Url"
       match_type = "MatchNone"
-      patterns   = ["https://www.lecolroule.fr/valloire/index*", "https://www.lecolroule.fr/valloire/en/*"]
+      patterns   = ["${local.base_url}/valloire/index*", "${local.base_url}/valloire/en/*"]
     },
   ] : merge(local.trigger_defaults, t)]
 
   actions = [for a in [{
     type       = "OriginUrl"
-    parameter1 = "https://www.lecolroule.fr/valloire/indexfr.html"
+    parameter1 = "${local.base_url}/valloire/indexfr.html"
   }] : merge(local.action_defaults, a)]
 }
