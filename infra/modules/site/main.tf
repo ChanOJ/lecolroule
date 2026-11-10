@@ -32,6 +32,10 @@ resource "bunnynet_pullzone" "this" {
   block_no_referer = true
   log_anonymized   = true
 
+  # Cache times: -1 = as told by the origin (storage zone), 0 = no cache.
+  cache_expiration_time         = var.cache == "none" ? 0 : -1
+  cache_expiration_time_browser = var.cache == "none" ? 0 : -1
+
   # TLS security level: "Compatible" drops the weak RSA/CBC cipher suites and
   # TLS 1.0/1.1 allowed by "Legacy", while keeping older-but-maintained clients.
   tls_level = "Compatible"

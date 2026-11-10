@@ -289,3 +289,38 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
     parameter2 = "301"
   }] : merge(local.action_defaults, a)]
 }
+
+# ------------------------------------------------------------------- caching
+
+# Pages: short browser cache ("cdn" policy), whatever the origin says, so that
+# visitors get a new version quickly after a deployment. Fingerprinted assets
+# keep the long cache of the origin.
+locals {
+  page_patterns = concat(
+    ["${local.base_url}/", "${local.base_url}/*/", "${local.base_url}/*.html", "${local.base_url}/*.xml", "${local.base_url}/*.txt"],
+    # Legacy layout: pages have no extension and no trailing slash.
+    var.layout == "legacy" ? ["${local.base_url}/valloire/*"] : [],
+  )
+}
+
+resource "bunnynet_pullzone_edgerule" "page_browser_cache" {
+  count = var.cache == "cdn" ? 1 : 0
+
+  pullzone    = bunnynet_pullzone.this.id
+  description = "Pages: browser cache ${var.html_browser_cache_seconds} s"
+  enabled     = true
+  # Own slot, clear of the layout rules (1-3 legacy, 1-9 and 10+ hugo).
+  priority   = 100
+  match_type = "MatchAny"
+
+  triggers = [for chunk in chunklist(local.page_patterns, 5) : merge(local.trigger_defaults, {
+    type       = "Url"
+    match_type = "MatchAny"
+    patterns   = chunk
+  })]
+
+  actions = [for a in [{
+    type       = "OverrideBrowserCacheTime"
+    parameter1 = tostring(var.html_browser_cache_seconds)
+  }] : merge(local.action_defaults, a)]
+}
