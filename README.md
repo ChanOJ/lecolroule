@@ -90,7 +90,11 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
 
-Environments are named `prod` and `test`. `test` is a staging copy of the site used to validate a
+Environments are named `prod` and `test`. The module option `layout` selects the edge rules:
+`legacy` (single page per language under `/valloire/`, rewrites to `indexfr.html`/`indexen.html`)
+or `hugo` (one page per URL under `/<lang>/`, root redirected with a 302 by `Accept-Language`,
+301 from the legacy URLs listed in `infra/legacy_redirects.json`). During the Hugo migration,
+`test` uses `hugo` and `prod` stays on `legacy`. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
 Content-Security-Policy blocks analytics (Google Analytics, Mouseflow) so that stats stay clean.
 Its DNS record is created by `dns.tf` before the environment, so that the TLS certificate can be
