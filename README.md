@@ -72,7 +72,7 @@ Files are deployed as is, at the same path, to the storage zone.
 - `.github/workflows/deploy.yml` runs `scripts/deploy.py`:
   - on push to `main` (except infra-only or Markdown-only changes): deploys to **test**
     (https://test.lecolroule.fr/valloire/);
-  - manually (Actions → Deploy website → Run workflow): deploys to **test** or **prod**, as a dry run
+  - manually (Actions → Website: deploy → Run workflow): deploys to **test** or **prod**, as a dry run
     by default. The `prod` environment only accepts runs from `main`.
 
   Release flow: merge to `main` → automatic deployment to test → check https://test.lecolroule.fr →
@@ -161,7 +161,7 @@ they are in the dashboard.
 
 - pull request touching `infra/`: `fmt -check`, `validate` and `plan`, shown in the run summary;
 - push to `main` touching `infra/`: plan only (spots drift or a forgotten apply);
-- manual run (Actions → Infrastructure (OpenTofu) → Run workflow → `apply`, from `main`): plan,
+- manual run (Actions → Infra: bunny.net & DNS → Run workflow → `apply`, from `main`): plan,
   apply, then commit of the updated encrypted state by `github-actions[bot]`.
   Pull `main` afterwards before working on `infra/` locally.
 

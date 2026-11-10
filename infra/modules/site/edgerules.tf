@@ -185,8 +185,17 @@ moved {
 
 locals {
   hugo                = var.layout == "hugo"
-  redirect_languages  = local.hugo ? toset([for l in var.languages : l if l != var.default_language]) : toset([])
-  accept_language_any = [for l in var.languages : "${l}*" if l != var.default_language]
+  other_languages     = sort([for l in var.languages : l if l != var.default_language])
+  redirect_languages  = local.hugo ? toset(local.other_languages) : toset([])
+  accept_language_any = [for l in local.other_languages : "${l}*"]
+
+  # bunny.net requires a unique priority (order index) per rule of a pull zone:
+  # 0 security headers, 1-8 root language rules, 9 root default language,
+  # 10.. legacy redirects. Fixed slots avoid transient collisions when rules
+  # are added or removed.
+  root_language_priority   = { for i, l in local.other_languages : l => 1 + i }
+  root_default_priority    = 9
+  legacy_redirect_priority = { for i, k in sort(keys(var.legacy_redirects)) : k => 10 + i }
 }
 
 # Root URL -> home page of the browser's preferred language (302: depends on
@@ -197,7 +206,7 @@ resource "bunnynet_pullzone_edgerule" "root_language" {
   pullzone    = bunnynet_pullzone.this.id
   description = "Root to /${each.key}/"
   enabled     = true
-  priority    = 1
+  priority    = local.root_language_priority[each.key]
   match_type  = "MatchAll"
 
   triggers = [for t in [
@@ -229,7 +238,7 @@ resource "bunnynet_pullzone_edgerule" "root_default_language" {
   pullzone    = bunnynet_pullzone.this.id
   description = "Root to /${var.default_language}/"
   enabled     = true
-  priority    = 1
+  priority    = local.root_default_priority
   match_type  = "MatchAll"
 
   triggers = [for t in [
@@ -261,7 +270,7 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
   pullzone    = bunnynet_pullzone.this.id
   description = "Legacy URLs to ${each.key}"
   enabled     = true
-  priority    = 2
+  priority    = local.legacy_redirect_priority[each.key]
   match_type  = "MatchAny"
 
   triggers = [for t in [{

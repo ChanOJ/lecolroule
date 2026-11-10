@@ -1,4 +1,4 @@
-name: Daily smoke test
+name: "Monitoring: daily smoke test"
 
 # Daily check of both environments (pages, routing, headers, TLS certificates)
 # and of the alternative domains redirections. A failure sends GitHub's usual
