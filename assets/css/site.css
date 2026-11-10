@@ -5,6 +5,21 @@
 	color-scheme: dark;
 }
 
+/* Nothing may widen the page beyond the screen: on a phone, the reCAPTCHA
+   badge of the newsletter form (fixed, partly off-screen on the right)
+   widened the blog page and pushed the language menu out of view. */
+html, body {
+	overflow-x: hidden;
+	overflow-x: clip;
+}
+
+/* Close button of the articles in the top left corner: the top right one is
+   the language menu's. */
+#main article .close {
+	left: 0;
+	right: auto;
+}
+
 /* Source Sans Pro (SIL Open Font License), latin subset, served by the site
    itself: no third-party request blocking the first render. */
 @font-face {
