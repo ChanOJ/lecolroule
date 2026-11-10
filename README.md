@@ -56,14 +56,17 @@ Files are deployed as is, at the same path, to the storage zone.
 
 | File | Content |
 |---|---|
-| `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`) |
+| `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
 | `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
-| `moved.tf` | state moves from the former flat layout (removable once applied) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
 
-Environments are named `prod` and `test` (the latter is planned, on `test.lecolroule.fr`).
+Environments are named `prod` and `test`. `test` is a staging copy of the site used to validate a
+version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
+Content-Security-Policy blocks analytics (Google Analytics, Mouseflow) so that stats stay clean.
+Its hostname needs a DNS record at Infomaniak:
+`test 3600 IN CNAME le-col-roule-test.b-cdn.net.`
 `tofu output` shows, per environment, the storage zone name, the pull zone id and the
 bunny.net hostname to use as DNS CNAME target.
 

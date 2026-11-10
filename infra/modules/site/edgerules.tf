@@ -5,11 +5,33 @@ locals {
   action_defaults  = { parameter1 = null, parameter2 = null, parameter3 = null }
 
   base_url = "https://${var.hostname}"
+
+  # Content-Security-Policy, one list of sources per directive.
+  # Analytics sources are dropped when var.analytics is false.
+  analytics_sources = [
+    "https://www.googletagmanager.com",
+    "https://*.google-analytics.com",
+    "https://*.analytics.google.com",
+    "https://*.mouseflow.com",
+  ]
+  csp_directives = [
+    ["default-src", "'self'", "https://www.google.com", "https://*.mouseflow.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["img-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.mouseflow.com", "https://*.analytics.google.com"],
+    ["connect-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.mouseflow.com", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com", "https://*.mouseflow.com", "https://www.google.com", "https://www.gstatic.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["style-src", "'self'", "'unsafe-inline'", "https://fonts.bunny.net", "https://sibforms.com", "https://*.sibforms.com"],
+    ["font-src", "'self'", "https://assets.brevo.com", "https://fonts.bunny.net"],
+    ["object-src", "'none'"],
+  ]
+  csp = join("; ", [
+    for d in local.csp_directives :
+    join(" ", [for s in d : s if var.analytics || !contains(local.analytics_sources, s)])
+  ])
 }
 
 # Edge rules of the pull zone. Lower priority values run first.
 
-# Security headers on every GET response.
+# Security headers on every GET response (plus X-Robots-Tag when var.noindex).
 resource "bunnynet_pullzone_edgerule" "security_headers" {
   pullzone    = bunnynet_pullzone.this.id
   description = "Response Headers"
@@ -23,7 +45,7 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
     patterns   = ["GET"]
   }] : merge(local.trigger_defaults, t)]
 
-  actions = [for a in [
+  actions = [for a in concat([
     {
       type       = "SetResponseHeader"
       parameter1 = "Access-Control-Allow-Origin"
@@ -37,15 +59,7 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
     {
       type       = "SetResponseHeader"
       parameter1 = "Content-Security-Policy"
-      parameter2 = join("; ", [
-        "default-src 'self' https://www.google.com https://*.mouseflow.com https://sibforms.com https://*.sibforms.com",
-        "img-src 'self' data: https://*.google-analytics.com https://*.mouseflow.com https://*.analytics.google.com",
-        "connect-src 'self' data: https://*.google-analytics.com https://*.analytics.google.com https://*.mouseflow.com https://www.google.com https://sibforms.com https://*.sibforms.com",
-        "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://*.mouseflow.com https://www.google.com https://www.gstatic.com https://sibforms.com https://*.sibforms.com",
-        "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://sibforms.com https://*.sibforms.com",
-        "font-src 'self' https://assets.brevo.com https://fonts.bunny.net",
-        "object-src 'none'",
-      ])
+      parameter2 = local.csp
     },
     {
       type       = "SetResponseHeader"
@@ -67,7 +81,11 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
       parameter1 = "Referrer-Policy"
       parameter2 = "same-origin"
     },
-  ] : merge(local.action_defaults, a)]
+    ], var.noindex ? [{
+      type       = "SetResponseHeader"
+      parameter1 = "X-Robots-Tag"
+      parameter2 = "noindex, nofollow"
+  }] : []) : merge(local.action_defaults, a)]
 }
 
 # Root URL -> /valloire/

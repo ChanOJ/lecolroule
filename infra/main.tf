@@ -9,6 +9,21 @@ module "prod" {
   replication_regions = ["UK"]
 }
 
+# Staging environment: validate a version here before deploying it to prod.
+# Not indexed by search engines, analytics blocked so that stats stay clean.
+module "test" {
+  source = "./modules/site"
+
+  name      = "le-col-roule-test"
+  hostname  = "test.lecolroule.fr"
+  noindex   = true
+  analytics = false
+}
+
 output "prod" {
   value = module.prod
+}
+
+output "test" {
+  value = module.test
 }
