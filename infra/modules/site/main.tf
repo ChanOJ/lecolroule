@@ -8,8 +8,8 @@ resource "bunnynet_storage_zone" "this" {
   replication_regions = var.replication_regions
   zone_tier           = "Standard"
 
-  # Every 404 is answered with this file (see error.html and assets/js/main.js).
-  custom_404_file_path = "/error.html"
+  # Every 404 is answered with this file.
+  custom_404_file_path = var.not_found_page
   rewrite_404_to_200   = false
 }
 

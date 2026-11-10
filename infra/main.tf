@@ -28,6 +28,9 @@ module "test" {
   # No cache at all: every deployment is visible at once.
   cache = "none"
 
+  # The Hugo site publishes its not found page as /404.html.
+  not_found_page = "/404.html"
+
   name      = local.test_name
   hostname  = "test.lecolroule.fr"
   noindex   = true
