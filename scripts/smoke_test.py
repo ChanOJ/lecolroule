@@ -49,7 +49,7 @@ PAGES = {
 # Root redirect: Accept-Language header -> expected language (None: no header).
 ROOT_LANGUAGES = {"fr-FR,fr;q=0.9,en;q=0.8": "fr", "en-GB,en;q=0.9": "en", "de-DE,de;q=0.9": "en", None: "en"}
 
-ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com", "mouseflow.com"]
+ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com"]
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DIST = REPO_ROOT / "dist"

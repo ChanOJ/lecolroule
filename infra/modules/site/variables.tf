@@ -21,7 +21,7 @@ variable "noindex" {
 }
 
 variable "analytics" {
-  description = "Allow analytics (Google Analytics, Mouseflow) in the Content-Security-Policy. When false, their scripts are blocked by the browser."
+  description = "Allow analytics (Google Analytics) in the Content-Security-Policy. When false, their scripts are blocked by the browser."
   type        = bool
   default     = true
 }

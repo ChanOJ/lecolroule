@@ -45,7 +45,6 @@ IGNORED = [
     "sibforms.com/forms",
     "sibforms.com/serve",
     "assets.brevo.com",
-    "cdn.mouseflow.com",
 ]
 
 # Sites answering robots with 403/999 or a login/consent redirect: reported,
