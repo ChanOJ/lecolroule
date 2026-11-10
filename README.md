@@ -57,8 +57,14 @@ Posts are listed on the blog page, newest first.
 ## How it works (do not break)
 
 - One HTML page per URL and per language. Each page holds the header (with the menu) and at most one
-  `<article>`; `main.js` shows that article over the header on load. Closing it goes back to the
-  home page of the language (`body[data-home]`) without reloading.
+  `<article>`; `main.js` shows that article over the header on load.
+- In-site navigation (`assets/js/main.js`, "In-site navigation"): links to pages of the current
+  language are followed without reloading. The target page is fetched (and preloaded on hover),
+  its article swapped in with the theme's animation, and the title, meta tags, `hreflang` links and
+  language switcher are updated; back/forward work the same way. The background is never reloaded,
+  so its fade-in only plays on the first page. A normal page load happens for another language, on a
+  fetch error, or when the target page needs stylesheets/scripts the current one lacks; the blog
+  (`data-full-load`) always reloads because the Brevo newsletter form only works on a real load.
 - Every 404 is answered with `/error.html`, through the storage zone "404 File path" setting: that
   file must not be renamed or removed.
 - Edge rules (`infra/modules/site/edgerules.tf`): root redirect, security headers and, for the

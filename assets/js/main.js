@@ -5,30 +5,24 @@
 */
 
 // Each page holds at most one <article> (built by Hugo): it is shown over the
-// header on load. Closing it goes back to the home page of the current
-// language (body[data-home]) without reloading.
+// header on load. Links to other pages of the same language are followed
+// without reloading: the target page is fetched and its article swapped in
+// (see "In-site navigation"), so the background and its fade-in stay.
 
 (function($) {
 
 	var	$window = $(window),
 		$body = $('body'),
-		$wrapper = $('#wrapper'),
 		$header = $('#header'),
 		$footer = $('#footer'),
-		$main = $('#main'),
-		$main_articles = $main.children('article');
+		$main = $('#main');
 
-	// Breakpoints.
-		breakpoints({
-			xlarge:   [ '1281px',  '1680px' ],
-			large:    [ '981px',   '1280px' ],
-			medium:   [ '737px',   '980px'  ],
-			small:    [ '481px',   '736px'  ],
-			xsmall:   [ '361px',   '480px'  ],
-			xxsmall:  [ null,      '360px'  ]
-		});
+	// Articles change while browsing: always look them up.
+		function articles() {
+			return $main.children('article');
+		}
 
-	// Lazy loading lib
+	// Lazy loading of images and maps (class "lozad", data-src).
 		const observer = lozad();
 		observer.observe();
 
@@ -38,28 +32,6 @@
 				$body.removeClass('is-preload');
 			}, 100);
 		});
-
-	// Fix: Flexbox min-height bug on IE.
-		if (browser.name == 'ie') {
-
-			var flexboxFixTimeoutId;
-
-			$window.on('resize.flexbox-fix', function() {
-
-				clearTimeout(flexboxFixTimeoutId);
-
-				flexboxFixTimeoutId = setTimeout(function() {
-
-					if ($wrapper.prop('scrollHeight') > $window.height())
-						$wrapper.css('height', 'auto');
-					else
-						$wrapper.css('height', '100vh');
-
-				}, 250);
-
-			}).triggerHandler('resize.flexbox-fix');
-
-		}
 
 	// Nav.
 		var $nav = $header.children('nav'),
@@ -80,7 +52,7 @@
 		// Methods.
 			$main._show = function(id, initial) {
 
-				var $article = $main_articles.filter('#' + id);
+				var $article = articles().filter('#' + id);
 
 				if ($article.length == 0)
 					return;
@@ -97,7 +69,7 @@
 						$body.addClass('is-article-visible');
 
 					// Deactivate all articles (just in case one's already active).
-						$main_articles.removeClass('active');
+						articles().removeClass('active');
 
 					// Hide header, footer.
 						$header.hide();
@@ -129,7 +101,7 @@
 				if ($body.hasClass('is-article-visible')) {
 
 					// Deactivate current article.
-						var $currentArticle = $main_articles.filter('.active');
+						var $currentArticle = articles().filter('.active');
 
 						$currentArticle.removeClass('active');
 
@@ -148,9 +120,7 @@
 									$article.addClass('active');
 
 									// Window stuff.
-										$window
-											.scrollTop(0)
-											.triggerHandler('resize.flexbox-fix');
+										$window.scrollTop(0);
 
 									// Unlock.
 										setTimeout(function() {
@@ -187,9 +157,7 @@
 									$article.addClass('active');
 
 									// Window stuff.
-										$window
-											.scrollTop(0)
-											.triggerHandler('resize.flexbox-fix');
+										$window.scrollTop(0);
 
 									// Unlock.
 										setTimeout(function() {
@@ -203,27 +171,13 @@
 				}
 			};
 
-			$main._hide = function(addState) {
+			$main._hide = function() {
 
-				var $article = $main_articles.filter('.active');
+				var $article = articles().filter('.active');
 
 				// Article not visible? Bail.
 					if (!$body.hasClass('is-article-visible'))
 						return;
-
-				// Add state?
-					if (typeof addState != 'undefined'
-					&&	addState === true) {
-						history.pushState(null, null, $body.data('home'));
-						document.title = $body.data('home-title');
-
-						// Analytics
-						if (typeof gtag === "function") {
-							gtag('event', 'page_view', {
-								page_path: location.pathname
-							});
-						}
-					}
 
 				// Handle lock.
 
@@ -254,9 +208,7 @@
 								$body.removeClass('is-switching');
 
 							// Window stuff.
-								$window
-									.scrollTop(0)
-									.triggerHandler('resize.flexbox-fix');
+								$window.scrollTop(0);
 
 							return;
 
@@ -285,9 +237,7 @@
 								$body.removeClass('is-article-visible');
 
 								// Window stuff.
-									$window
-										.scrollTop(0)
-										.triggerHandler('resize.flexbox-fix');
+									$window.scrollTop(0);
 
 								// Unlock.
 									setTimeout(function() {
@@ -301,70 +251,214 @@
 
 			};
 
-		// Articles.
-			$main_articles.each(function() {
+		// Articles: close button, clicks inside do not close.
+			function setupArticle($article) {
 
-				var $this = $(this);
-
-				// Close.
-					$('<div class="close">Close</div>')
-						.appendTo($this)
-						.on('click', function() {
-							$main._hide(true);
-						});
-
-				// Prevent clicks from inside article from bubbling.
-					$this.on('click', function(event) {
-						event.stopPropagation();
+				$('<div class="close">Close</div>')
+					.appendTo($article)
+					.on('click', function() {
+						navigate($body.data('home'), true);
 					});
 
+				$article.on('click', function(event) {
+					event.stopPropagation();
+				});
+
+			}
+
+			articles().each(function() {
+				setupArticle($(this));
 			});
 
-		// Events.
+		// Events: click outside the article or Escape go back to the home page.
 			$body.on('click', function(event) {
 
-				// Article visible? Hide.
-					if ($body.hasClass('is-article-visible'))
-						$main._hide(true);
+				if ($body.hasClass('is-article-visible'))
+					navigate($body.data('home'), true);
 
 			});
 
 			$window.on('keyup', function(event) {
 
-				switch (event.keyCode) {
-
-					case 27:
-
-						// Article visible? Hide.
-							if ($body.hasClass('is-article-visible'))
-								$main._hide(true);
-
-						break;
-
-					default:
-						break;
-
-				}
+				if (event.keyCode == 27 && $body.hasClass('is-article-visible'))
+					navigate($body.data('home'), true);
 
 			});
 
-			// Back/forward between a page and the home URL pushed by _hide(): the
-			// displayed state no longer matches the URL, so load the URL.
+		// In-site navigation.
+		//   Pages of the current language are fetched and their article swapped in
+		//   with the theme's animation; title, meta tags, alternate languages and
+		//   the language switcher follow. Anything else (other language, error,
+		//   page needing resources this one lacks, e.g. the blog's newsletter
+		//   form) falls back to a normal page load.
+
+			var lang = document.documentElement.lang,
+				pages = {};
+
+			// Is this link a page of the site in the current language?
+				function isPageLink(a) {
+					return a.origin === location.origin
+						&& a.pathname.indexOf('/' + lang + '/') === 0
+						&& !a.target
+						&& !a.hasAttribute('download')
+						&& !(a.hash && a.pathname === location.pathname);
+				}
+
+			// Fetched pages, by path (also used to preload on hover).
+				function fetchPage(path) {
+
+					if (!pages[path])
+						pages[path] = fetch(path, { credentials: 'same-origin' })
+							.then(function(response) {
+								if (!response.ok)
+									throw new Error('HTTP ' + response.status);
+								return response.text();
+							})
+							.then(function(text) {
+								return new DOMParser().parseFromString(text, 'text/html');
+							})
+							.catch(function(error) {
+								delete pages[path];
+								throw error;
+							});
+
+					return pages[path];
+
+				}
+
+			// Does the page need a stylesheet or script this one has not loaded?
+				function needsReload(doc) {
+
+					var missing = false;
+
+					doc.querySelectorAll('link[rel="stylesheet"][href], script[src]').forEach(function(el) {
+						// <noscript> content is parsed as elements by DOMParser, not in this page.
+						if (el.closest('noscript'))
+							return;
+						var attr = el.tagName == 'LINK' ? 'href' : 'src',
+							url = el.getAttribute(attr);
+						if (!document.querySelector(el.tagName.toLowerCase() + '[' + attr + '="' + url + '"]'))
+							missing = true;
+					});
+
+					return missing || !!doc.querySelector('#main > article[data-full-load]');
+
+				}
+
+			// Title, meta tags, alternate languages, structured data, language switcher.
+				function updateHead(doc) {
+
+					var selector = 'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"], '
+						+ 'link[rel="canonical"], link[rel="alternate"], script[type="application/ld+json"]';
+
+					document.title = doc.title;
+					document.head.querySelectorAll(selector).forEach(function(el) { el.remove(); });
+					doc.head.querySelectorAll(selector).forEach(function(el) {
+						document.head.appendChild(document.importNode(el, true));
+					});
+
+					$('#topbar').html(doc.getElementById('topbar').innerHTML);
+					observer.observe();
+
+				}
+
+			// Go to a page of the site; push: add it to the browser history.
+				function navigate(path, push) {
+
+					fetchPage(path).then(function(doc) {
+
+						if (needsReload(doc)) {
+							location.href = path;
+							return;
+						}
+
+						if (push)
+							history.pushState(null, '', path);
+
+						updateHead(doc);
+
+						if (typeof gtag === 'function')
+							gtag('event', 'page_view', { page_path: path, page_title: doc.title });
+
+						var article = doc.querySelector('#main > article');
+
+						// Home page: no article.
+							if (!article) {
+								$main._hide();
+								return;
+							}
+
+						// Already displayed?
+							if (articles().filter('.active').attr('id') == article.id)
+								return;
+
+						// Swap: drop hidden leftovers, add the new article, show it.
+							articles().not('.active').remove();
+
+							var $article = $(document.importNode(article, true)).hide().appendTo($main);
+							$article.children('.close').remove();
+							setupArticle($article);
+							observer.observe();
+							$main._show(article.id);
+
+					}).catch(function() {
+						location.href = path;
+					});
+
+				}
+
+			// Links: captured before articles stop the click from bubbling.
+				document.addEventListener('click', function(event) {
+
+					var a = event.target.closest('a');
+
+					if (!a || event.defaultPrevented || event.button !== 0
+					||	event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+					||	!isPageLink(a))
+						return;
+
+					event.preventDefault();
+					event.stopPropagation();
+
+					if (a.pathname !== location.pathname)
+						navigate(a.pathname, true);
+					else if (!articles().filter('.active').length && articles().length)
+						$main._show(articles().first().attr('id'));
+
+				}, true);
+
+			// Preload a page when the pointer reaches its link.
+				document.addEventListener('mouseover', function(event) {
+
+					var a = event.target.closest && event.target.closest('a');
+
+					if (a && isPageLink(a) && a.pathname !== location.pathname)
+						fetchPage(a.pathname).catch(function() {});
+
+				});
+
+			// Back / forward.
 				$window.on('popstate', function() {
-					location.reload();
+					navigate(location.pathname, false);
 				});
 
 		// Initialize.
 
 			// Hide main, articles.
 				$main.hide();
-				$main_articles.hide();
+				articles().hide();
 
 			// Show the article of this page, if any.
-				if ($main_articles.length > 0) {
+				if (articles().length > 0) {
 					$window.on('load', function() {
-						$main._show($main_articles.first().attr('id'), true);
+						$main._show(articles().first().attr('id'), true);
 					});
 				}
+
+			// The current page and its home page are known: no need to fetch them again.
+				pages[location.pathname] = Promise.resolve(document.cloneNode(true));
+				$window.on('load', function() {
+					fetchPage($body.data('home')).catch(function() {});
+				});
 
 })(jQuery);

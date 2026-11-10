@@ -3,7 +3,9 @@
 		{{- partial "brevo-head.html" . }}
 {{ end }}
 {{ define "main" }}
-						<article id="{{ .Section }}">
+						{{- /* data-full-load: the newsletter form (Brevo, reCAPTCHA) only works on a
+						       real page load, so in-site navigation reloads this page. */}}
+						<article id="{{ .Section }}" data-full-load>
 							<h2 class="major">{{ .Title }}</h2>
 							{{- partial "newsletter.html" . }}
 							<hr/>
