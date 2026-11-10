@@ -59,5 +59,5 @@ And if all that wasn't enough, the departure of the [3 Vallées](https://www.les
 
 {{< buttons >}}
 {{< button page="/apartment" >}}Discover the flat{{< /button >}}
-{{< button page="/booking" primary=true >}}See availability{{< /button >}}
+{{< button href="airbnb:" primary=true >}}See availability{{< /button >}}
 {{< /buttons >}}

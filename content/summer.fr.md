@@ -99,5 +99,5 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 
 {{< buttons >}}
 {{< button page="/apartment" >}}Découvrir l'appartement{{< /button >}}
-{{< button page="/booking" primary=true >}}Voir les disponibilités{{< /button >}}
+{{< button href="airbnb:" primary=true >}}Voir les disponibilités{{< /button >}}
 {{< /buttons >}}

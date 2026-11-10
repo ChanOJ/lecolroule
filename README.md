@@ -33,7 +33,8 @@ On top of it:
 | Need | Write |
 |---|---|
 | Link to another page of the site (current language) | `[winter](/ski)` |
-| External link (opens in a new tab) | `[Airbnb](https://airbnb.fr/...)` |
+| External link (opens in a new tab) | `[Valloire](https://www.valloire.net/)` |
+| Airbnb page of the current language (`airbnb` in `hugo.toml`) | `[Airbnb](airbnb:)`, `{{< button href="airbnb:" >}}Book{{< /button >}}` |
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |

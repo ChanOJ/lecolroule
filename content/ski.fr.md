@@ -59,5 +59,5 @@ Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallée
 
 {{< buttons >}}
 {{< button page="/apartment" >}}Découvrir l'appartement{{< /button >}}
-{{< button page="/booking" primary=true >}}Voir les disponibilités{{< /button >}}
+{{< button href="airbnb:" primary=true >}}Voir les disponibilités{{< /button >}}
 {{< /buttons >}}

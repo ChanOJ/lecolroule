@@ -99,5 +99,5 @@ For the most part in the village, 3 via ferrata and hundreds of climbing routes 
 
 {{< buttons >}}
 {{< button page="/apartment" >}}Discover the flat{{< /button >}}
-{{< button page="/booking" primary=true >}}See availability{{< /button >}}
+{{< button href="airbnb:" primary=true >}}See availability{{< /button >}}
 {{< /buttons >}}

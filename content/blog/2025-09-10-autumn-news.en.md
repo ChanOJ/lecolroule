@@ -4,7 +4,7 @@ date: 2025-09-10
 image: { src: /images/niveau_principal.jpg, alt: Living room, caption: The new bay window! }
 ---
 
-Here it is, we have finally uploaded photos of the complete renovation of the main level and its bay window. You can see them on our [website](/apartment) and on [Airbnb](https://www.airbnb.com/rooms/48075207).
+Here it is, we have finally uploaded photos of the complete renovation of the main level and its bay window. You can see them on our [website](/apartment) and on [Airbnb](airbnb:).
 
 Regarding the latest updates to the apartment, here is a non-exhaustive list:
 

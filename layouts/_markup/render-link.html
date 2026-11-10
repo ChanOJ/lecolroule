@@ -3,9 +3,11 @@
   - external URL (http/https): opens in a new tab;
   - page reference (e.g. "/apartment", "/booking"): resolved to that page in the
     current language, so links survive slug changes and translations;
+  - "airbnb:": the Airbnb page of the current language (hugo.toml, params.airbnb);
   - anything else (mailto:, #anchor, /images/...): kept as is.
 */ -}}
 {{- $dest := .Destination -}}
+{{- if eq $dest "airbnb:" }}{{ $dest = site.Language.Params.airbnb }}{{ end -}}
 {{- $external := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
 {{- $href := $dest -}}
 {{- if and (not $external) (hasPrefix $dest "/") (not (strings.Contains $dest ".")) -}}

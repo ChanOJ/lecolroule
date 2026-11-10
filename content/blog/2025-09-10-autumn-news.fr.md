@@ -4,7 +4,7 @@ date: 2025-09-10
 image: { src: /images/niveau_principal.jpg, alt: Séjour, caption: La nouvelle baie vitrée ! }
 ---
 
-Ca y est, nous avons enfin mis en ligne les photos de la rénovation complète du niveau principal et de sa baie vitrée. Vous pouvez les voir sur [notre site](/apartment) et sur [Airbnb](https://www.airbnb.fr/rooms/48075207).
+Ca y est, nous avons enfin mis en ligne les photos de la rénovation complète du niveau principal et de sa baie vitrée. Vous pouvez les voir sur [notre site](/apartment) et sur [Airbnb](airbnb:).
 
 Concernant les dernières nouveautés de l'appartement, en voici une liste non exhaustive :
 

@@ -89,7 +89,7 @@ Bedding with duvets or blankets at your choice (sheets and towels not provided, 
 {{< button page="/summer" icon="hiking" >}}Summer atmosphere{{< /button >}}
 {{< /buttons >}}
 {{< buttons >}}
-{{< button page="/booking" icon="calendar" primary=true >}}Click here to make a reservation{{< /button >}}
+{{< button href="airbnb:" icon="calendar" primary=true >}}Click here to make a reservation{{< /button >}}
 {{< /buttons >}}
 
 ![View of all the Fermes de l'Archaz chalets in winter](/images/fermes_de_larchaz_hiver.jpg)

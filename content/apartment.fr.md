@@ -89,7 +89,7 @@ Literie avec couettes ou couvertures au choix (draps et serviettes en location e
 {{< button page="/summer" icon="hiking" >}}Ambiance été{{< /button >}}
 {{< /buttons >}}
 {{< buttons >}}
-{{< button page="/booking" icon="calendar" primary=true >}}Cliquez ici pour réserver{{< /button >}}
+{{< button href="airbnb:" icon="calendar" primary=true >}}Cliquez ici pour réserver{{< /button >}}
 {{< /buttons >}}
 
 ![Vue sur l'ensemble des chalets des Fermes de l'Archaz en hiver](/images/fermes_de_larchaz_hiver.jpg)
