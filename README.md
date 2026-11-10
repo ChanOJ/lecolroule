@@ -108,6 +108,21 @@ Files are deployed as is, at the same path, to the storage zone.
 - Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
   image of a page loaded at once.
 
+## Performance and icons
+
+Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobile and desktop).
+
+- HTML, XML and JSON output minified (`[minify]` in `hugo.toml`); stylesheets and scripts of
+  `assets/` minified and fingerprinted (`layouts/_partials/asset-url.html`, `styles.html`).
+- Font Source Sans Pro served by the site (`static/webfonts/source-sans-pro-*`, `@font-face` in
+  `assets/css/site.css`, latin subset, preloaded): no third-party font CDN. The theme's `@import`
+  of a font CDN is removed when `main.css` is built.
+- Logo resized and converted to WebP at build time (`img.html` option `resize`); language flags
+  are SVG.
+- Icons (`layouts/_partials/favicon.html`, also used by the 404 page): `/favicon.ico` (16 and
+  32 px), a 192 px PNG (Google Search wants a multiple of 48 px), the Apple touch icon and the web
+  app manifest `images/favicon/manifest.json` (`.json`: served with a JSON content type).
+
 ## Smoke tests
 
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
@@ -204,11 +219,15 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 ## Planned work
 
 1. Clean up unused files now that automated deployment is validated.
-2. Rework: a single HTML template + FR/EN translation files, blog posts as data, build to `dist/` in CI.
-3. SEO: one URL = its own content (today every URL serves the whole page → duplicate content).
-4. PR checks for the website (FR/EN parity).
-5. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
-   semver in the path, e.g. `main.3f2a1c.css`) so they never need purging; only HTML pages would.
-6. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
-   `lecolroulé.fr` → `https://www.lecolroule.fr/`) from Infomaniak to a bunny.net pull zone managed
-   in `infra/`, with their DNS records (apex domains cannot be CNAMEs at Infomaniak).
+2. PR checks for the website (FR/EN parity).
+3. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
+4. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
+   `lecolroulé.fr`, and `www` of the last three → `https://www.lecolroule.fr/`) from Infomaniak to
+   a bunny.net pull zone managed in `infra/`. A pull zone has no fixed IP and Infomaniak accepts no
+   CNAME at the apex, so the DNS of the 4 domains has to move to Bunny DNS (apex records linked to
+   the pull zone), all records as code, mail ones included (MX, SPF, DKIM, DMARC, BIMI,
+   verification codes). Infomaniak stays the registrar: name servers and DNSSEC DS records are
+   changed there by hand. DNSSEC is on for the 4 domains: remove the DS record and wait for it to
+   expire before switching name servers, then enable DNSSEC at Bunny and publish its DS. Start
+   with the 3 secondary domains (no mail), check every record against Bunny's name servers before
+   switching `lecolroule.fr`.

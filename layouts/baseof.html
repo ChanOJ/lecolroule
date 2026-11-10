@@ -17,7 +17,7 @@
 				<!-- TopBar: links to this page in the other languages -->
 					<div id="topbar">
 						{{- range .Translations }}
-						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate">{{ partial "img.html" (dict "src" .Language.Params.flag "alt" .Language.Label "eager" true) }}</a></span>
+						<span class="image lang"><a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" rel="alternate">{{ partial "img.html" (dict "src" .Language.Params.flag "alt" .Language.Label "eager" true "width" 18 "height" 12) }}</a></span>
 						{{- end }}
 					</div>
 

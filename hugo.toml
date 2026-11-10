@@ -81,7 +81,7 @@ enableGitInfo = true
     label = "Français"
     locale = "fr-FR"
     [languages.fr.params]
-      flag = "/images/fr.gif"
+      flag = "/images/fr.svg"
       # Booking page; used by links and buttons written "airbnb:" in content.
       airbnb = "https://www.airbnb.fr/rooms/48075207"
       ogLocale = "fr_FR"
@@ -92,7 +92,12 @@ enableGitInfo = true
     label = "English"
     locale = "en-GB"
     [languages.en.params]
-      flag = "/images/uk.gif"
+      flag = "/images/uk.svg"
       airbnb = "https://www.airbnb.com/rooms/48075207"
       ogLocale = "en_GB"
       brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+
+[minify]
+  # Minified HTML, XML and JSON output (stylesheets and scripts are minified
+  # by layouts/_partials/asset-url.html and styles.html).
+  minifyOutput = true
