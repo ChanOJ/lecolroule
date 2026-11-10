@@ -28,6 +28,7 @@ concurrency:
 env:
   TOFU_VERSION: "1.13.9"
   BUNNYNET_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+  INFOMANIAK_TOKEN: ${{ secrets.INFOMANIAK_TOKEN }}
   TF_VAR_state_passphrase: ${{ secrets.TF_VAR_STATE_PASSPHRASE }}
 
 defaults:

@@ -59,14 +59,16 @@ Files are deployed as is, at the same path, to the storage zone.
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
 | `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
+| `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
+| `imports.tf` | one-off import of the existing `www` record (removable once applied) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
 
 Environments are named `prod` and `test`. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
 Content-Security-Policy blocks analytics (Google Analytics, Mouseflow) so that stats stay clean.
-Its hostname needs a DNS record at Infomaniak:
-`test 3600 IN CNAME le-col-roule-test.b-cdn.net.`
+Its DNS record is created by `dns.tf` before the environment, so that the TLS certificate can be
+issued in the same apply.
 `tofu output` shows, per environment, the storage zone name, the pull zone id and the
 bunny.net hostname to use as DNS CNAME target.
 
@@ -74,9 +76,10 @@ Other zones of the bunny.net account belong to other projects and are not manage
 
 **Secrets.** The state contains secrets (storage zone passwords, pull zone token auth key), so it is
 always encrypted (`enforced = true`) and the encrypted `infra/terraform.tfstate` is committed, so
-it can be shared with CI. Commit it after every `tofu apply`. Two values are needed:
+it can be shared with CI. Commit it after every `tofu apply`. Three values are needed:
 
 - `BUNNYNET_API_KEY`: bunny.net account API key;
+- `INFOMANIAK_TOKEN`: Infomaniak API token restricted to DNS (Profile → Developer → API tokens);
 - `TF_VAR_state_passphrase`: state encryption passphrase. **Losing it makes the state unreadable**:
   it is kept in Proton Pass (vault `LeColRoule`) as the source of truth.
 
@@ -98,7 +101,7 @@ they are in the dashboard.
   apply, then commit of the updated encrypted state by `github-actions[bot]`.
   Pull `main` afterwards before working on `infra/` locally.
 
-GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`) and `TF_VAR_STATE_PASSPHRASE`
+GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIAK_TOKEN` and `TF_VAR_STATE_PASSPHRASE`
 (exposed as `TF_VAR_state_passphrase`).
 
 ## Planned work
@@ -111,3 +114,6 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`) and `TF_VAR
    assets) — currently done by hand.
 6. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
    semver in the path, e.g. `main.3f2a1c.css`) so they never need purging; only HTML pages would.
+7. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
+   `lecolroulé.fr` → `https://www.lecolroule.fr/`) from Infomaniak to a bunny.net pull zone managed
+   in `infra/`, with their DNS records (apex domains cannot be CNAMEs at Infomaniak).
