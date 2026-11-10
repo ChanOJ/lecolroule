@@ -58,8 +58,9 @@ enableRobotsTXT = true
     locale = "fr-FR"
     [languages.fr.params]
       flag = "/images/fr.gif"
-      # Booking page; used by links and buttons written "airbnb:" in content.
-      airbnb = "https://www.airbnb.fr/rooms/48075207"
+      # Booking page (Airbnb custom link); used by links and buttons written
+      # "airbnb:" in content.
+      airbnb = "https://www.airbnb.fr/h/le-col-roule-valloire"
       ogLocale = "fr_FR"
       keywords = "Location, Vacances, Appartement, Hébergement, Ski, Vélo, Cyclisme, VTT, Gravel, Snowboard, Randonnée, Savoie, Alpes, Maurienne, Col du Galibier, Col du Télégraphe, Valloire, Vallée d'Or, 3 Vallées, Trois Vallées, Val-Thorens, Orelle"
       brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFAKFA-m-7SD2GvTdZ_cN1O6lGrKAhBM27iGXAq0_J_OeNBrmoCmaFG3yJI3yNmwbFDy42WJgbczqOzgMMi77KVt4sEPSD_y0B_63vE6LRIcJCsGQXUwjgD5XSNTPc2v-QhriIu3eI_mHBGOxZ8SV45kHFaCh6TqRUPQGj5IL24o8YSI5aFc9pyxEpKP41m9VEeVNCN7VzTdTi"
@@ -70,7 +71,7 @@ enableRobotsTXT = true
     locale = "en-GB"
     [languages.en.params]
       flag = "/images/uk.gif"
-      airbnb = "https://www.airbnb.com/rooms/48075207"
+      airbnb = "https://www.airbnb.com/h/le-col-roule-valloire"
       ogLocale = "en_GB"
       keywords = "Rental, Vacation, Holiday, Apartment, Flat, Ski, Bike, Bicycle, Mountain bike, MTB, Gravel, Hiking, Snowboard, Alps, France, Valloire, Col du Galibier, Col du Télégraphe, 3 Vallées, Trois Vallées, Val-Thorens, Orelle"
       brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
