@@ -14,6 +14,7 @@ DNS is managed at Infomaniak (not in this repository).
 - `index.html` (root): placeholder; the root URL is redirected to `/valloire/` by an edge rule.
 - `robots.txt`, `sitemap.xml`, `favicon.ico`, `bimi.svg`: served as is.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
+- `scripts/smoke_test.py`: checks of a deployed environment (see below).
 - `infra/`: bunny.net configuration as code (OpenTofu, see below).
 
 ## How it works (do not break)
@@ -55,6 +56,25 @@ Files are deployed as is, at the same path, to the storage zone.
   storage zone matches the target environment before deploying.
 - Locally: export the same variables, then `python3 scripts/deploy.py --dry-run`.
 - Plain Python 3, no dependencies.
+
+## Smoke tests
+
+`scripts/smoke_test.py --env test|prod` checks a deployed environment: FR/EN pages and deep links,
+root and HTTP→HTTPS redirects, `error.html` on unknown URLs, security headers, and the environment
+rules (test: `noindex` and analytics blocked; prod: indexable, analytics allowed). Options:
+`--expect-repo-content` (served HTML byte-identical to the checkout, proving upload and purge) and
+`--redirect-domains` (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and
+without `www`, over HTTP and HTTPS, must answer 301 to `https://www.lecolroule.fr/valloire/`).
+
+It runs:
+
+- after every real deployment (`deploy.yml`), with `--expect-repo-content`, plus `--redirect-domains`
+  for prod;
+- after every infrastructure apply (`infra.yml`), on both environments;
+- every day at 05:17 UTC (`smoke.yml`), on both environments, plus the redirect domains. A failure
+  triggers GitHub's "workflow run failed" e-mail.
+
+Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 
 ## Infrastructure (bunny.net, OpenTofu)
 
@@ -116,10 +136,8 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 2. Rework: a single HTML template + FR/EN translation files, blog posts as data, build to `dist/` in CI.
 3. SEO: one URL = its own content (today every URL serves the whole page → duplicate content).
 4. PR checks for the website (broken links, FR/EN parity).
-5. Automated smoke test of the deployed site after each deployment (FR/EN pages, deep links, 404,
-   assets) — currently done by hand.
-6. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
+5. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
    semver in the path, e.g. `main.3f2a1c.css`) so they never need purging; only HTML pages would.
-7. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
+6. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
    `lecolroulé.fr` → `https://www.lecolroule.fr/`) from Infomaniak to a bunny.net pull zone managed
    in `infra/`, with their DNS records (apex domains cannot be CNAMEs at Infomaniak).

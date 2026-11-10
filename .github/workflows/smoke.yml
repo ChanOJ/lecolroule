@@ -1,0 +1,29 @@
+name: Daily smoke test
+
+# Daily check of both environments (pages, routing, headers, TLS certificates)
+# and of the alternative domains redirections. A failure sends GitHub's usual
+# "workflow run failed" notification.
+
+on:
+  schedule:
+    - cron: "17 5 * * *" # every day at 05:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - env: test
+            args: ""
+          - env: prod
+            args: "--redirect-domains"
+    name: smoke (${{ matrix.env }})
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 scripts/smoke_test.py --env ${{ matrix.env }} ${{ matrix.args }}
