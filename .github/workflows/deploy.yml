@@ -34,6 +34,10 @@ on:
         description: "Allow deleting more than 25 % of the remote files (e.g. after renaming many files)"
         type: boolean
         default: false
+      no_delete:
+        description: "Upload only, keep remote files missing from the build (e.g. old site during a switch); skips the smoke test"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -87,6 +91,9 @@ jobs:
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.allow_mass_delete }}" = "true" ]; then
             args="--allow-mass-delete"
           fi
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.no_delete }}" = "true" ]; then
+            args="$args --no-delete"
+          fi
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}" = "true" ]; then
             python3 scripts/deploy.py --dry-run $args
           else
@@ -95,8 +102,10 @@ jobs:
 
       # The served pages must be the ones just deployed (upload + purge), and
       # routing, headers and environment rules must hold.
+      # Skipped on dry runs, and on upload-only runs (the site is then only
+      # partly in place, e.g. during the switch from the legacy site).
       - name: Smoke test
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        if: ${{ !(github.event_name == 'workflow_dispatch' && (inputs.dry_run || inputs.no_delete)) }}
         run: |
           extra=""
           if [ "$DEPLOY_ENV" = "prod" ]; then extra="--redirect-domains"; fi
