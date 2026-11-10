@@ -89,3 +89,9 @@ variable "html_browser_cache_seconds" {
   type        = number
   default     = 300
 }
+
+variable "not_found_page" {
+  description = "File of the storage zone answered for every 404 (\"404 File path\" setting)."
+  type        = string
+  default     = "/error.html"
+}
