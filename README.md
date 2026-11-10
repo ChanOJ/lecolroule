@@ -96,6 +96,18 @@ Files are deployed as is, at the same path, to the storage zone.
 - Locally: export the same variables, then `python3 scripts/deploy.py --dry-run`.
 - Plain Python 3, no dependencies.
 
+## SEO
+
+- Each page: `seoTitle` (<title>, ~60 characters max), `description` (~150 characters) and
+  `ogImage` (share image) in its front matter; canonical URL, `hreflang` alternates (fr, en,
+  x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
+- Structured data (schema.org JSON-LD, `layouts/_partials/structured-data.html`) from
+  `params.lodging` in `hugo.toml`: LodgingBusiness (home), Apartment (apartment page), Blog with
+  its posts (blog page).
+- Sitemap per language with the same `hreflang` alternates and `lastmod` from git.
+- Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
+  image of a page loaded at once.
+
 ## Smoke tests
 
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a

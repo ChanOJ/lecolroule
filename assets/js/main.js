@@ -22,10 +22,6 @@
 			return $main.children('article');
 		}
 
-	// Lazy loading of images and maps (class "lozad", data-src).
-		const observer = lozad();
-		observer.observe();
-
 	// Play initial animations on page load.
 		$window.on('load', function() {
 			window.setTimeout(function() {
@@ -358,7 +354,6 @@
 					});
 
 					$('#topbar').html(doc.getElementById('topbar').innerHTML);
-					observer.observe();
 
 				}
 
@@ -398,7 +393,6 @@
 							var $article = $(document.importNode(article, true)).hide().appendTo($main);
 							$article.children('.close').remove();
 							setupArticle($article);
-							observer.observe();
 							$main._show(article.id);
 
 					}).catch(function() {

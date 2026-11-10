@@ -1,12 +1,16 @@
 {{- /*
   Markdown images: ![alt text](/images/file.jpg "caption")
-  Rendered as a full-width lazy-loaded image with its caption below. Files of
-  assets/images/ get a content fingerprint in their URL.
+  Rendered as a full-width image with its caption below (the first image of a
+  page loads at once, the others lazily). Files of assets/images/ get a
+  content fingerprint in their URL and their real dimensions.
   The caption defaults to the alt text; use "-" as caption to show none.
 */ -}}
 {{- $caption := .Title | default .Text -}}
-{{- $src := .Destination -}}
-{{- if hasPrefix $src "/images/" }}{{ $src = partial "asset-url.html" $src }}{{ end -}}
-<span class="image main"><img class="lozad" data-src="{{ $src | safeURL }}" alt="{{ .Text }}" />{{ if ne $caption "-" }}
+{{- if hasPrefix .Destination "/images/" -}}
+<span class="image main">{{ partial "img.html" (dict "src" .Destination "alt" .Text "eager" (eq .Ordinal 0)) }}{{ if ne $caption "-" }}
 	{{ $caption }}{{ end }}</span>
+{{- else -}}
+<span class="image main"><img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" loading="lazy" decoding="async" />{{ if ne $caption "-" }}
+	{{ $caption }}{{ end }}</span>
+{{- end -}}
 {{- /* */ -}}

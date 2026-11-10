@@ -1,6 +1,6 @@
 {{- /*
   Embedded Google map: {{< map src="https://www.google.com/maps/embed?..." height="350" >}}
-  Lazy-loaded unless lazy=false.
+  Loaded lazily (when scrolled into view) unless lazy=false.
 */ -}}
 {{- $lazy := ne (.Get "lazy") false -}}
-<span class="image main"><iframe {{ if $lazy }}class="lozad" data-src{{ else }}src{{ end }}="{{ .Get "src" | safeURL }}" height="{{ .Get "height" | default "350" }}" allowfullscreen="" aria-hidden="false" tabindex="0" sandbox="allow-scripts allow-popups"></iframe></span>
+<span class="image main"><iframe src="{{ .Get "src" | safeURL }}"{{ if $lazy }} loading="lazy"{{ end }} height="{{ .Get "height" | default "350" }}" allowfullscreen="" aria-hidden="false" tabindex="0" sandbox="allow-scripts allow-popups"></iframe></span>
