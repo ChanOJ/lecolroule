@@ -186,12 +186,17 @@ locals {
   hugo               = var.layout == "hugo"
   other_languages    = sort([for l in var.languages : l if l != var.default_language])
   redirect_languages = local.hugo ? toset(local.other_languages) : toset([])
-  # Accept-Language patterns. A plain value such as "fr*" is found anywhere in
-  # the header ("nl-BE,nl;q=0.9,fr;q=0.8" matches it), and when several
-  # redirect rules match, the lowest priority wins. So the browser's first
-  # language is matched with an anchored Lua pattern ("pattern:^fr"), and any
-  # language it also accepts only as a fallback, with a higher priority.
+  # Accept-Language patterns. bunny.net finds a value anywhere in the header,
+  # ignoring case ("fr*" matches "nl-BE,nl;q=0.9,fr;q=0.8" and even "esfr"),
+  # and when several redirect rules match, the lowest priority wins. Its
+  # anchored Lua patterns ("pattern:^fr") are refused by the API for headers
+  # ("The trigger path is not a valid URL"). So the browser's first language
+  # is recognised by what follows it: browsers list it first, followed by a
+  # comma ("fr-FR,..." or "fr,..."), the other ones carry a ";q=" weight
+  # ("fr-FR;q=0.8"); "?" matches one character. A single-language header has
+  # no comma: the fallback rules (any accepted language) handle it.
   accept_language_any = [for l in local.other_languages : "${l}*"]
+  first_language      = { for l in var.languages : l => ["${l}-??,", "${l},"] }
 
   # Language chosen in the site's language menu: cookie set by main.js.
   cookie_languages = local.hugo ? toset(var.languages) : toset([])
@@ -253,7 +258,7 @@ resource "bunnynet_pullzone_edgerule" "root_cookie_language" {
 }
 
 # Root URL -> home page of the browser's first language (302: depends on the
-# visitor). Matched on the start of Accept-Language, e.g. "fr-FR,fr;q=0.9".
+# visitor), e.g. "fr-FR,fr;q=0.9".
 resource "bunnynet_pullzone_edgerule" "root_language" {
   for_each = local.redirect_languages
 
@@ -273,7 +278,7 @@ resource "bunnynet_pullzone_edgerule" "root_language" {
       type       = "RequestHeader"
       match_type = "MatchAny"
       parameter1 = "Accept-Language"
-      patterns   = ["pattern:^${each.key}"]
+      patterns   = local.first_language[each.key]
     },
   ], local.no_language_cookie) : merge(local.trigger_defaults, t)]
 
@@ -305,7 +310,7 @@ resource "bunnynet_pullzone_edgerule" "root_default_primary_language" {
       type       = "RequestHeader"
       match_type = "MatchAny"
       parameter1 = "Accept-Language"
-      patterns   = ["pattern:^${var.default_language}"]
+      patterns   = local.first_language[var.default_language]
     },
   ], local.no_language_cookie) : merge(local.trigger_defaults, t)]
 

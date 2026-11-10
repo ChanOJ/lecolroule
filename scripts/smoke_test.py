@@ -65,6 +65,8 @@ ROOT_LANGUAGES = {
     "en-GB,en;q=0.9,fr;q=0.8": "en",
     "it-IT,it;q=0.9,de;q=0.8": "it",
     "es-ES,es;q=0.9,de;q=0.8": "de",
+    "fr,en-US;q=0.7,en;q=0.3": "fr",
+    "it": "it",
     None: "en",
 }
 # Root redirect with the language menu cookie: (Cookie, Accept-Language) ->
