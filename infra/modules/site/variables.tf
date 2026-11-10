@@ -42,23 +42,6 @@ variable "layout" {
   }
 }
 
-variable "languages" {
-  description = "Site languages (\"hugo\" layout): prefixes of the language home pages, /<lang>/."
-  type        = list(string)
-  default     = ["fr", "en", "nl", "de", "it"]
-
-  validation {
-    condition     = length(var.languages) <= 5
-    error_message = "At most 5 languages (edge rule priorities 4-7 and 40-43 are reserved for the root redirects of the non-default ones, 50-54 for the language cookie ones)."
-  }
-}
-
-variable "default_language" {
-  description = "Language the root URL redirects to when the browser prefers none of var.languages."
-  type        = string
-  default     = "en"
-}
-
 variable "legacy_redirects" {
   description = "\"hugo\" layout: new path => list of legacy paths answered with a 301 to it."
   type        = map(list(string))
