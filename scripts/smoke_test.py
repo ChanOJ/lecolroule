@@ -26,6 +26,7 @@ import argparse
 import http.client
 import json
 import os
+import re
 import sys
 import time
 import urllib.parse
@@ -194,17 +195,21 @@ def main() -> int:
         return "404"
     report.check("Unknown legacy URL", legacy_unknown)
 
-    def asset():
-        r = fetch(f"{base}/assets/css/main.css")
-        expect_status(r, 200)
-        assert r.header("Content-Type").startswith("text/css"), f"Content-Type {r.header('Content-Type')!r}"
-        return "200 text/css"
-    report.check("Stylesheet", asset)
+    def assets():
+        # Every stylesheet, script and image referenced by a page (fingerprinted
+        # URLs: their names change with their content).
+        body = fetch(f"{base}/fr/appartement-valloire/").body.decode()
+        urls = sorted(set(re.findall(r'(?:href|src|data-src)="(/(?:css|js|images)/[^"]+)"', body)))
+        assert urls, "no stylesheet, script or image found in the page"
+        broken = [u for u in urls if fetch(base + u).status != 200]
+        assert not broken, "not served: " + ", ".join(broken)
+        return f"{len(urls)} files served"
+    report.check("Stylesheets, scripts and images", assets)
 
     def not_found():
         r = fetch(f"{base}/404.html")
         expect_status(r, 404)
-        assert b'name="error"' in r.body, "body is not error.html"
+        assert b"<title>Erreur 404" in r.body, "body is not error.html"
         return "404 with error.html"
     report.check("Unknown URL serves error.html", not_found)
 
