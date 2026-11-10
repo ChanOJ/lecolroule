@@ -88,8 +88,12 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
   }] : []) : merge(local.action_defaults, a)]
 }
 
+# ---------------------------------------------------------------- legacy layout
+
 # Root URL -> /valloire/
 resource "bunnynet_pullzone_edgerule" "redirect_root" {
+  count = var.layout == "legacy" ? 1 : 0
+
   pullzone    = bunnynet_pullzone.this.id
   description = ""
   enabled     = true
@@ -111,6 +115,8 @@ resource "bunnynet_pullzone_edgerule" "redirect_root" {
 
 # /valloire/en/* is served by the English page (client-side routing in main.js).
 resource "bunnynet_pullzone_edgerule" "rewrite_en" {
+  count = var.layout == "legacy" ? 1 : 0
+
   pullzone    = bunnynet_pullzone.this.id
   description = "Default EN Page"
   enabled     = true
@@ -132,6 +138,8 @@ resource "bunnynet_pullzone_edgerule" "rewrite_en" {
 # Any other /valloire/* path is served by the French page, except index* files
 # and the English section.
 resource "bunnynet_pullzone_edgerule" "rewrite_fr" {
+  count = var.layout == "legacy" ? 1 : 0
+
   pullzone    = bunnynet_pullzone.this.id
   description = "Default FR Page"
   enabled     = true
@@ -154,5 +162,118 @@ resource "bunnynet_pullzone_edgerule" "rewrite_fr" {
   actions = [for a in [{
     type       = "OriginUrl"
     parameter1 = "${local.base_url}/valloire/indexfr.html"
+  }] : merge(local.action_defaults, a)]
+}
+
+# The legacy rules became conditional (count): keep the existing ones.
+moved {
+  from = bunnynet_pullzone_edgerule.redirect_root
+  to   = bunnynet_pullzone_edgerule.redirect_root[0]
+}
+
+moved {
+  from = bunnynet_pullzone_edgerule.rewrite_en
+  to   = bunnynet_pullzone_edgerule.rewrite_en[0]
+}
+
+moved {
+  from = bunnynet_pullzone_edgerule.rewrite_fr
+  to   = bunnynet_pullzone_edgerule.rewrite_fr[0]
+}
+
+# ------------------------------------------------------------------ hugo layout
+
+locals {
+  hugo                = var.layout == "hugo"
+  redirect_languages  = local.hugo ? toset([for l in var.languages : l if l != var.default_language]) : toset([])
+  accept_language_any = [for l in var.languages : "${l}*" if l != var.default_language]
+}
+
+# Root URL -> home page of the browser's preferred language (302: depends on
+# the visitor). Matched on the start of Accept-Language, e.g. "fr-FR,fr;q=0.9".
+resource "bunnynet_pullzone_edgerule" "root_language" {
+  for_each = local.redirect_languages
+
+  pullzone    = bunnynet_pullzone.this.id
+  description = "Root to /${each.key}/"
+  enabled     = true
+  priority    = 1
+  match_type  = "MatchAll"
+
+  triggers = [for t in [
+    {
+      type       = "Url"
+      match_type = "MatchAny"
+      patterns   = ["${local.base_url}/"]
+    },
+    {
+      type       = "RequestHeader"
+      match_type = "MatchAny"
+      parameter1 = "Accept-Language"
+      patterns   = ["${each.key}*"]
+    },
+  ] : merge(local.trigger_defaults, t)]
+
+  actions = [for a in [{
+    type       = "Redirect"
+    parameter1 = "${local.base_url}/${each.key}/"
+    parameter2 = "302"
+  }] : merge(local.action_defaults, a)]
+}
+
+# Root URL -> default language when the browser prefers none of the others
+# (also crawlers, which usually send no Accept-Language).
+resource "bunnynet_pullzone_edgerule" "root_default_language" {
+  count = local.hugo ? 1 : 0
+
+  pullzone    = bunnynet_pullzone.this.id
+  description = "Root to /${var.default_language}/"
+  enabled     = true
+  priority    = 1
+  match_type  = "MatchAll"
+
+  triggers = [for t in [
+    {
+      type       = "Url"
+      match_type = "MatchAny"
+      patterns   = ["${local.base_url}/"]
+    },
+    {
+      type       = "RequestHeader"
+      match_type = "MatchNone"
+      parameter1 = "Accept-Language"
+      patterns   = local.accept_language_any
+    },
+  ] : merge(local.trigger_defaults, t)]
+
+  actions = [for a in [{
+    type       = "Redirect"
+    parameter1 = "${local.base_url}/${var.default_language}/"
+    parameter2 = "302"
+  }] : merge(local.action_defaults, a)]
+}
+
+# Legacy URLs (/valloire/...) -> their new address, permanently. Any other
+# legacy URL ends in the storage zone 404 (error.html).
+resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
+  for_each = local.hugo ? var.legacy_redirects : {}
+
+  pullzone    = bunnynet_pullzone.this.id
+  description = "Legacy URLs to ${each.key}"
+  enabled     = true
+  priority    = 2
+  match_type  = "MatchAny"
+
+  triggers = [for t in [{
+    type       = "Url"
+    match_type = "MatchAny"
+    # Each legacy path, with or without a query string.
+    patterns = flatten([for old in each.value : ["${local.base_url}${old}", "${local.base_url}${old}?*"]])
+  }] : merge(local.trigger_defaults, t)]
+
+  actions = [for a in [{
+    type       = "Redirect"
+    parameter1 = "${local.base_url}${each.key}"
+    parameter2 = "301"
   }] : merge(local.action_defaults, a)]
 }

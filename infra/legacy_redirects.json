@@ -1,0 +1,19 @@
+{
+  "_comment": "URLs of the former single-page site (/valloire/...) and their new address. Read by infra/main.tf (301 edge rules) and scripts/smoke_test.py. Keys: new path; values: old paths.",
+  "/fr/": ["/valloire", "/valloire/", "/valloire/index.html", "/valloire/indexfr.html"],
+  "/fr/appartement-valloire/": ["/valloire/appartement"],
+  "/fr/commerces-valloire/": ["/valloire/appartement-commerces"],
+  "/fr/acces-valloire/": ["/valloire/appartement-trajet"],
+  "/fr/location-ski-valloire/": ["/valloire/appartement-ski"],
+  "/fr/velo-randonnee-valloire/": ["/valloire/appartement-rando-velo"],
+  "/fr/reservation/": ["/valloire/contact-reservation"],
+  "/fr/blog/": ["/valloire/blog"],
+  "/en/": ["/valloire/en", "/valloire/en/", "/valloire/indexen.html"],
+  "/en/valloire-apartment/": ["/valloire/en/apartment"],
+  "/en/valloire-shops/": ["/valloire/en/apartment-shops"],
+  "/en/getting-to-valloire/": ["/valloire/en/apartment-route"],
+  "/en/valloire-ski-rental/": ["/valloire/en/ski-apartment"],
+  "/en/valloire-cycling-hiking/": ["/valloire/en/biking-hiking-apartment"],
+  "/en/booking/": ["/valloire/en/booking-contact"],
+  "/en/blog/": ["/valloire/en/blog"]
+}
