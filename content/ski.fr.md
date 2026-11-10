@@ -17,11 +17,11 @@ Imaginez une matinée d'hiver excitante ! Adrien, âgé de 9 ans, doit être à 
 
 ### Ski & Snowboard
 
-La diversité des [activités d'hiver](https://www.valloire.net/quoi-faire/le-ski/) est pléthorique :
+La diversité des [activités d'hiver](https://www.valloire.net/profiter-de-valloire/le-ski/) est pléthorique :
 
 - Pour les snowboarders, Snow Park à 2300m d'altitude.
-- 10km de pistes de [ski de fond](https://www.valloire.net/domaine-skiable/ski-de-fond-domaine-nordique-valloire/) aménagées.
-- Deux [écoles de ski (ESF et ESI)](https://www.valloire.net/quoi-faire/le-ski/ecoles-de-ski/) comportant 140 moniteurs et 3 jardins d'enfants, ainsi que des moniteurs indépendants.
+- 10km de pistes de [ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/) aménagées.
+- Deux [écoles de ski (ESF et ESI)](https://www.valloire.net/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) comportant 140 moniteurs et 3 jardins d'enfants, ainsi que des moniteurs indépendants.
 
 Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallées](https://www.les3vallees.com/fr) (Courchevel, Méribel, Les Ménuires, Val-Thorens, Orelle), le plus grand domaine skiable du monde avec ses 600 km de pistes, et ouvert de novembre à mai, est à seulement 35mn en voiture !
 
@@ -33,23 +33,23 @@ Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallée
 
 #### sur place
 
-- {{< icon name="route" title="zig zag" >}} [Snake Gliss](https://www.valloire.net/activite/descente-en-snake-gliss-valloire/)
-- {{< icon name="hiking" title="marcheur" >}} [Balades en raquettes](https://www.valloire.net/equipement/les-sentiers-pietons-et-raquettes-du-domaine-skiable-valloire/)
-- {{< icon name="mountain" title="montagne" >}} [Mountain Kart](https://www.valloire.net/activite/mountain-kart-valloire/)
-- {{< icon name="skiing-nordic" title="ski de fond" >}} [Ski de fond](https://www.valloire.net/domaine-skiable/ski-de-fond-domaine-nordique-de-valloire-galibier-valloire/)
-- {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/equipement/patinoire-philippe-candeloro-valloire/)
-- {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/activite/le-trail-avec-rando-montagne-valloire/)
-- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
-- {{< icon name="dumbbell" title="haltères" >}} [Spa & Gym - Val'Form](https://www.valloire.net/equipement/valform-centre-bien-etre-et-remise-en-forme-valloire/)
-- {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/equipement/bowling-le-mafayo-valloire/)
-- {{< icon name="angle-double-right" title="et plus" >}} [et des dizaines d'autres activités !](https://www.valloire.net/quoi-faire/)
+- {{< icon name="route" title="zig zag" >}} [Snake Gliss](https://www.valloire.net/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="hiking" title="marcheur" >}} [Balades en raquettes](https://www.valloire.net/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
+- {{< icon name="mountain" title="montagne" >}} [Mountain Kart](https://www.valloire.net/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="skiing-nordic" title="ski de fond" >}} [Ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
+- {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/trail/le-trail-avec-rando-montagne-4620573/)
+- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.valloire.net/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="dumbbell" title="haltères" >}} [Spa & Gym - Val'Form](https://www.valloire.net/profiter-de-valloire/bien-etre/)
+- {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/sit/bowling-le-mafayo-371455/)
+- {{< icon name="angle-double-right" title="et plus" >}} [et des dizaines d'autres activités !](https://www.valloire.net/profiter-de-valloire/)
 
 #### à moins d'une heure
 
 - {{< icon name="child" title="enfant" >}} [Parc de loisirs Valmigliss](https://www.valmigliss.com/) (25mn)
 - {{< icon name="skiing" title="ski" >}} [Orelle - Val Thorens - Les 3 Vallées](https://orelle.net/station-ski/domaine-skiable) (35mn)
-- {{< icon name="landmark" title="musée" >}} [Espace Alu](https://espacealu.fr/) (35mn)
-- {{< icon name="landmark" title="musée" >}} [Musée Opinel](https://www.opinel.com/la-marque/le-musee-opinel) (45mn)
+- {{< icon name="landmark" title="musée" >}} [Espace Alu](https://espacealu.fr/Accueil.htm) (35mn)
+- {{< icon name="landmark" title="musée" >}} [Musée Opinel](https://www.opinel.com/fr-fr/le-musee-opinel) (45mn)
 - {{< icon name="sleigh" title="luge" >}} [Norma Loops (Luge 4 Saisons)](https://normaloops.fr/) (55mn)
 - {{< icon name="angle-double-right" title="et plus" >}} et des dizaines d'autres activités !
 

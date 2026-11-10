@@ -42,7 +42,7 @@ enableRobotsTXT = true
     style = "brands"
   [[params.social]]
     name = "youtube"
-    url = "https://youtube.com/channel/UCOglkzCFo1V95EHQb4eHKHg"
+    url = "https://www.youtube.com/channel/UCOglkzCFo1V95EHQb4eHKHg"
     icon = "youtube"
     style = "brands"
   [[params.social]]

@@ -7,10 +7,10 @@ The village centre is just [a 10-15 minute walk (downhill)](https://www.viewgpx.
 
 Some ideas for all-season activities :
 
-- {{< icon name="spa" title="spa / massage" >}} [Spa](http://www.les-sens-des-cimes.com/)
-- {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/equipement/bowling-le-mafayo-valloire/)
-- {{< icon name="skating" title="ice rink" >}} [Ice rink](https://www.valloire.net/equipement/patinoire-philippe-candeloro-valloire/)
-- {{< icon name="film" title="cinema" >}} [Cinema](https://www.valloire.net/quoi-faire/programme-cinema/)
+- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.valloire.net/en/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)
+- {{< icon name="skating" title="ice rink" >}} [Ice rink](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="film" title="cinema" >}} [Cinema](https://www.valloire.net/en/profiter-de-valloire/lagenda/le-programme-cinema-de-valloire/)
 
 Some [shops](https://www.valloire.net/en/preparer-son-sejour/commerces-et-services/commerces/) in the area :
 
@@ -37,5 +37,5 @@ Finally some commodities :
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Go back{{< /button >}}
-{{< button href="https://goo.gl/maps/qu3E6SK4tRDhvRss6" icon="map-marker-alt" primary=true >}}See the map{{< /button >}}
+{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}See the map{{< /button >}}
 {{< /buttons >}}

@@ -110,6 +110,15 @@ It runs:
 
 Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 
+## Link check
+
+- Internal links and images: Hugo fails the build on a link to an unknown page or a missing image.
+- External links: `scripts/check_links.py` (after `hugo`) requests every external link of `dist/`
+  without following redirects. Broken links (4xx, 5xx, unreachable) fail; redirects are listed with
+  the final URL to use instead; sites blocking robots or asking for a login (Facebook, LinkedIn,
+  BlaBlaCar, Google Maps, ...) are only listed. Runs every Monday (`links.yml`, "Monitoring: weekly
+  link check") and manually.
+
 ## Infrastructure (bunny.net, OpenTofu)
 
 `infra/` describes the bunny.net resources of the site with the official
@@ -178,7 +187,7 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 1. Clean up unused files now that automated deployment is validated.
 2. Rework: a single HTML template + FR/EN translation files, blog posts as data, build to `dist/` in CI.
 3. SEO: one URL = its own content (today every URL serves the whole page → duplicate content).
-4. PR checks for the website (broken links, FR/EN parity).
+4. PR checks for the website (FR/EN parity).
 5. Cache: purge only changed URLs instead of the whole pull zone, and version assets (hash or
    semver in the path, e.g. `main.3f2a1c.css`) so they never need purging; only HTML pages would.
 6. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,

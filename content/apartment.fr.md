@@ -8,7 +8,7 @@ jsonld:
   "@context": https://schema.org
   "@type": Apartment
   name: Le Col Roulé
-  hasMap: https://goo.gl/maps/3pwy91ck7hqCgJTs7
+  hasMap: https://maps.app.goo.gl/ng9N1mwDaAWFdeH87
   image: /images/vue_ete3.jpg
   numberOfBedrooms: 3
   numberOfFullBathrooms: 1

@@ -7,10 +7,10 @@ Le centre village se trouve à [10-15 minutes à pied](https://www.viewgpx.com/r
 
 Quelques idées d'activités toutes saisons :
 
-- {{< icon name="spa" title="spa / massage" >}} [Spa](http://www.les-sens-des-cimes.com/)
-- {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/equipement/bowling-le-mafayo-valloire/)
-- {{< icon name="skating" title="patinoire" >}} [Patinoire](https://www.valloire.net/equipement/patinoire-philippe-candeloro-valloire/)
-- {{< icon name="film" title="cinéma" >}} [Cinéma](https://www.valloire.net/quoi-faire/programme-cinema/)
+- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.valloire.net/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/sit/bowling-le-mafayo-371455/)
+- {{< icon name="skating" title="patinoire" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="film" title="cinéma" >}} [Cinéma](https://www.valloire.net/profiter-de-valloire/lagenda/le-programme-cinema-de-valloire/)
 
 Quelques [commerces](https://www.valloire.net/preparer-son-sejour/commerces-et-services/commerces/) que l'on peut trouver :
 
@@ -37,5 +37,5 @@ Et enfin des commodités :
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Retour{{< /button >}}
-{{< button href="https://goo.gl/maps/qu3E6SK4tRDhvRss6" icon="map-marker-alt" primary=true >}}Voir la carte{{< /button >}}
+{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}Voir la carte{{< /button >}}
 {{< /buttons >}}
