@@ -37,15 +37,22 @@ The repository only holds sources; nothing generated is committed (`dist/` is ig
 Files are deployed as is, at the same path, to the storage zone.
 
 - `.github/workflows/deploy.yml` runs `scripts/deploy.py`:
-  - on push to `main`, only if the repository variable `DEPLOY_ENABLED` is `true` (currently unset);
-  - manually (Actions → Deploy to bunny.net → Run workflow), as a dry run by default.
+  - on push to `main` (except infra-only or Markdown-only changes): deploys to **test**
+    (https://test.lecolroule.fr/valloire/);
+  - manually (Actions → Deploy website → Run workflow): deploys to **test** or **prod**, as a dry run
+    by default. The `prod` environment only accepts runs from `main`.
+
+  Release flow: merge to `main` → automatic deployment to test → check https://test.lecolroule.fr →
+  run the workflow on `main` for `prod` (dry run first, then for real).
 - The script takes the files tracked by git (minus `DEPLOY_EXCLUDE`: `.github/`, `infra/`,
   `scripts/`, `README.md`, `CLAUDE.md`…), uploads only those whose SHA-256 differs, deletes remote
   files that are not in the repository (except `PROTECTED` patterns, empty for now), then purges the
   pull zone. A guard aborts if more than 25 % of the remote files would be deleted.
-- GitHub secrets: `BUNNY_STORAGE_ZONE` (the zone **name**, `le-col-roule`, not its id),
-  `BUNNY_STORAGE_PASSWORD`, `BUNNY_STORAGE_ENDPOINT` (optional, defaults to
-  `https://storage.bunnycdn.com` = Frankfurt), `BUNNY_API_KEY`, `BUNNY_PULLZONE_ID`.
+- Secrets, in the GitHub Environments `test` and `prod` (values from `tofu output` and the storage
+  zone passwords): `BUNNY_STORAGE_ZONE` (the zone **name**, not its id), `BUNNY_STORAGE_PASSWORD`,
+  `BUNNY_PULLZONE_ID`. Repository secrets shared by both: `BUNNY_API_KEY`, `BUNNY_STORAGE_ENDPOINT`
+  (optional, defaults to `https://storage.bunnycdn.com` = Frankfurt). The workflow checks that the
+  storage zone matches the target environment before deploying.
 - Locally: export the same variables, then `python3 scripts/deploy.py --dry-run`.
 - Plain Python 3, no dependencies.
 
@@ -60,7 +67,6 @@ Files are deployed as is, at the same path, to the storage zone.
 | `modules/site/main.tf` | one environment: storage zone (404 → `/error.html`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, root redirect, FR/EN rewrites |
 | `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
-| `imports.tf` | one-off import of the existing `www` record (removable once applied) |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
 

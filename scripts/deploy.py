@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""Synchronise les fichiers versionnés du site vers une Storage Zone bunny.net.
+"""Synchronise the files tracked by git to a bunny.net storage zone.
 
-- Source : les fichiers suivis par git (`git ls-files`), moins DEPLOY_EXCLUDE.
-- Envoie uniquement les fichiers nouveaux ou modifiés (comparaison SHA-256).
-- Supprime côté storage les fichiers absents du dépôt (orphelins), sauf PROTECTED.
-- Purge le cache de la Pull Zone si quelque chose a changé.
+- Source: files tracked by git (`git ls-files`), minus DEPLOY_EXCLUDE.
+- Uploads only new or changed files (SHA-256 comparison).
+- Deletes remote files that are not in the repository (orphans), except PROTECTED.
+- Purges the pull zone cache when something changed.
 
-Aucune dépendance hors bibliothèque standard (Python >= 3.9).
+Standard library only (Python >= 3.9).
 
-Variables d'environnement :
-  BUNNY_STORAGE_ZONE      nom de la Storage Zone
-  BUNNY_STORAGE_PASSWORD  mot de passe (clé d'accès) de la Storage Zone
-  BUNNY_STORAGE_ENDPOINT  ex. https://uk.storage.bunnycdn.com (défaut : https://storage.bunnycdn.com)
-  BUNNY_API_KEY           clé API du compte (purge) — facultative en --dry-run / --no-purge
-  BUNNY_PULLZONE_ID       identifiant numérique de la Pull Zone — idem
+Environment variables:
+  BUNNY_STORAGE_ZONE      storage zone name
+  BUNNY_STORAGE_PASSWORD  storage zone password (access key)
+  BUNNY_STORAGE_ENDPOINT  e.g. https://uk.storage.bunnycdn.com (default: https://storage.bunnycdn.com)
+  BUNNY_API_KEY           account API key (purge), optional with --dry-run / --no-purge
+  BUNNY_PULLZONE_ID       numeric pull zone id, same
+  DEPLOY_ENV              optional environment label shown in the summary (test, prod)
 
-Usage :
-  python3 scripts/deploy.py --dry-run     # affiche le plan sans rien modifier
-  python3 scripts/deploy.py               # déploie et purge
+Usage:
+  python3 scripts/deploy.py --dry-run     # show the plan without changing anything
+  python3 scripts/deploy.py               # deploy and purge
 """
 
 from __future__ import annotations
@@ -36,7 +37,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-# Fichiers du dépôt qui ne font pas partie du site (motifs fnmatch, chemins relatifs).
+# Repository files that are not part of the website (fnmatch patterns, relative paths).
 DEPLOY_EXCLUDE = [
     ".gitignore",
     ".github/*",
@@ -48,12 +49,12 @@ DEPLOY_EXCLUDE = [
     "*.DS_Store",
 ]
 
-# Chemins distants jamais supprimés, même s'ils n'existent pas dans le dépôt
-# (motifs fnmatch, ex. "dossier/*").
+# Remote paths never deleted, even if they are not in the repository
+# (fnmatch patterns, e.g. "folder/*").
 PROTECTED: list[str] = []
 
-# Garde-fou : refuse de supprimer plus que cette part des fichiers distants
-# (et au moins MIN_DELETE_GUARD fichiers) sans --allow-mass-delete.
+# Guard: refuse to delete more than this share of the remote files
+# (and at least MIN_DELETE_GUARD files) without --allow-mass-delete.
 MAX_DELETE_RATIO = 0.25
 MIN_DELETE_GUARD = 10
 
@@ -90,7 +91,7 @@ def local_files(allow_dirty: bool) -> dict[str, Path]:
         if matches(rel, DEPLOY_EXCLUDE):
             continue
         p = REPO_ROOT / rel
-        if p.is_file():  # ignore les fichiers supprimés mais pas encore commités
+        if p.is_file():  # skip files deleted but not committed yet
             files[rel] = p
 
     dirty = subprocess.run(
@@ -99,8 +100,8 @@ def local_files(allow_dirty: bool) -> dict[str, Path]:
     ).stdout.strip()
     if dirty and not allow_dirty:
         sys.exit(
-            "Des fichiers du site ont des modifications non commitées :\n"
-            f"{dirty}\nCommitez-les ou relancez avec --allow-dirty."
+            "Website files have uncommitted changes:\n"
+            f"{dirty}\nCommit them or run again with --allow-dirty."
         )
     return files
 
@@ -110,7 +111,7 @@ def local_files(allow_dirty: bool) -> dict[str, Path]:
 class Storage:
     def __init__(self, endpoint: str, zone: str, password: str):
         endpoint = endpoint.rstrip("/")
-        # Le dashboard affiche « https://storage.bunnycdn.com/<zone> » : accepte les deux formes.
+        # The dashboard shows "https://storage.bunnycdn.com/<zone>": accept both forms.
         if endpoint.endswith("/" + zone):
             endpoint = endpoint[: -len(zone) - 1]
         self.base = f"{endpoint}/{urllib.parse.quote(zone)}/"
@@ -136,7 +137,7 @@ class Storage:
         raise AssertionError("unreachable")
 
     def list_recursive(self) -> tuple[dict[str, str | None], set[str]]:
-        """Renvoie ({chemin_fichier: checksum}, {chemins_dossiers})."""
+        """Return ({file_path: checksum}, {directory_paths})."""
         files: dict[str, str | None] = {}
         dirs: set[str] = set()
         stack = [""]
@@ -181,7 +182,7 @@ def plan(local: dict[str, Path], remote: dict[str, str | None], remote_dirs: set
 
     orphans = sorted(rel for rel in remote if rel not in local and not matches(rel, PROTECTED))
 
-    # Dossiers distants sans aucun fichier local ni protégé : supprimés d'un coup.
+    # Remote directories without any local or protected file: deleted in one call.
     def dir_needed(d: str) -> bool:
         prefix = d + "/"
         return (any(r.startswith(prefix) for r in local)
@@ -189,7 +190,7 @@ def plan(local: dict[str, Path], remote: dict[str, str | None], remote_dirs: set
                 or matches(prefix, PROTECTED))
 
     orphan_dirs = sorted(d for d in remote_dirs if not dir_needed(d))
-    # Ne garde que les dossiers de plus haut niveau.
+    # Keep only the top-level ones.
     orphan_dirs = [d for d in orphan_dirs
                    if not any(d.startswith(o + "/") for o in orphan_dirs if o != d)]
     loose_orphans = [f for f in orphans
@@ -208,14 +209,14 @@ def summary(lines: list[str]) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--dry-run", action="store_true", help="n'effectue aucune modification")
-    ap.add_argument("--no-delete", action="store_true", help="ne supprime pas les orphelins")
-    ap.add_argument("--no-purge", action="store_true", help="ne purge pas la Pull Zone")
-    ap.add_argument("--force-purge", action="store_true", help="purge même sans changement")
+    ap.add_argument("--dry-run", action="store_true", help="do not change anything")
+    ap.add_argument("--no-delete", action="store_true", help="do not delete orphans")
+    ap.add_argument("--no-purge", action="store_true", help="do not purge the pull zone")
+    ap.add_argument("--force-purge", action="store_true", help="purge even without changes")
     ap.add_argument("--allow-dirty", action="store_true",
-                    help="autorise des modifications non commitées (usage local)")
+                    help="allow uncommitted changes (local use)")
     ap.add_argument("--allow-mass-delete", action="store_true",
-                    help="désactive le garde-fou sur le nombre de suppressions")
+                    help="disable the guard on the number of deletions")
     args = ap.parse_args()
 
     env = os.environ
@@ -223,21 +224,21 @@ def main() -> int:
         zone = env["BUNNY_STORAGE_ZONE"]
         password = env["BUNNY_STORAGE_PASSWORD"]
     except KeyError as e:
-        sys.exit(f"Variable d'environnement manquante : {e.args[0]}")
+        sys.exit(f"Missing environment variable: {e.args[0]}")
     endpoint = env.get("BUNNY_STORAGE_ENDPOINT") or "https://storage.bunnycdn.com"
     do_purge = not (args.dry_run or args.no_purge)
     if do_purge and not (env.get("BUNNY_API_KEY") and env.get("BUNNY_PULLZONE_ID")):
-        sys.exit("BUNNY_API_KEY et BUNNY_PULLZONE_ID sont requis pour la purge "
-                 "(ou utilisez --no-purge).")
+        sys.exit("BUNNY_API_KEY and BUNNY_PULLZONE_ID are required to purge "
+                 "(or use --no-purge).")
 
     local = local_files(args.allow_dirty)
     if not local:
-        sys.exit("Aucun fichier local à déployer : abandon.")
+        sys.exit("No local file to deploy: aborting.")
 
     storage = Storage(endpoint, zone, password)
-    log(f"Lecture de la Storage Zone « {zone} »…")
+    log(f"Listing storage zone {zone!r}...")
     remote, remote_dirs = storage.list_recursive()
-    log(f"{len(local)} fichiers locaux, {len(remote)} fichiers distants.")
+    log(f"{len(local)} local files, {len(remote)} remote files.")
 
     local_sums, uploads, orphans, orphan_dirs, loose = plan(local, remote, remote_dirs)
     if args.no_delete:
@@ -245,20 +246,22 @@ def main() -> int:
 
     guard = max(MIN_DELETE_GUARD, int(len(remote) * MAX_DELETE_RATIO))
     if len(orphans) > guard and not args.allow_mass_delete:
-        summary([f"**Abandon** : {len(orphans)} suppressions prévues (> {guard}).",
+        summary([f"**Aborted**: {len(orphans)} deletions planned (> {guard}).",
                  *[f"- `{o}`" for o in orphans],
-                 "Relancez avec --allow-mass-delete si c'est voulu."])
+                 "Run again with --allow-mass-delete if this is intended."])
         return 2
 
-    title = "Déploiement bunny.net" + (" (dry-run)" if args.dry_run else "")
+    label = env.get("DEPLOY_ENV")
+    title = ("bunny.net deployment" + (f" to {label}" if label else "")
+             + (" (dry run)" if args.dry_run else ""))
     lines = [f"## {title}", "",
-             f"- Fichiers à envoyer : **{len(uploads)}**",
-             f"- Fichiers à supprimer : **{len(orphans)}**"
-             + (f" (dont {len(orphans) - len(loose)} via {len(orphan_dirs)} dossier(s))"
+             f"- Files to upload: **{len(uploads)}**",
+             f"- Files to delete: **{len(orphans)}**"
+             + (f" ({len(orphans) - len(loose)} through {len(orphan_dirs)} folder(s))"
                 if orphan_dirs else ""),
              ""]
-    lines += [f"- ⬆️ `{u}`" + ("" if u in remote else " (nouveau)") for u in uploads]
-    lines += [f"- 🗑️ `{d}/` (dossier)" for d in orphan_dirs]
+    lines += [f"- ⬆️ `{u}`" + ("" if u in remote else " (new)") for u in uploads]
+    lines += [f"- 🗑️ `{d}/` (folder)" for d in orphan_dirs]
     lines += [f"- 🗑️ `{o}`" for o in loose]
     summary(lines)
 
@@ -270,13 +273,13 @@ def main() -> int:
         list(pool.map(storage.delete, loose))
     for d in orphan_dirs:
         storage.delete(d + "/")
-    log("Storage à jour.")
+    log("Storage zone up to date.")
 
     if do_purge and (uploads or orphans or args.force_purge):
         purge_pullzone(env["BUNNY_API_KEY"], env["BUNNY_PULLZONE_ID"])
-        log("Cache de la Pull Zone purgé.")
+        log("Pull zone cache purged.")
     elif do_purge:
-        log("Aucun changement : pas de purge.")
+        log("No change: no purge.")
     return 0
 
 
