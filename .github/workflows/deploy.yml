@@ -1,4 +1,4 @@
-name: Deploy website
+name: "Website: deploy (test auto, prod manual)"
 
 # - Push to main: deploy to test (https://test.lecolroule.fr).
 # - Manual run: deploy to test or prod, optionally as a dry run.
