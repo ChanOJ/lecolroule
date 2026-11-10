@@ -15,7 +15,7 @@
 		{{- range where $page.AllTranslations "Language.Lang" $lang.Lang }}{{ $target = . }}{{ end }}
 		<li><a href="{{ $target.RelPermalink }}" hreflang="{{ $lang.Lang }}" lang="{{ $lang.Lang }}" data-lang="{{ $lang.Lang }}" title="{{ $lang.Label }}"
 			{{- if eq $lang.Lang site.Language.Lang }} aria-current="true"{{ else }} rel="alternate"{{ end }}>
-			{{- partial "img.html" (dict "src" $lang.Params.flag "alt" $lang.Label "eager" true "width" 24 "height" 16) -}}
+			{{- partial "img.html" (dict "src" $lang.Params.flag "alt" $lang.Label "eager" true "width" 30 "height" 20) -}}
 		</a></li>
 		{{- end }}
 	</ul>
