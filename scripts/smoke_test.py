@@ -2,7 +2,7 @@
 """Smoke test of a deployed environment of the website (Hugo layout).
 
 Checks the language home pages and a deep page per language, the root redirect
-by browser language, the 301 of every legacy /valloire/... URL
+by browser language and by language cookie (language menu), the 301 of every legacy /valloire/... URL
 (infra/legacy_redirects.json), HTTP -> HTTPS, the 404 page, security headers
 and environment-specific rules (noindex and analytics on test, no noindex on
 prod). Optionally:
@@ -48,6 +48,14 @@ PAGES = {
 }
 # Root redirect: Accept-Language header -> expected language (None: no header).
 ROOT_LANGUAGES = {"fr-FR,fr;q=0.9,en;q=0.8": "fr", "en-GB,en;q=0.9": "en", "de-DE,de;q=0.9": "en", None: "en"}
+# Root redirect with the language menu cookie: (Cookie, Accept-Language) ->
+# expected language. The cookie prevails; an unknown value is ignored.
+ROOT_COOKIES = {
+    ("lcr_lang=fr", "en-GB,en;q=0.9"): "fr",
+    ("lcr_lang=en", "fr-FR,fr;q=0.9"): "en",
+    ("_ga=GA1.1.1; lcr_lang=fr", None): "fr",
+    ("lcr_lang=xx", "fr-FR,fr;q=0.9"): "fr",
+}
 
 ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com"]
 
@@ -178,6 +186,10 @@ def main() -> int:
     for accept, lang in ROOT_LANGUAGES.items():
         headers = {"Accept-Language": accept} if accept else None
         report.check(f"Root, Accept-Language {accept or '(none)'}",
+                     expect_redirect(f"{base}/", f"{base}/{lang}/", 302, headers))
+    for (cookie, accept), lang in ROOT_COOKIES.items():
+        headers = {"Cookie": cookie, **({"Accept-Language": accept} if accept else {})}
+        report.check(f"Root, Cookie {cookie}, Accept-Language {accept or '(none)'}",
                      expect_redirect(f"{base}/", f"{base}/{lang}/", 302, headers))
     report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/fr/", f"{base}/fr/"))
 

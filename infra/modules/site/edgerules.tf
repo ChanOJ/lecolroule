@@ -188,14 +188,58 @@ locals {
   redirect_languages  = local.hugo ? toset(local.other_languages) : toset([])
   accept_language_any = [for l in local.other_languages : "${l}*"]
 
+  # Language chosen in the site's language menu: cookie set by main.js.
+  cookie_languages = local.hugo ? toset(var.languages) : toset([])
+  cookie_patterns  = [for l in sort(var.languages) : "*lcr_lang=${l}*"]
+  # Accept-Language rules apply only to visitors without a language cookie.
+  no_language_cookie = [for chunk in chunklist(local.cookie_patterns, 5) : {
+    type       = "RequestHeader"
+    match_type = "MatchNone"
+    parameter1 = "Cookie"
+    patterns   = chunk
+  }]
   # bunny.net requires a unique priority (order index) per rule of a pull zone:
   # 0 security headers, 1-3 legacy layout rules, 4-8 root language rules,
-  # 9 root default language, 10.. legacy redirects, 100 page cache. Fixed,
-  # disjoint slots avoid collisions while rules are added and removed in the
-  # same apply (e.g. switching from the legacy to the hugo layout).
+  # 9 root default language, 10.. legacy redirects, 50-55 root language
+  # cookie rules, 100 page cache. Fixed, disjoint slots avoid collisions while
+  # rules are added and removed in the same apply (e.g. switching from the
+  # legacy to the hugo layout).
   root_language_priority   = { for i, l in local.other_languages : l => 4 + i }
   root_default_priority    = 9
   legacy_redirect_priority = { for i, k in sort(keys(var.legacy_redirects)) : k => 10 + i }
+  cookie_language_priority = { for i, l in sort(var.languages) : l => 50 + i }
+}
+
+# Root URL -> home page of the language chosen in the language menu (cookie
+# "lcr_lang"), which prevails over the browser's language.
+resource "bunnynet_pullzone_edgerule" "root_cookie_language" {
+  for_each = local.cookie_languages
+
+  pullzone    = bunnynet_pullzone.this.id
+  description = "Root to /${each.key}/ (language cookie)"
+  enabled     = true
+  priority    = local.cookie_language_priority[each.key]
+  match_type  = "MatchAll"
+
+  triggers = [for t in [
+    {
+      type       = "Url"
+      match_type = "MatchAny"
+      patterns   = ["${local.base_url}/"]
+    },
+    {
+      type       = "RequestHeader"
+      match_type = "MatchAny"
+      parameter1 = "Cookie"
+      patterns   = ["*lcr_lang=${each.key}*"]
+    },
+  ] : merge(local.trigger_defaults, t)]
+
+  actions = [for a in [{
+    type       = "Redirect"
+    parameter1 = "${local.base_url}/${each.key}/"
+    parameter2 = "302"
+  }] : merge(local.action_defaults, a)]
 }
 
 # Root URL -> home page of the browser's preferred language (302: depends on
@@ -209,7 +253,7 @@ resource "bunnynet_pullzone_edgerule" "root_language" {
   priority    = local.root_language_priority[each.key]
   match_type  = "MatchAll"
 
-  triggers = [for t in [
+  triggers = [for t in concat([
     {
       type       = "Url"
       match_type = "MatchAny"
@@ -221,7 +265,7 @@ resource "bunnynet_pullzone_edgerule" "root_language" {
       parameter1 = "Accept-Language"
       patterns   = ["${each.key}*"]
     },
-  ] : merge(local.trigger_defaults, t)]
+  ], local.no_language_cookie) : merge(local.trigger_defaults, t)]
 
   actions = [for a in [{
     type       = "Redirect"
@@ -241,7 +285,7 @@ resource "bunnynet_pullzone_edgerule" "root_default_language" {
   priority    = local.root_default_priority
   match_type  = "MatchAll"
 
-  triggers = [for t in [
+  triggers = [for t in concat([
     {
       type       = "Url"
       match_type = "MatchAny"
@@ -253,7 +297,7 @@ resource "bunnynet_pullzone_edgerule" "root_default_language" {
       parameter1 = "Accept-Language"
       patterns   = local.accept_language_any
     },
-  ] : merge(local.trigger_defaults, t)]
+  ], local.no_language_cookie) : merge(local.trigger_defaults, t)]
 
   actions = [for a in [{
     type       = "Redirect"

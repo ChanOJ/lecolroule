@@ -270,10 +270,56 @@
 
 			$window.on('keyup', function(event) {
 
-				if (event.keyCode == 27 && $body.hasClass('is-article-visible'))
+				if (event.keyCode != 27)
+					return;
+
+				if (languageMenuOpen()) {
+					toggleLanguageMenu(false);
+					$('#topbar .lang-toggle').trigger('focus');
+				}
+				else if ($body.hasClass('is-article-visible'))
 					navigate($body.data('home'), true);
 
 			});
+
+		// Language menu (#topbar, replaced on each in-site navigation: elements
+		// are looked up when used). Choosing a language stores it in the
+		// "lcr_lang" cookie for a year: the root URL then redirects to it rather
+		// than to the browser's language (edge rules).
+			function languageMenuOpen() {
+				return $('#topbar .lang-toggle').attr('aria-expanded') == 'true';
+			}
+
+			function toggleLanguageMenu(open) {
+				$('#topbar .lang-toggle').attr('aria-expanded', open ? 'true' : 'false');
+				$('#topbar .lang-list').prop('hidden', !open);
+			}
+
+			// Captured: runs before the links handler below, and keeps clicks on
+			// the menu from closing the article (body handler).
+			document.addEventListener('click', function(event) {
+
+				var toggle = event.target.closest('#topbar .lang-toggle'),
+					choice = event.target.closest('#topbar .lang-list a[data-lang]');
+
+				if (toggle) {
+					event.stopPropagation();
+					toggleLanguageMenu(!languageMenuOpen());
+					return;
+				}
+
+				if (choice) {
+					event.stopPropagation();
+					document.cookie = 'lcr_lang=' + choice.getAttribute('data-lang')
+						+ '; path=/; max-age=31536000; SameSite=Lax; Secure';
+					toggleLanguageMenu(false);
+					return;
+				}
+
+				if (languageMenuOpen() && !event.target.closest('#topbar .lang-menu'))
+					toggleLanguageMenu(false);
+
+			}, true);
 
 		// In-site navigation.
 		//   Pages of the current language are fetched and their article swapped in

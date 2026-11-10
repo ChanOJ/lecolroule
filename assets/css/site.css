@@ -44,3 +44,67 @@ li > .icon:first-child {
 .image.main img {
 	height: auto;
 }
+
+/* Language menu (top right, layouts/_partials/language-menu.html): a button
+   opening the list of flags. */
+#topbar {
+	/* Fixed, hence its own stacking context: keep it above the article. */
+	z-index: 4;
+}
+
+.lang-menu {
+	position: fixed;
+	top: 0.75rem;
+	right: 1.25rem;
+	z-index: 10;
+	text-align: right;
+}
+
+	.lang-menu .lang-toggle {
+		background: none;
+		border: 0;
+		box-shadow: none;
+		height: auto;
+		line-height: 1;
+		padding: 0.25rem;
+		font-size: 1.25rem;
+		color: #ffffff;
+		opacity: 0.8;
+		cursor: pointer;
+	}
+
+		.lang-menu .lang-toggle:hover,
+		.lang-menu .lang-toggle[aria-expanded="true"] {
+			background: none;
+			opacity: 1;
+		}
+
+	.lang-menu .lang-list {
+		list-style: none;
+		margin: 0.25rem 0 0 0;
+		padding: 0.25rem 0;
+		background: rgba(27, 31, 34, 0.95);
+		border: solid 1px rgba(255, 255, 255, 0.35);
+		border-radius: 4px;
+	}
+
+		.lang-menu .lang-list li {
+			padding: 0;
+		}
+
+		.lang-menu .lang-list a {
+			display: block;
+			padding: 0.4rem 0.6rem;
+			border: 0;
+			line-height: 0;
+		}
+
+			.lang-menu .lang-list a:hover,
+			.lang-menu .lang-list a[aria-current] {
+				background: rgba(255, 255, 255, 0.15);
+			}
+
+		.lang-menu .lang-list img {
+			border: solid 1px #a0a0a0;
+			border-radius: 1px;
+		}
