@@ -1,3 +1,11 @@
 .DS_Store
 node_modules/
 dist/
+
+# OpenTofu / Terraform
+.terraform/
+*.tfstate
+# The infra state is encrypted (infra/encryption.tf, enforced) and is shared through git.
+!infra/terraform.tfstate
+*.tfstate.*
+crash.log

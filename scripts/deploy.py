@@ -41,6 +41,7 @@ DEPLOY_EXCLUDE = [
     ".gitignore",
     ".github/*",
     ".claude/*",
+    "infra/*",
     "scripts/*",
     "CLAUDE.md",
     "README.md",
