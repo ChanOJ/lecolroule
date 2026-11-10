@@ -72,7 +72,7 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 - {{< icon name="golf-ball" title="golf" >}} [Golf](https://www.valloire.net/sit/golf-des-verneys-371458/)
 - {{< icon name="fish" title="poisson" >}} [Pêche](https://www.valloire.net/profiter-de-valloire/activites-outdoor/les-pieds-dans-leau/)
 - {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/profiter-de-valloire/activites-outdoor/la-randonnee/le-trail-a-valloire/)
-- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.valloire.net/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="haltères" >}} [Spa & Gym - Val'Form](https://www.valloire.net/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/sit/bowling-le-mafayo-371455/)
 - {{< icon name="angle-double-right" title="et plus" >}} [et des dizaines d'autres activités !](https://www.valloire.net/profiter-de-valloire/)
@@ -90,7 +90,7 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 
 #### à moins de deux heures
 
-- {{< icon name="water" title="eau" >}} [Wam Park (Teleski, Wakeboard, Accrobranche, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
+- {{< icon name="water" title="eau" >}} [Wam Park Savoie - Montailleur (Teleski, Wakeboard, Accrobranche, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
 - {{< icon name="water" title="eau" >}} [EXO 73 (Teleski, Wakeboard, ...)](https://www.exoloisirs.com/fr/content/exo-73-tns-73-0) (1h15)
 - {{< icon name="water" title="eau" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/) (1h25)
 - {{< icon name="bicycle" title="vélo" >}} [VTT / MTB électriques](https://serre-chevalier.bike/) (1h40)

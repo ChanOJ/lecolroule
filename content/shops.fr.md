@@ -7,7 +7,7 @@ Le centre village se trouve à [10-15 minutes à pied](https://www.viewgpx.com/r
 
 Quelques idées d'activités toutes saisons :
 
-- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.valloire.net/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.les-sens-des-cimes.com/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/sit/bowling-le-mafayo-371455/)
 - {{< icon name="skating" title="patinoire" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="film" title="cinéma" >}} [Cinéma](https://www.valloire.net/profiter-de-valloire/lagenda/le-programme-cinema-de-valloire/)

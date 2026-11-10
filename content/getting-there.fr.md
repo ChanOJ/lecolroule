@@ -9,7 +9,7 @@ slug: acces-valloire
 
 - [TicTacTrip](https://www.tictactrip.eu/) (réservez train+bus en une seule fois)
 - [Transdev](https://www.valloire.net/commerces-et-services/transdev-savoie-liaison-autobus-depuis-la-gare-st-michel-valloire-372299/)
-- [Cars Région Savoie / OùRA](https://boutique.oura.com/fr/travel)
+- [Oùra](https://boutique.oura.com/fr/travel) (ex Cars Région Savoie)
 - [Altibus](https://www.altibus.com/)
 
 {{< map height="550" src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d22494.105852034605!2d6.4345662372827075!3d45.191888905738516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x478a27126c68ef6d%3A0xda20958ac7f210d!2sSaint-Michel-de-Maurienne!3m2!1d45.217675!2d6.475869899999999!4m5!1s0x478a2112637c8317%3A0xffa05217aa1434ae!2sValloire%2C%2073450!3m2!1d45.165292!2d6.428732999999999!5e0!3m2!1sfr!2sfr!4v1602540879293!5m2!1sfr!2sfr" >}}

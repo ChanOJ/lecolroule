@@ -39,7 +39,7 @@ And if all that wasn't enough, the departure of the [3 Vallées](https://www.les
 - {{< icon name="skiing-nordic" title="nordic skiing" >}} [Cross-country skiing](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="skater" >}} [Ice Rink](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="runner" >}} [Trail running](https://www.valloire.net/en/trail/le-trail-avec-rando-montagne-4620573/)
-- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.valloire.net/en/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="dumbbell" >}} [Spa & Gym - Val'Form](https://www.valloire.net/en/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)
 - {{< icon name="angle-double-right" title="and more" >}} [and dozens of other activities!](https://www.valloire.net/en/profiter-de-valloire/)
@@ -49,7 +49,7 @@ And if all that wasn't enough, the departure of the [3 Vallées](https://www.les
 - {{< icon name="child" title="child" >}} [Leisure park Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25mn)
 - {{< icon name="skiing" title="ski" >}} [Orelle - Val Thorens - Les 3 Vallées](https://orelle.net/ski-resort/ski-area) (35mn)
 - {{< icon name="landmark" title="museum" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35mn)
-- {{< icon name="landmark" title="museum" >}} [The Opinel Museum](https://www.auvergnerhonealpes-tourisme.com/en/fiches/opinel-museum/) (45mn)
+- {{< icon name="landmark" title="museum" >}} [The Opinel Museum](https://www.opinel.com/en-fr/the-museum) (45mn)
 - {{< icon name="sleigh" title="sled" >}} [Norma Loops (4 Seasons Sled)](https://normaloops.fr/) (55mn)
 - {{< icon name="angle-double-right" title="and more" >}} and dozens of other activities!
 

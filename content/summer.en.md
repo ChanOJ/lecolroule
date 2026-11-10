@@ -72,7 +72,7 @@ For the most part in the village, 3 via ferrata and hundreds of climbing routes 
 - {{< icon name="golf-ball" title="golf" >}} [Golf](https://www.valloire.net/en/sit/golf-des-verneys-371458/)
 - {{< icon name="fish" title="fish" >}} [Fishing](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/les-pieds-dans-leau/)
 - {{< icon name="running" title="runner" >}} [Trail running](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/la-randonnee/le-trail-a-valloire/)
-- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.valloire.net/en/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="dumbbell" >}} [Spa & Gym - Val'Form](https://www.valloire.net/en/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)
 - {{< icon name="angle-double-right" title="and more" >}} [and dozens of other activities!](https://www.valloire.net/en/profiter-de-valloire/)
@@ -82,7 +82,7 @@ For the most part in the village, 3 via ferrata and hundreds of climbing routes 
 - {{< icon name="child" title="child" >}} [Leisure park Valmigliss](https://www.valmigliss.com/copie-de-accueil-ete) (25mn)
 - {{< icon name="swimming-pool" title="thermal baths" >}} [Thermal baths of Monêtier-les-Bains](https://lesgrandsbainsdumonetier.fr/en) (55mn)
 - {{< icon name="landmark" title="museum" >}} [Espace Alu](https://espacealu.fr/english-tour.htm) (35mn)
-- {{< icon name="landmark" title="museum" >}} [The Opinel Museum](https://www.auvergnerhonealpes-tourisme.com/en/fiches/opinel-museum/) (45mn)
+- {{< icon name="landmark" title="museum" >}} [The Opinel Museum](https://www.opinel.com/en-fr/the-museum) (45mn)
 - {{< icon name="sleigh" title="sled" >}} [Norma Loops (4 Seasons Sled)](https://normaloops.fr/) (55mn)
 - {{< icon name="tree" title="tree" >}} [Parcobranche du Diable (Branch hook, Giant Ziplines)](https://www.parcdudiable.fr/) (55mn)
 - {{< icon name="swimming-pool" title="swimming" >}} [St Alban Beach](https://plage-lac-aiguebelette.com/) and [Hurtières Lake](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1h)
@@ -90,7 +90,7 @@ For the most part in the village, 3 via ferrata and hundreds of climbing routes 
 
 #### less than two hours away
 
-- {{< icon name="water" title="water" >}} [Wam Park (Teleski, Wakeboard, Tree climbing, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
+- {{< icon name="water" title="water" >}} [Wam Park Savoie - Montailleur (Teleski, Wakeboard, Tree climbing, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
 - {{< icon name="water" title="water" >}} [EXO 73 (Teleski, Wakeboard, ...)](https://www.exoloisirs.com/en/content/exo-73-tns-73) (1h15)
 - {{< icon name="water" title="water" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1h25)
 - {{< icon name="bicycle" title="bike" >}} [Electric VTT / MTB](https://serre-chevalier.bike/) (1h40)

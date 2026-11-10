@@ -39,7 +39,7 @@ Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallée
 - {{< icon name="skiing-nordic" title="ski de fond" >}} [Ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/trail/le-trail-avec-rando-montagne-4620573/)
-- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.valloire.net/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="haltères" >}} [Spa & Gym - Val'Form](https://www.valloire.net/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/sit/bowling-le-mafayo-371455/)
 - {{< icon name="angle-double-right" title="et plus" >}} [et des dizaines d'autres activités !](https://www.valloire.net/profiter-de-valloire/)

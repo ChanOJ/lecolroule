@@ -7,7 +7,7 @@ The village centre is just [a 10-15 minute walk (downhill)](https://www.viewgpx.
 
 Some ideas for all-season activities :
 
-- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.valloire.net/en/bien-etre/les-sens-des-cimes-espace-bien-etre-75202/)
+- {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.les-sens-des-cimes.com/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)
 - {{< icon name="skating" title="ice rink" >}} [Ice rink](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="film" title="cinema" >}} [Cinema](https://www.valloire.net/en/profiter-de-valloire/lagenda/le-programme-cinema-de-valloire/)
