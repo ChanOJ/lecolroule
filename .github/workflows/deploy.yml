@@ -88,8 +88,12 @@ jobs:
       - name: Sync to the storage zone and purge the cache
         run: |
           args=""
+          # Search engines are only told about the prod site (test is noindex).
+          if [ "$DEPLOY_ENV" = "prod" ]; then
+            args="--indexnow https://www.lecolroule.fr"
+          fi
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.allow_mass_delete }}" = "true" ]; then
-            args="--allow-mass-delete"
+            args="$args --allow-mass-delete"
           fi
           if [ "${{ github.event_name == 'workflow_dispatch' && inputs.no_delete }}" = "true" ]; then
             args="$args --no-delete"

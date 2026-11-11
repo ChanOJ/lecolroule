@@ -14,9 +14,7 @@ module "prod" {
   hostname            = "www.lecolroule.fr"
   replication_regions = ["UK"]
 
-  layout           = "hugo"
   legacy_redirects = local.legacy_redirects
-  not_found_page   = "/404.html"
 }
 
 # Staging environment: validate a version here before deploying it to prod.
@@ -24,14 +22,11 @@ module "prod" {
 module "test" {
   source = "./modules/site"
 
-  layout           = "hugo"
   legacy_redirects = local.legacy_redirects
 
   # No cache at all: every deployment is visible at once.
   cache = "none"
 
-  # The Hugo site publishes its not found page as /404.html.
-  not_found_page = "/404.html"
 
   name      = local.test_name
   hostname  = "test.lecolroule.fr"

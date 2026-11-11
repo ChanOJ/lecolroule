@@ -5,6 +5,9 @@
 - Uploads only new or changed files (SHA-256 comparison).
 - Deletes remote files that are not in the repository (orphans), except PROTECTED.
 - Purges the pull zone cache when something changed.
+- With --indexnow URL (prod only): notifies the search engines of the IndexNow
+  protocol (Bing, Yandex, Naver, Seznam...; also read by AI assistants relying
+  on Bing) of the pages added, changed or deleted.
 
 Standard library only (Python >= 3.9).
 
@@ -42,6 +45,13 @@ SKIP = ["*.DS_Store"]
 # Remote paths never deleted, even if they are not in the repository
 # (fnmatch patterns, e.g. "folder/*").
 PROTECTED: list[str] = []
+
+# IndexNow key: public, served at the site root as /<key>.txt (static/) to
+# prove the site owns it.
+INDEXNOW_KEY = "d0d3e0eb3f50e66fbba261e492f3d5f2"
+INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow"
+# Pages not worth notifying: the root language page and the 404 page (noindex).
+INDEXNOW_SKIP = ["index.html", "404.html"]
 
 # Guard: refuse to delete more than this share of the remote files
 # (and at least MIN_DELETE_GUARD files) without --allow-mass-delete.
@@ -177,6 +187,30 @@ def plan(local: dict[str, Path], remote: dict[str, str | None], remote_dirs: set
     return local_sums, uploads, orphans, orphan_dirs, loose_orphans
 
 
+def page_urls(site: str, rels: list[str]) -> list[str]:
+    """URLs of the pages (".../index.html") among deployed paths."""
+    return sorted(site.rstrip("/") + "/" + rel[: -len("index.html")]
+                  for rel in rels
+                  if rel.endswith("index.html") and rel not in INDEXNOW_SKIP)
+
+
+def indexnow(site: str, urls: list[str]) -> str:
+    """Submit URLs to IndexNow; returns a one-line result (never raises)."""
+    host = urllib.parse.urlsplit(site).hostname
+    body = json.dumps({"host": host, "key": INDEXNOW_KEY,
+                       "keyLocation": f"{site.rstrip('/')}/{INDEXNOW_KEY}.txt",
+                       "urlList": urls}).encode()
+    req = urllib.request.Request(INDEXNOW_ENDPOINT, data=body, method="POST",
+                                 headers={"Content-Type": "application/json; charset=utf-8"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return f"IndexNow: {len(urls)} URL(s) submitted (HTTP {r.status})."
+    except urllib.error.HTTPError as e:
+        return f"IndexNow: HTTP {e.code} {e.reason} ({len(urls)} URL(s) not submitted)."
+    except OSError as e:
+        return f"IndexNow: {e} ({len(urls)} URL(s) not submitted)."
+
+
 def summary(lines: list[str]) -> None:
     text = "\n".join(lines)
     log(text)
@@ -196,6 +230,9 @@ def main() -> int:
                     help="build directory to deploy (default: dist/)")
     ap.add_argument("--allow-mass-delete", action="store_true",
                     help="disable the guard on the number of deletions")
+    ap.add_argument("--indexnow", metavar="SITE_URL",
+                    help="notify IndexNow of the changed pages of this site (prod), "
+                         "e.g. https://www.lecolroule.fr")
     args = ap.parse_args()
 
     env = os.environ
@@ -213,6 +250,8 @@ def main() -> int:
     local = local_files(args.source)
     if not local:
         sys.exit("No local file to deploy: aborting.")
+    if args.indexnow and f"{INDEXNOW_KEY}.txt" not in local:
+        sys.exit(f"IndexNow key file {INDEXNOW_KEY}.txt missing from the build (static/).")
 
     storage = Storage(endpoint, zone, password)
     log(f"Listing storage zone {zone!r}...")
@@ -259,6 +298,15 @@ def main() -> int:
         log("Pull zone cache purged.")
     elif do_purge:
         log("No change: no purge.")
+
+    if args.indexnow:
+        urls = page_urls(args.indexnow, uploads + orphans)
+        if urls:
+            result = indexnow(args.indexnow, urls)
+            log(result)
+            summary([f"- {result}"] + [f"  - {u}" for u in urls])
+        else:
+            log("IndexNow: no page changed.")
     return 0
 
 

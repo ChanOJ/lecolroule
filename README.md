@@ -86,8 +86,10 @@ Posts are listed on the blog page, newest first.
   which language a browser prefers.
 - Every 404 is answered with `/404.html` (`content/not-found.fr.md`), through the storage zone "404 File path" setting: that
   file must not be renamed or removed.
-- Edge rules (`infra/modules/site/edgerules.tf`): security headers, legacy redirects and, for the
-  legacy single-page layout, the `/valloire/*` rewrites.
+- Edge rules (`infra/modules/site/edgerules.tf`): security headers, page cache and the 301 from
+  the URLs of the former single-page site (`/valloire/...`, `infra/legacy_redirects.json`) to
+  their new address. **`/valloire/` → `/fr/` stays for good**: many backlinks point to it. The
+  other ones are temporary (see "Planned work").
 
 ## Deployment
 
@@ -96,7 +98,7 @@ Files are deployed as is, at the same path, to the storage zone.
 
 - `.github/workflows/deploy.yml` runs `scripts/deploy.py`:
   - on push to `main` (except infra-only or Markdown-only changes): deploys to **test**
-    (https://test.lecolroule.fr/valloire/);
+    (https://test.lecolroule.fr/);
   - manually (Actions → Website: deploy → Run workflow): deploys to **test** or **prod**, as a dry run
     by default. The `prod` environment only accepts runs from `main`.
 
@@ -106,6 +108,10 @@ Files are deployed as is, at the same path, to the storage zone.
   `scripts/`, `README.md`, `CLAUDE.md`…), uploads only those whose SHA-256 differs, deletes remote
   files that are not in the repository (except `PROTECTED` patterns, empty for now), then purges the
   pull zone. A guard aborts if more than 25 % of the remote files would be deleted.
+- Prod only: the added, changed or deleted pages are then submitted to
+  [IndexNow](https://www.indexnow.org/) (Bing, Yandex, Naver, Seznam…; Bing also feeds ChatGPT
+  and Copilot search). The key is public: `static/<key>.txt` at the site root and `INDEXNOW_KEY`
+  in `scripts/deploy.py`.
 - Secrets, in the GitHub Environments `test` and `prod` (values from `tofu output` and the storage
   zone passwords): `BUNNY_STORAGE_ZONE` (the zone **name**, not its id), `BUNNY_STORAGE_PASSWORD`,
   `BUNNY_PULLZONE_ID`. Repository secrets shared by both: `BUNNY_API_KEY`, `BUNNY_STORAGE_ENDPOINT`
@@ -121,7 +127,9 @@ Files are deployed as is, at the same path, to the storage zone.
   language, x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
 - Structured data (schema.org JSON-LD, `layouts/_partials/structured-data.html`) from
   `params.lodging` in `hugo.toml`: LodgingBusiness (home), Apartment (apartment page), Blog with
-  its posts (blog page).
+  its posts (blog page). They include the amenities (`amenities`) and, as `sameAs`, the Airbnb
+  page of the language, the social links and the Google and Apple business profiles
+  (`profiles`).
 - Sitemap per language with the same `hreflang` alternates and `lastmod` from git.
 - Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
   image of a page loaded at once.
@@ -149,7 +157,7 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
 deep page per language, the root language page, HTTP→HTTPS, the 301 of every legacy
 `/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `404.html` on
-unknown URLs, security headers, and the environment rules (test: `noindex` and analytics blocked;
+unknown URLs, the IndexNow key file, security headers, and the environment rules (test: `noindex` and analytics blocked;
 prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
 byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
 (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and without `www`, over
@@ -188,11 +196,9 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
 
-Environments are named `prod` and `test`. The module option `layout` selects the edge rules:
-`legacy` (single page per language under `/valloire/`, rewrites to `indexfr.html`/`indexen.html`)
-or `hugo` (one page per URL under `/<lang>/`, root served by the site's language page,
-301 from the legacy URLs listed in `infra/legacy_redirects.json`). Both environments use `hugo`;
-`legacy` is kept until the switch is validated, then removed. `test` is a staging copy of the site used to validate a
+Environments are named `prod` and `test`. Each serves one page per URL under `/<lang>/`, the
+root language page at `/`, and the permanent 301 from the former single-page site URLs listed in
+`infra/legacy_redirects.json`. `test` is a staging copy of the site used to validate a
 version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
 Content-Security-Policy blocks analytics (Google Analytics) so that stats stay clean.
 Its DNS record is created by `dns.tf` before the environment, so that the TLS certificate can be
@@ -240,9 +246,13 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 ## Planned work
 
 1. Clean up unused files now that automated deployment is validated.
-2. PR checks for the website (parity of the languages with FR).
-3. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
-4. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
+2. Remove the temporary 301s of `infra/legacy_redirects.json` (every `/valloire/...` URL except
+   `/valloire`, `/valloire/`, `/valloire/index.html` and `/valloire/indexfr.html`, which keep
+   pointing to `/fr/`) once search engines no longer list them (Google Search Console and Bing
+   Webmaster Tools, a few weeks after the switch of 2026-11-10).
+3. PR checks for the website (parity of the languages with FR).
+4. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
+5. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
    `lecolroulé.fr`, and `www` of the last three → `https://www.lecolroule.fr/`) from Infomaniak to
    a bunny.net pull zone managed in `infra/`. A pull zone has no fixed IP and Infomaniak accepts no
    CNAME at the apex, so the DNS of the 4 domains has to move to Bunny DNS (apex records linked to

@@ -56,6 +56,29 @@ enableGitInfo = true
     yearBuilt = 2010
     petsAllowed = true
     smokingAllowed = false
+    # Listings of the rental (schema.org sameAs, with the Airbnb page of the
+    # language and the social links).
+    profiles = [
+      "https://maps.app.goo.gl/LcE7D1GPghGa8nBMA",  # Google Business Profile
+      "https://maps.apple/p/N-qZ7Ut20C~wpH",        # Apple Business Connect
+    ]
+    # Amenities (schema.org amenityFeature): present (true) or not (false).
+    # An array, not a table: Hugo lowercases table keys.
+    amenities = [
+      { name = "Wifi (fibre)", value = true },
+      { name = "Free private parking (2 spaces)", value = true },
+      { name = "Electric vehicle charging station (7 kW)", value = true },
+      { name = "Fully equipped kitchen", value = true },
+      { name = "Dishwasher", value = true },
+      { name = "Washing machine", value = true },
+      { name = "Television", value = true },
+      { name = "Covered terrace (20 m²)", value = true },
+      { name = "Mountain view", value = true },
+      { name = "Ski locker", value = true },
+      { name = "Glove dryer", value = true },
+      { name = "Baby cot", value = true },
+      { name = "Elevator", value = false },
+    ]
 
   # Social links: footer and booking page.
   [[params.social]]

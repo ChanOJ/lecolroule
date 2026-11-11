@@ -1,7 +1,8 @@
 {{- /*
   schema.org structured data (JSON-LD), from params.lodging in hugo.toml:
-  - home page: the holiday rental as a LodgingBusiness;
-  - apartment page: the Apartment (rooms, size, occupancy...);
+  - home page: the holiday rental as a LodgingBusiness (with its listings on
+    Airbnb, Google, Apple... as sameAs);
+  - apartment page: the Apartment (rooms, size, occupancy, amenities...);
   - blog: the Blog and its posts.
 */ -}}
 {{- $l := site.Params.lodging -}}
@@ -17,6 +18,11 @@
 {{- $geo := dict "@type" "GeoCoordinates" "latitude" $l.latitude "longitude" $l.longitude -}}
 {{- $sameAs := slice site.Language.Params.airbnb -}}
 {{- range site.Params.social }}{{ if ne .name "google maps" }}{{ $sameAs = $sameAs | append .url }}{{ end }}{{ end -}}
+{{- range $l.profiles }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- $amenities := slice -}}
+{{- range $l.amenities -}}
+  {{- $amenities = $amenities | append (dict "@type" "LocationFeatureSpecification" "name" .name "value" .value) -}}
+{{- end -}}
 {{- $data := false -}}
 
 {{- if .IsHome -}}
@@ -35,6 +41,8 @@
       "starRating" (dict "@type" "Rating" "ratingValue" $l.stars)
       "numberOfRooms" $l.bedrooms
       "petsAllowed" $l.petsAllowed
+      "smokingAllowed" $l.smokingAllowed
+      "amenityFeature" $amenities
       "inLanguage" site.Language.Lang
       "sameAs" $sameAs -}}
 
@@ -59,6 +67,7 @@
       "yearBuilt" $l.yearBuilt
       "petsAllowed" $l.petsAllowed
       "smokingAllowed" $l.smokingAllowed
+      "amenityFeature" $amenities
       "containedInPlace" (dict "@id" (print $home.Permalink "#lodging")) -}}
 
 {{- else if eq .Kind "section" -}}

@@ -26,24 +26,8 @@ variable "analytics" {
   default     = true
 }
 
-variable "layout" {
-  description = <<-EOT
-    Site layout the edge rules serve:
-    - "legacy": single page per language under /valloire/ (rewrites to indexfr.html / indexen.html);
-    - "hugo": one page per URL under /<lang>/ (root redirected by browser language, 301 from the
-      legacy URLs listed in legacy_redirects).
-  EOT
-  type        = string
-  default     = "legacy"
-
-  validation {
-    condition     = contains(["legacy", "hugo"], var.layout)
-    error_message = "layout must be \"legacy\" or \"hugo\"."
-  }
-}
-
 variable "legacy_redirects" {
-  description = "\"hugo\" layout: new path => list of legacy paths answered with a 301 to it."
+  description = "New path => list of URLs of the former single-page site (/valloire/...) answered with a 301 to it."
   type        = map(list(string))
   default     = {}
 }
@@ -76,5 +60,5 @@ variable "html_browser_cache_seconds" {
 variable "not_found_page" {
   description = "File of the storage zone answered for every 404 (\"404 File path\" setting)."
   type        = string
-  default     = "/error.html"
+  default     = "/404.html"
 }

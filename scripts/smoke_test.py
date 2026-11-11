@@ -34,10 +34,9 @@ from pathlib import Path
 
 HOSTS = {"test": "test.lecolroule.fr", "prod": "www.lecolroule.fr"}
 
-# Alternative domains redirected to the prod site by Infomaniak, and the
-# targets accepted for them (the former home page still 301s to /fr/).
+# Alternative domains redirected to the prod site by Infomaniak, and their target.
 REDIRECT_DOMAINS = ["lecolroule.fr", "lecolroule.com", "lecolroulé.com", "lecolroulé.fr"]
-REDIRECT_TARGETS = ["https://www.lecolroule.fr/", "https://www.lecolroule.fr/valloire/"]
+REDIRECT_TARGET = "https://www.lecolroule.fr/"
 
 # Language home pages and one deep page per language.
 PAGES = {
@@ -183,9 +182,6 @@ def main() -> int:
     # visitor to their language. Not tested here (JavaScript): its content is.
     def root():
         r = fetch(f"{base}/")
-        if r.status == 302 and re.fullmatch(rf"{base}/({'|'.join(LANGUAGES)})/", r.header("Location")):
-            # Root language edge rules not removed yet (infra applied after the deployment).
-            return f"302 → {r.header('Location')} (edge rule)"
         expect_status(r, 200)
         body = r.body.decode()
         assert "lcr_lang" in body and "location.replace" in body, "no language script"
@@ -194,6 +190,16 @@ def main() -> int:
         assert not missing, "no link to " + ", ".join(missing)
         return f"200, language page ({', '.join(LANGUAGES)})"
     report.check("Root: language page", root)
+
+    def indexnow_key():
+        key = next((p.stem for p in (REPO_ROOT / "static").glob("*.txt")
+                    if re.fullmatch(r"[0-9a-f]{32}", p.stem)), None)
+        assert key, "no IndexNow key file in static/"
+        r = fetch(f"{base}/{key}.txt")
+        expect_status(r, 200)
+        assert r.body.decode().strip() == key, "wrong content"
+        return f"/{key}.txt"
+    report.check("IndexNow key file", indexnow_key)
     report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/fr/", f"{base}/fr/"))
 
     # Legacy URLs: 301 to their new address, unknown ones: 404.
@@ -279,7 +285,7 @@ def main() -> int:
                 if h == HOSTS["prod"]:
                     continue  # the site itself, not a redirection
                 for scheme in ("http", "https"):
-                    report.check(f"{scheme}://{h}/", expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGETS))
+                    report.check(f"{scheme}://{h}/", expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGET))
 
     report.write()
     print(f"\n{len(report.rows) - report.failed}/{len(report.rows)} checks passed.")
