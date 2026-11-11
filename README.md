@@ -9,7 +9,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 
 - `hugo.toml`: site configuration, languages and their settings (flag, Brevo form, keywords).
 - `content/`: **the texts**, one Markdown file per page and per language (see "Editing content").
-- `i18n/<lang>.yaml`: interface strings (newsletter form, close button, ...).
+- `i18n/<lang>.yaml`: interface strings (language menu, close button, map button, ...).
 - `layouts/`: HTML templates shared by all languages (`baseof.html`, `page.html`, `section.html`
   for the blog, `_partials/`), Markdown render hooks (`_markup/`) and shortcodes (`_shortcodes/`).
 - `static/`: files copied as is: `assets/` (theme CSS/JS/webfonts, `assets/css/site.css` for our
@@ -29,8 +29,10 @@ front matter (the block between `---` lines), together with the title and the me
 Languages: `fr` (reference: other languages follow its content), `en`, `nl` (neutral Dutch, also
 for Flanders), `de` (Swiss spelling, "ss" and no "ß", fine for Germany and Austria too), `it`.
 External links point to the page in the visitor's language when the site has one, else to its
-English version (valloire.net has no German version). NL/DE/IT use the English Brevo newsletter
-form (`brevoFormAction` in `hugo.toml`); the newsletter text says emails are in English.
+English version (valloire.net has no German version). The newsletter form is a Brevo form,
+embedded as an iframe (`brevoForm` in `hugo.toml`, `layouts/_partials/newsletter.html`): its
+texts, style and captcha (Cloudflare Turnstile) are edited in Brevo. NL/DE/IT use the English
+form until Brevo has one in their language.
 
 **Translation notes.** A translation may deliberately differ from a literal one (a button label
 shortened to fit on phones, a link to a site's own language version, ...). Such choices are
@@ -77,8 +79,7 @@ Posts are listed on the blog page, newest first.
   its article swapped in with the theme's animation, and the title, meta tags, `hreflang` links and
   language switcher are updated; back/forward work the same way. The background is never reloaded,
   so its fade-in only plays on the first page. A normal page load happens for another language, on a
-  fetch error, or when the target page needs stylesheets/scripts the current one lacks; the blog
-  (`data-full-load`) always reloads because the Brevo newsletter form only works on a real load.
+  fetch error, or when the target page needs stylesheets/scripts the current one lacks.
 - Language menu (top right, `layouts/_partials/language-menu.html`): the 文A button opens the list
   of the site languages as flags, each linking to the current page in that language (or that
   language's home page). Choosing one stores it in the `lcr_lang` cookie (one year, `main.js`).
@@ -149,7 +150,8 @@ ePrivacy rules), so it has no cookie banner:
   consent banner).
 - Embedded Google maps (`map` shortcode) only load when the visitor clicks "Show the map".
 - `lcr_lang` (language menu) only stores a choice the visitor made.
-- Still to do: the newsletter form (blog page) loads Google reCAPTCHA.
+- The newsletter form is a Brevo page in an iframe; its captcha is Cloudflare Turnstile, which
+  sets no cookie (Google reCAPTCHA is gone).
 
 ## Performance and icons
 

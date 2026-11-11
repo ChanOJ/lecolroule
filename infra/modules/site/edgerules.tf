@@ -14,12 +14,15 @@ locals {
     "https://*.analytics.google.com",
   ]
   csp_directives = [
-    ["default-src", "'self'", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
+    ["default-src", "'self'"],
+    # Embedded content: Google maps (loaded on click) and the Brevo newsletter
+    # form (its own page, with its Cloudflare Turnstile captcha).
+    ["frame-src", "https://www.google.com", "https://*.sibforms.com"],
     ["img-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com"],
-    ["connect-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com", "https://www.google.com", "https://sibforms.com", "https://*.sibforms.com"],
-    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com", "https://www.google.com", "https://www.gstatic.com", "https://sibforms.com", "https://*.sibforms.com"],
-    ["style-src", "'self'", "'unsafe-inline'", "https://sibforms.com", "https://*.sibforms.com"],
-    ["font-src", "'self'", "https://assets.brevo.com"],
+    ["connect-src", "'self'", "https://*.google-analytics.com", "https://*.analytics.google.com"],
+    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
+    ["style-src", "'self'", "'unsafe-inline'"],
+    ["font-src", "'self'"],
     ["object-src", "'none'"],
   ]
   csp = join("; ", [

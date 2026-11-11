@@ -351,8 +351,8 @@
 		//   Pages of the current language are fetched and their article swapped in
 		//   with the theme's animation; title, meta tags, alternate languages and
 		//   the language switcher follow. Anything else (other language, error,
-		//   page needing resources this one lacks, e.g. the blog's newsletter
-		//   form) falls back to a normal page load.
+		//   page needing stylesheets or scripts this one lacks) falls back to a
+		//   normal page load.
 
 			var lang = document.documentElement.lang,
 				pages = {};
@@ -403,7 +403,7 @@
 							missing = true;
 					});
 
-					return missing || !!doc.querySelector('#main > article[data-full-load]');
+					return missing;
 
 				}
 

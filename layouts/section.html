@@ -1,11 +1,6 @@
 {{- /* Blog: newsletter form, then every post (newest first). */ -}}
-{{ define "head" }}
-		{{- partial "brevo-head.html" . }}
-{{ end }}
 {{ define "main" }}
-						{{- /* data-full-load: the newsletter form (Brevo, reCAPTCHA) only works on a
-						       real page load, so in-site navigation reloads this page. */}}
-						<article id="{{ .Section }}" data-full-load>
+						<article id="{{ .Section }}">
 							<h2 class="major">{{ .Title }}</h2>
 							{{- partial "newsletter.html" . }}
 							<hr/>
@@ -21,7 +16,4 @@
 							<hr/>
 							{{- end }}
 						</article>
-{{ end }}
-{{ define "scripts" }}
-		{{- partial "brevo-scripts.html" . }}
 {{ end }}
