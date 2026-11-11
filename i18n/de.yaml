@@ -13,3 +13,5 @@ brevoCountryCode: Bitte wählen Sie eine Landesvorwahl
 brevoInvalid: "Die angegebenen Informationen sind ungültig. Bitte überprüfen Sie das Format der Felder und versuchen Sie es erneut."
 brevoRequired: "Dieses Feld darf nicht leer bleiben. "
 logoAlt: Logo Le Col Roulé
+showMap: "Karte anzeigen"
+mapNote: "Google-Maps-Karte: Sobald sie angezeigt wird, setzt sie Cookies von Google."

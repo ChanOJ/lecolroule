@@ -30,7 +30,10 @@ enableGitInfo = true
   wrapStandAloneImageWithinParagraph = false
 
 [params]
-  googleAnalyticsID = "G-2MX2EV8ZZE"
+  # Google Analytics: disabled (it sets cookies, so it would need a consent
+  # banner under EU law). Uncomment to put it back on every page; the prod
+  # Content-Security-Policy still allows it (infra module option "analytics").
+  # googleAnalyticsID = "G-2MX2EV8ZZE"
   recaptchaSiteKey = "6LflesIqAAAAAOjZvfGc0s_DN1VHLHQSiG2ePmSi"
   twitter = "@LeColRoule"
   ogImage = "/images/vue_ete3.jpg"

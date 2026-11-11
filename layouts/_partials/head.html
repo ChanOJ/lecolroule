@@ -30,17 +30,21 @@
 		<link rel="preload" href="{{ partial "asset-url.html" "/images/bg.jpg" }}" as="image" />
 		{{- partial "styles.html" . }}
 		{{- partial "favicon.html" . }}
+		{{- /* Google Analytics, only when params.googleAnalyticsID is set in
+		       hugo.toml (disabled for now: it would need a cookie banner). */}}
+		{{- with site.Params.googleAnalyticsID }}
 		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.Params.googleAnalyticsID }}"></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 
-			gtag('config', '{{ site.Params.googleAnalyticsID }}');
+			gtag('config', '{{ . }}');
 
 			gtag('event', 'page_view', {
 				page_path: location.pathname
 			});
 		</script>
+		{{- end }}
 		{{- partial "structured-data.html" . }}

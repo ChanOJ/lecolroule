@@ -8,6 +8,11 @@ ogImage: /images/col-du-galibier.jpg
 menu:
   main:
     weight: 3
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
+  - "Parcobranche du Diable links to its home page: its translations are made in the browser (GTranslate), with no URL per language."
 ---
 
 ![Mittagessen mit Aussicht auf der Terrasse der Wohnung](/images/vue_ete3.jpg)

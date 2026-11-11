@@ -4,6 +4,10 @@ slug: geschaefte-valloire
 seoTitle: "Geschäfte und Dienstleistungen in Valloire - Le Col Roulé"
 description: "Bäckereien, Restaurants, Supermärkte, Spa, Eisbahn, Kino: alles, was Sie 10-15 Gehminuten von der Wohnung entfernt im Zentrum von Valloire finden."
 ogImage: /images/vue_hiver1.jpg
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
 ---
 
 Das Dorfzentrum liegt [10-15 Gehminuten](https://www.viewgpx.com/route/bMjNJt5p) entfernt (bergab). Dort finden Sie alles, ausser einem Spital {{< icon name="smile-wink" style="regular" title=";-)" >}}

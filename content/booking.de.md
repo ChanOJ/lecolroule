@@ -7,6 +7,10 @@ ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 5
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
 ---
 
 {{< icon name="female" title="Frau" >}}

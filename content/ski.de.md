@@ -8,13 +8,18 @@ ogImage: /images/vue_hiver1.jpg
 menu:
   main:
     weight: 2
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
+  - "Heading: 'Ski & Snowboard-Stimmung', the word order of the English heading, more natural in German."
 ---
 
 ![Blick auf das Dorfzentrum von der Wohnung aus](/images/vue_hiver1.jpg)
 
 Stellen Sie sich einen aufregenden Wintermorgen vor! Adrien, 9 Jahre alt, muss um 9.15 Uhr in der Skischule sein. Um 8.50 Uhr verlassen Sie die Wohnung, ziehen Ihre Skischuhe an und nehmen Ihre Ski. Ab zur Haltestelle des Gratis-Skibusses, direkt vor den Chalets. Um 9.10 Uhr sind Sie an der Talstation der Gondelbahnen. Adrien fährt mit seiner Gruppe los, und der Rest der Familie muss nur noch hinauffahren, um die Hänge hinunterzusausen: Ein grossartiger Tag in den Bergen steht bevor!
 
-{{< map lazy=false src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1406.5786778195065!2d6.430923389162817!3d45.163663342767606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x478a21729eff66b1%3A0x13b9cd057ccf96bb!2sLe%20Col%20Roul%C3%A9%2C%20Route%20de%20l&#39;Archaz%2C%20Valloire!3m2!1d45.1631563!2d6.4344931999999995!4m5!1s0x478a210fef518a95%3A0x77a95ab4a7f3e4ea!2sESF%20-%20Ecole%20du%20ski%20fran%C3%A7ais%20de%20Valloire%2C%20Chemin%20du%20Cr%C3%AAt%20de%20la%20Brive%2C%20Valloire!3m2!1d45.164605599999994!2d6.4306722!5e0!3m2!1sde!2sfr!4v1713254024259!5m2!1sde!2sfr" >}}
+{{< map src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1406.5786778195065!2d6.430923389162817!3d45.163663342767606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x478a21729eff66b1%3A0x13b9cd057ccf96bb!2sLe%20Col%20Roul%C3%A9%2C%20Route%20de%20l&#39;Archaz%2C%20Valloire!3m2!1d45.1631563!2d6.4344931999999995!4m5!1s0x478a210fef518a95%3A0x77a95ab4a7f3e4ea!2sESF%20-%20Ecole%20du%20ski%20fran%C3%A7ais%20de%20Valloire%2C%20Chemin%20du%20Cr%C3%AAt%20de%20la%20Brive%2C%20Valloire!3m2!1d45.164605599999994!2d6.4306722!5e0!3m2!1sde!2sfr!4v1713254024259!5m2!1sde!2sfr" >}}
 
 [Valloire](https://www.valloire.net/en/) verbindet die Vorzüge eines familiären, überschaubaren und lebendigen Ferienorts mit denen eines grossen Skigebiets mit 160 km Pisten an 5 Berghängen und modernsten Bergbahnen. Und für alle, die nie genug bekommen: [Les 3 Vallées](https://www.les3vallees.com/de) sind nur 35 Autominuten entfernt!
 
