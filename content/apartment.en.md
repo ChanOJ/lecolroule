@@ -7,6 +7,11 @@ ogImage: /images/vue_ete3.jpg
 menu:
   main:
     weight: 1
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Booking button: 'Click here to book', short enough for one line on phones."
+  - "Sizes also in square feet (680 sqft) for British and American readers."
 ---
 
 ![Lunch with view from the terrace of the flat in summer](/images/vue_ete3.jpg)
@@ -77,7 +82,7 @@ Bedding with duvets or blankets at your choice (sheets and towels not provided, 
 {{< button page="/summer" icon="hiking" >}}Summer atmosphere{{< /button >}}
 {{< /buttons >}}
 {{< buttons >}}
-{{< button href="airbnb:" icon="calendar" primary=true >}}Click here to make a reservation{{< /button >}}
+{{< button href="airbnb:" icon="calendar" primary=true >}}Click here to book{{< /button >}}
 {{< /buttons >}}
 
 ![View of all the Fermes de l'Archaz chalets in winter](/images/fermes_de_larchaz_hiver.jpg)

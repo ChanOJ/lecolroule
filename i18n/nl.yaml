@@ -12,3 +12,5 @@ brevoCountryCode: Kies een landcode
 brevoInvalid: "De ingevulde gegevens zijn ongeldig. Controleer de notatie van de velden en probeer het opnieuw."
 brevoRequired: "Dit veld mag niet leeg blijven. "
 logoAlt: Logo Le Col Roulé
+showMap: "Kaart tonen"
+mapNote: "Google Maps-kaart: zodra ze getoond wordt, plaatst ze cookies van Google."

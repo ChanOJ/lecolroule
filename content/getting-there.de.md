@@ -4,6 +4,10 @@ slug: anreise-valloire
 seoTitle: "Anreise nach Valloire mit Auto, Zug oder Bus - Le Col Roulé"
 description: "Anreise nach Valloire mit dem Auto über die A43 oder mit dem TGV bis Saint-Michel-de-Maurienne und weiter mit Bus, Taxi oder Mitfahrgelegenheit."
 ogImage: /images/vue_ete1.jpg
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "BlaBlaCar links to the home page of blablacar.de: it has no Valloire page (only blablacar.fr and .co.uk do)."
 ---
 
 {{< icon name="car" title="Auto" >}} {{< icon name="motorcycle" title="Motorrad" >}} Die Gemeinde Valloire sagt es gern: Wer mit dem Auto oder Motorrad aus einer französischen Grossstadt anreist, kommt nur an einer einzigen Ampel vorbei! Die Autobahn führt nämlich bis Saint-Michel-de-Maurienne, und nach 25 Minuten Bergfahrt sind Sie da.

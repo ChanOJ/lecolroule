@@ -4,6 +4,10 @@ slug: bereikbaarheid-valloire
 seoTitle: "Naar Valloire met de auto, trein of bus - Le Col Roulé"
 description: "Valloire bereiken met de auto via de A43, of met de TGV tot Saint-Michel-de-Maurienne en dan met de bus, taxi of carpool: alle mogelijkheden."
 ogImage: /images/vue_ete1.jpg
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "BlaBlaCar links to the home page of blablacar.nl: it has no Valloire page (only blablacar.fr and .co.uk do)."
 ---
 
 {{< icon name="car" title="auto" >}} {{< icon name="motorcycle" title="motor" >}} Het gemeentebestuur van Valloire zegt het graag: wie met de auto of motor uit eender welke Franse grootstad komt, passeert maar één rood licht! De autosnelweg loopt immers tot Saint-Michel-de-Maurienne, en na 25 minuten klimmen bent u er.

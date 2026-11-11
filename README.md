@@ -32,6 +32,11 @@ External links point to the page in the visitor's language when the site has one
 English version (valloire.net has no German version). NL/DE/IT use the English Brevo newsletter
 form (`brevoFormAction` in `hugo.toml`); the newsletter text says emails are in English.
 
+**Translation notes.** A translation may deliberately differ from a literal one (a button label
+shortened to fit on phones, a link to a site's own language version, ...). Such choices are
+listed in the front matter of the translated page, under `translationNotes`, and must be kept
+when the page is translated again from French. Add a note whenever you fine-tune a translation.
+
 Adding a language = adding it in `hugo.toml` (with a flag in `assets/images/`) and `i18n/`,
 translating the files, and adding its pages to `PAGES` in `scripts/smoke_test.py`.
 
@@ -46,7 +51,7 @@ On top of it:
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
-| Embedded Google map | `{{< map src="https://www.google.com/maps/embed?..." height="350" >}}` |
+| Embedded Google map (shown on click) | `{{< map src="https://www.google.com/maps/embed?..." height="350" >}}` |
 | Social network icons | `{{< social >}}` |
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
@@ -133,6 +138,18 @@ Files are deployed as is, at the same path, to the storage zone.
 - Sitemap per language with the same `hreflang` alternates and `lastmod` from git.
 - Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
   image of a page loaded at once.
+
+## Privacy (no consent banner)
+
+The site sets no cookie and calls no third party that would need the visitor's consent (EU
+ePrivacy rules), so it has no cookie banner:
+
+- Google Analytics is disabled: `googleAnalyticsID` is commented out in `hugo.toml`
+  (`layouts/_partials/head.html` adds it back to every page when set; it would then need a
+  consent banner).
+- Embedded Google maps (`map` shortcode) only load when the visitor clicks "Show the map".
+- `lcr_lang` (language menu) only stores a choice the visitor made.
+- Still to do: the newsletter form (blog page) loads Google reCAPTCHA.
 
 ## Performance and icons
 

@@ -12,3 +12,5 @@ brevoCountryCode: Please choose a country code
 brevoInvalid: "The information provided is invalid. Please review the field format and try again."
 brevoRequired: "This field cannot be left blank. "
 logoAlt: Logo Le Col Roulé
+showMap: "Show the map"
+mapNote: "Google Maps map: it sets Google cookies once shown."

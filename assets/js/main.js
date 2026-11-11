@@ -321,6 +321,32 @@
 
 			}, true);
 
+		// Maps: Google Maps sets cookies, so an embedded map is only loaded when
+		// the visitor asks for it (layouts/_shortcodes/map.html). Captured:
+		// articles stop clicks from bubbling.
+			document.addEventListener('click', function(event) {
+
+				var button = event.target.closest('.map-embed .map-load');
+
+				if (!button)
+					return;
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				var box = button.closest('.map-embed'),
+					iframe = document.createElement('iframe');
+
+				iframe.src = box.getAttribute('data-src');
+				iframe.title = button.textContent;
+				iframe.setAttribute('allowfullscreen', '');
+				iframe.setAttribute('sandbox', 'allow-scripts allow-popups');
+				box.textContent = '';
+				box.appendChild(iframe);
+				box.classList.add('is-loaded');
+
+			}, true);
+
 		// In-site navigation.
 		//   Pages of the current language are fetched and their article swapped in
 		//   with the theme's animation; title, meta tags, alternate languages and
