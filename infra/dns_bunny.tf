@@ -143,6 +143,7 @@ locals {
     spf        = { name = "", type = "TXT", value = "v=spf1 include:_spf.protonmail.ch include:spf.brevo.com ~all" }
     proton_ver = { name = "", type = "TXT", value = "protonmail-verification=1ff463ee9ba9899bcd03c8f32ba3f09bc32d0e02" }
     brevo_ver  = { name = "", type = "TXT", value = "brevo-code:dbc3dc0cdc742feb4debcec4d4c47478" }
+    google_ver = { name = "", type = "TXT", value = "google-site-verification=D3Y2KhznVBAMJY05TDKwWZiBqteuLRvoufknwr0mFDc" }
     dmarc      = { name = "_dmarc", type = "TXT", value = "v=DMARC1; p=reject; rua=mailto:rua@dmarc.brevo.com" }
     bimi       = { name = "default._bimi", type = "TXT", value = "v=BIMI1; l=https://www.lecolroule.fr/bimi.svg" }
 
