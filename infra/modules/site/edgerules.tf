@@ -103,9 +103,11 @@ locals {
   legacy_redirect_priority = { for i, k in sort(keys(var.legacy_redirects)) : k => 10 + i }
 }
 
-# URLs of the former single-page site (/valloire/...) -> their new address,
-# permanently: many backlinks point to them, keep these rules. Any other
-# legacy URL ends in the storage zone 404 (404.html).
+# URLs of the former single-page site (/valloire/...) -> their new address
+# (301). /valloire/ -> /fr/ stays for good: many backlinks point to it. The
+# other ones only until search engines have updated their index (see
+# "Planned work" in README.md). Any other legacy URL ends in the storage zone
+# 404 (404.html).
 resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
   for_each = var.legacy_redirects
 

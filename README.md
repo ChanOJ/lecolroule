@@ -88,7 +88,8 @@ Posts are listed on the blog page, newest first.
   file must not be renamed or removed.
 - Edge rules (`infra/modules/site/edgerules.tf`): security headers, page cache and the 301 from
   the URLs of the former single-page site (`/valloire/...`, `infra/legacy_redirects.json`) to
-  their new address. **Keep these 301s**: many backlinks point to the old URLs.
+  their new address. **`/valloire/` → `/fr/` stays for good**: many backlinks point to it. The
+  other ones are temporary (see "Planned work").
 
 ## Deployment
 
@@ -245,9 +246,13 @@ GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIA
 ## Planned work
 
 1. Clean up unused files now that automated deployment is validated.
-2. PR checks for the website (parity of the languages with FR).
-3. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
-4. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
+2. Remove the temporary 301s of `infra/legacy_redirects.json` (every `/valloire/...` URL except
+   `/valloire`, `/valloire/`, `/valloire/index.html` and `/valloire/indexfr.html`, which keep
+   pointing to `/fr/`) once search engines no longer list them (Google Search Console and Bing
+   Webmaster Tools, a few weeks after the switch of 2026-11-10).
+3. PR checks for the website (parity of the languages with FR).
+4. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
+5. Move the web redirections (apex `lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`,
    `lecolroulé.fr`, and `www` of the last three → `https://www.lecolroule.fr/`) from Infomaniak to
    a bunny.net pull zone managed in `infra/`. A pull zone has no fixed IP and Infomaniak accepts no
    CNAME at the apex, so the DNS of the 4 domains has to move to Bunny DNS (apex records linked to
