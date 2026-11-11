@@ -2,5 +2,6 @@
 language: Taal
 close: Sluiten
 logoAlt: Logo Le Col Roulé
-showMap: "Kaart tonen"
-mapNote: "Google Maps-kaart: zodra ze getoond wordt, plaatst ze cookies van Google."
+mapAria: "Kaart: route van {{ .from }} naar {{ .to }}"
+mapOnFoot: "te voet"
+mapOpen: "Openen in OpenStreetMap"

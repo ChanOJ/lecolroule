@@ -15,10 +15,11 @@ locals {
   ]
   csp_directives = [
     ["default-src", "'self'"],
-    # Embedded content: Google maps (loaded on click) and the Brevo newsletter
-    # form (its own page, with its Cloudflare Turnstile captcha).
-    ["frame-src", "https://www.google.com", "https://*.sibforms.com"],
-    ["img-src", "'self'", "data:", "https://*.google-analytics.com", "https://*.analytics.google.com"],
+    # Embedded content: the Brevo newsletter form (its own page, with its
+    # Cloudflare Turnstile captcha).
+    ["frame-src", "https://*.sibforms.com"],
+    # Images: OpenStreetMap tiles of the route maps.
+    ["img-src", "'self'", "data:", "https://tile.openstreetmap.org", "https://*.google-analytics.com", "https://*.analytics.google.com"],
     ["connect-src", "'self'", "https://*.google-analytics.com", "https://*.analytics.google.com"],
     ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
     ["style-src", "'self'", "'unsafe-inline'"],

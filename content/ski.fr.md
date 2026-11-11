@@ -14,7 +14,7 @@ menu:
 
 Imaginez une matinée d'hiver excitante ! Adrien, âgé de 9 ans, doit être à son cours de ski à 9h15. À 8h50, vous quittez l'appartement, enfilez vos bottes et prenez vos skis. Direction l'arrêt du skibus gratuit, juste au pied des châlets. À 9h10 vous êtes sur le front de neige, au pied des télécabines. Adrien part skier avec son groupe, et le reste de la famille n'a plus qu'à monter pour dévaler les pentes, une journée épique en montagne en perspective !
 
-{{< map src="https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1406.5786778195065!2d6.430923389162817!3d45.163663342767606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e2!4m5!1s0x478a21729eff66b1%3A0x13b9cd057ccf96bb!2sLe%20Col%20Roul%C3%A9%2C%20Route%20de%20l&#39;Archaz%2C%20Valloire!3m2!1d45.1631563!2d6.4344931999999995!4m5!1s0x478a210fef518a95%3A0x77a95ab4a7f3e4ea!2sESF%20-%20Ecole%20du%20ski%20fran%C3%A7ais%20de%20Valloire%2C%20Chemin%20du%20Cr%C3%AAt%20de%20la%20Brive%2C%20Valloire!3m2!1d45.164605599999994!2d6.4306722!5e0!3m2!1sen!2sfr!4v1713254024259!5m2!1sen!2sfr" >}}
+{{< map route="ski" >}}
 
 [Valloire](https://www.valloire.net/) a cela de particulier qu'elle allie les avantages d'une station familiale à taille humaine et dynamique, et ceux d'un grand domaine équipé de 160km de pistes de ski sur 5 versants avec des remontées mécaniques dernier cri. Et pour les éternels insatisfaits, [Les 3 Vallées](https://www.les3vallees.com/fr) sont à seulement 35mn en voiture !
 
