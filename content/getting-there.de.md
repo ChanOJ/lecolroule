@@ -7,6 +7,7 @@ ogImage: /images/vue_ete1.jpg
 # Deliberate choices of this translation: keep them when updating it from
 # the French page (see "Translation notes" in README.md).
 translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
   - "BlaBlaCar links to the home page of blablacar.de: it has no Valloire page (only blablacar.fr and .co.uk do)."
 ---
 

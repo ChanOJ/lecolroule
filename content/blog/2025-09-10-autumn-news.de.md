@@ -2,6 +2,10 @@
 title: "Die Neuigkeiten für diesen Herbst!"
 date: 2025-09-10
 image: { src: /images/niveau_principal.jpg, alt: Wohnzimmer, caption: Die neue Fensterfront! }
+# Deliberate choices of this translation: keep them when updating it from
+# the French page (see "Translation notes" in README.md).
+translationNotes:
+  - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
 ---
 
 Endlich sind die Fotos der kompletten Renovation der Hauptebene und ihrer Fensterfront online. Sie finden sie auf [unserer Website](/apartment) und auf [Airbnb](airbnb:).
