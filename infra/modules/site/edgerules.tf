@@ -87,100 +87,7 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
   }] : []) : merge(local.action_defaults, a)]
 }
 
-# ---------------------------------------------------------------- legacy layout
-
-# Root URL -> /valloire/
-resource "bunnynet_pullzone_edgerule" "redirect_root" {
-  count = var.layout == "legacy" ? 1 : 0
-
-  pullzone    = bunnynet_pullzone.this.id
-  description = ""
-  enabled     = true
-  priority    = 1
-  match_type  = "MatchAny"
-
-  triggers = [for t in [{
-    type       = "Url"
-    match_type = "MatchAny"
-    patterns   = ["${local.base_url}/"]
-  }] : merge(local.trigger_defaults, t)]
-
-  actions = [for a in [{
-    type       = "Redirect"
-    parameter1 = "${local.base_url}/valloire/"
-    parameter2 = "301"
-  }] : merge(local.action_defaults, a)]
-}
-
-# /valloire/en/* is served by the English page (client-side routing in main.js).
-resource "bunnynet_pullzone_edgerule" "rewrite_en" {
-  count = var.layout == "legacy" ? 1 : 0
-
-  pullzone    = bunnynet_pullzone.this.id
-  description = "Default EN Page"
-  enabled     = true
-  priority    = 2
-  match_type  = "MatchAny"
-
-  triggers = [for t in [{
-    type       = "Url"
-    match_type = "MatchAny"
-    patterns   = ["${local.base_url}/valloire/en/*"]
-  }] : merge(local.trigger_defaults, t)]
-
-  actions = [for a in [{
-    type       = "OriginUrl"
-    parameter1 = "${local.base_url}/valloire/indexen.html"
-  }] : merge(local.action_defaults, a)]
-}
-
-# Any other /valloire/* path is served by the French page, except index* files
-# and the English section.
-resource "bunnynet_pullzone_edgerule" "rewrite_fr" {
-  count = var.layout == "legacy" ? 1 : 0
-
-  pullzone    = bunnynet_pullzone.this.id
-  description = "Default FR Page"
-  enabled     = true
-  priority    = 3
-  match_type  = "MatchAll"
-
-  triggers = [for t in [
-    {
-      type       = "Url"
-      match_type = "MatchAny"
-      patterns   = ["${local.base_url}/valloire/*"]
-    },
-    {
-      type       = "Url"
-      match_type = "MatchNone"
-      patterns   = ["${local.base_url}/valloire/index*", "${local.base_url}/valloire/en/*"]
-    },
-  ] : merge(local.trigger_defaults, t)]
-
-  actions = [for a in [{
-    type       = "OriginUrl"
-    parameter1 = "${local.base_url}/valloire/indexfr.html"
-  }] : merge(local.action_defaults, a)]
-}
-
-# The legacy rules became conditional (count): keep the existing ones.
-moved {
-  from = bunnynet_pullzone_edgerule.redirect_root
-  to   = bunnynet_pullzone_edgerule.redirect_root[0]
-}
-
-moved {
-  from = bunnynet_pullzone_edgerule.rewrite_en
-  to   = bunnynet_pullzone_edgerule.rewrite_en[0]
-}
-
-moved {
-  from = bunnynet_pullzone_edgerule.rewrite_fr
-  to   = bunnynet_pullzone_edgerule.rewrite_fr[0]
-}
-
-# ------------------------------------------------------------------ hugo layout
+# ------------------------------------------------------------- routing
 
 # The root URL (/) is not redirected here: it serves the root page of the
 # site (layouts/alias.html), whose script picks the visitor's language. Edge
@@ -188,19 +95,19 @@ moved {
 # browser prefers.
 
 locals {
-  hugo = var.layout == "hugo"
   # bunny.net requires a unique priority (order index) per rule of a pull zone:
-  # 0 security headers, 1-3 legacy layout rules, 10.. legacy redirects,
-  # 100 page cache. Fixed, disjoint slots avoid collisions while rules are
-  # added and removed in the same apply; moving a rule to the slot of another
-  # one in the same apply fails ("Order index must be unique").
+  # 0 security headers, 10.. legacy redirects, 100 page cache. Fixed, disjoint
+  # slots avoid collisions while rules are added and removed in the same
+  # apply; moving a rule to the slot of another one in the same apply fails
+  # ("Order index must be unique").
   legacy_redirect_priority = { for i, k in sort(keys(var.legacy_redirects)) : k => 10 + i }
 }
 
-# Legacy URLs (/valloire/...) -> their new address, permanently. Any other
-# legacy URL ends in the storage zone 404 (error.html).
+# URLs of the former single-page site (/valloire/...) -> their new address,
+# permanently: many backlinks point to them, keep these rules. Any other
+# legacy URL ends in the storage zone 404 (404.html).
 resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
-  for_each = local.hugo ? var.legacy_redirects : {}
+  for_each = var.legacy_redirects
 
   pullzone    = bunnynet_pullzone.this.id
   description = "Legacy URLs to ${each.key}"
@@ -231,11 +138,7 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
 # visitors get a new version quickly after a deployment. Fingerprinted assets
 # keep the long cache of the origin.
 locals {
-  page_patterns = concat(
-    ["${local.base_url}/", "${local.base_url}/*/", "${local.base_url}/*.html", "${local.base_url}/*.xml", "${local.base_url}/*.txt"],
-    # Legacy layout: pages have no extension and no trailing slash.
-    var.layout == "legacy" ? ["${local.base_url}/valloire/*"] : [],
-  )
+  page_patterns = ["${local.base_url}/", "${local.base_url}/*/", "${local.base_url}/*.html", "${local.base_url}/*.xml", "${local.base_url}/*.txt"]
 }
 
 resource "bunnynet_pullzone_edgerule" "page_browser_cache" {
@@ -244,7 +147,7 @@ resource "bunnynet_pullzone_edgerule" "page_browser_cache" {
   pullzone    = bunnynet_pullzone.this.id
   description = "Pages: browser cache ${var.html_browser_cache_seconds} s"
   enabled     = true
-  # Own slot, clear of the layout rules (1-3 legacy, 1-9 and 10+ hugo).
+  # Own slot, clear of the legacy redirects (10+).
   priority   = 100
   match_type = "MatchAny"
 
