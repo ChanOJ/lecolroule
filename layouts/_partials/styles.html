@@ -20,7 +20,14 @@
   {{- $css = replace $css $from $to -}}
 {{- end -}}
 {{- $main = $css | resources.FromString "css/main.css" | minify | fingerprint "md5" }}
-		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/fontawesome-all.min.css" }}" />
+{{- /* Font Awesome: its @font-face rules list 5 formats per font; every
+       current browser uses woff2, the only one kept (static/webfonts/). */ -}}
+{{- $fa := resources.Get "css/fontawesome-all.min.css" -}}
+{{- $faCss := $fa.Content -}}
+{{- $faFont := `src:url\([^)]*\.eot\);src:[^}]*?url\(([^)]*\.woff2)\) format\("woff2"\)[^}]*` -}}
+{{- if ne (len (findRE $faFont $faCss)) 3 }}{{ errorf "styles.html: the 3 Font Awesome @font-face rules were not found" }}{{ end -}}
+{{- $fa = replaceRE $faFont `src:url($1) format("woff2")` $faCss | resources.FromString "css/fontawesome-all.min.css" | fingerprint "md5" }}
+		<link rel="stylesheet" href="{{ $fa.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ $main.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/site.css" }}" />
 		<noscript><link rel="stylesheet" href="{{ partial "asset-url.html" "css/noscript.css" }}" /></noscript>
