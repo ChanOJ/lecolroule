@@ -1,7 +1,10 @@
 {{- /* Home page: header and navigation only, no article. */ -}}
+{{ define "main" }}
 {{- /* /cover.jpg: the cover image (params.ogImage) at a fixed URL, without
        fingerprint, for listings that ask for an image URL (OpenStreetMap...):
        it always serves the current cover. Short browser cache: infra
-       page_patterns. */ -}}
+       page_patterns. Published from inside the "main" block: any output or
+       code outside the blocks would make Hugo render this template without
+       baseof.html. */ -}}
 {{- with resources.Get (strings.TrimPrefix "/" site.Params.ogImage) }}{{ $_ := (. | resources.Copy "cover.jpg").RelPermalink }}{{ end -}}
-{{ define "main" }}{{ end }}
+{{ end }}
