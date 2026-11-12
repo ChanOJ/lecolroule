@@ -14,7 +14,7 @@ menu:
 
 Stel u een spannende winterochtend voor! Adrien, 9 jaar, moet om 9u15 op skiles zijn. Om 8u50 verlaat u het appartement, trekt u uw skischoenen aan en neemt u uw ski's. Op naar de halte van de gratis skibus, vlak aan de voet van de chalets. Om 9u10 staat u aan de voet van de pistes, bij de gondels. Adrien vertrekt met zijn groep, en de rest van het gezin hoeft alleen nog naar boven om de hellingen af te suizen: een epische dag in de bergen in het vooruitzicht!
 
-{{< map route="ski" >}}
+{{< map route="walk-road" >}}
 
 [Valloire](https://www.valloire.net/nl/) combineert de voordelen van een gezellig en dynamisch familiedorp met die van een groot skigebied met 160 km pistes op 5 berghellingen en ultramoderne skiliften. En voor wie nooit genoeg heeft: [Les 3 Vallées](https://www.les3vallees.com/en) liggen op amper 35 minuten met de auto!
 

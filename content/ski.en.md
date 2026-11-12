@@ -14,7 +14,7 @@ menu:
 
 Imagine an exciting winter morning! Adrien, aged 9, has to be at his ski lesson by 9:15. At 8:50, you leave the apartment, put on your boots, and grab your skis. Head to the free ski bus stop, right at the foot of the chalets. By 9:10, you're at the ski area, at the base of the gondolas. Adrien goes off to ski with his group, and the rest of the family just has to hop on to hit the slopes, an epic day in the mountains ahead!
 
-{{< map route="ski" >}}
+{{< map route="walk-road" >}}
 
 What makes [Valloire](https://www.valloire.net/en/) so special is that it combines the advantages of a family resort on a human scale, with those of a large domain equipped with 100 miles of ski slopes on 5 sides, with the latest ski lifts. And for those who are always seeking more, [Les 3 Vallées](https://www.les3vallees.com/en) are just a 35-minute drive away!
 

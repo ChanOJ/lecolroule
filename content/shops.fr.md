@@ -8,7 +8,7 @@ ogImage: /images/vue_hiver1.jpg
 
 Le centre village se trouve à 10-15 minutes à pied (en descente). On y trouve tout sur place, à part un hôpital {{< icon name="smile-wink" style="regular" title=";-)" >}}
 
-{{< map route="village" >}}
+{{< map route="walk-trail" gpx="village" >}}
 
 Quelques idées d'activités toutes saisons :
 

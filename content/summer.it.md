@@ -20,7 +20,7 @@ In estate [il nostro appartamento](/apartment) si trova in posizione ideale, a 1
 
 La ciliegina sulla torta: la nostra grande terrazza coperta di 20 m² vi offre tutto lo spazio necessario per riporre la vostra attrezzatura!
 
-{{< map route="summer" >}}
+{{< map route="walk-trail" >}}
 
 Che veniate per scalare i colli in bici, scendere a tutta velocità in mountain bike o in kart, fare escursioni in giornata, in rifugio o in bivacco, percorrere le pareti arrampicando o in via ferrata, prendere il volo in parapendio o in ultraleggero, o semplicemente rilassarvi al golf, in piscina o alla spa, a Valloire troverete sicuramente quello che fa per voi.
 

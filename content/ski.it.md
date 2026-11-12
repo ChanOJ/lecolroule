@@ -14,7 +14,7 @@ menu:
 
 Immaginate un'emozionante mattina d'inverno! Adrien, 9 anni, deve essere alla lezione di sci alle 9:15. Alle 8:50 lasciate l'appartamento, infilate gli scarponi e prendete gli sci. Direzione la fermata dello skibus gratuito, proprio ai piedi degli chalet. Alle 9:10 siete ai piedi delle piste, alla partenza delle cabinovie. Adrien parte a sciare con il suo gruppo, e al resto della famiglia non resta che salire per sfrecciare lungo le piste: una giornata epica in montagna in prospettiva!
 
-{{< map route="ski" >}}
+{{< map route="walk-road" >}}
 
 [Valloire](https://www.valloire.net/it/) ha la particolarità di unire i vantaggi di una stazione familiare, a misura d'uomo e dinamica, a quelli di un grande comprensorio con 160 km di piste su 5 versanti e impianti di risalita all'avanguardia. E per gli eterni insoddisfatti, [Les 3 Vallées](https://www.les3vallees.com/en) sono a soli 35 minuti in auto!
 

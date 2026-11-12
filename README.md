@@ -66,14 +66,15 @@ fixed URL `/cover.jpg` (no fingerprint, 5-minute browser cache), for listings as
 image URL (OpenStreetMap...).
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
-`mode` = `car` or `foot`, `from`, `to`, `distance` in metres). `village` (flat → village
-centre, shops page) is converted from our own GPX track `assets/maps/village.gpx` (drawn with
-gpx.studio); when `<route>.gpx` exists, a "Download the GPX track" link is shown under the map.
-The other routes were computed once with the OSRM servers of openstreetmap.de and simplified,
-e.g. for a walk:
+`mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers
+of openstreetmap.de and simplified: `getting-there` (Saint-Michel → Valloire by car), `walk-trail`
+(flat → village centre and ESF on foot, by the footpath: summer and shops pages) and `walk-road`
+(the same walk by the road, its switchbacks: winter page; computed with the car profile). E.g.
 `https://routing.openstreetmap.de/routed-foot/route/v1/driving/<lon>,<lat>;<lon>,<lat>?overview=full&geometries=geojson`
-(`routed-car` for driving). `main.js` loads Leaflet (`assets/vendor/`) and draws a map when it
-comes into view (without JavaScript: a link to the route on openstreetmap.org).
+(`routed-car` for the road). Option `gpx="village"` adds a "Download the GPX track" link under the
+map (`assets/maps/village.gpx`, our own track). `main.js` loads Leaflet (`assets/vendor/`) and
+draws a map when it comes into view (without JavaScript: a link to the route on
+openstreetmap.org).
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 
