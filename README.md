@@ -34,8 +34,9 @@ External links point to the page in the visitor's language when the site has one
 English version (valloire.net has no German version). The newsletter sign-up form is our own
 (`layouts/_partials/newsletter.html`, texts `newsletter*` in `i18n/`, `main.js` "Newsletter
 form"): it is posted to the Brevo form of the language (`brevoForm` in `hugo.toml`), which adds
-the address to its list and checks the Cloudflare Turnstile captcha (`captchaKey`, the public key
-of Brevo's forms). FR goes to the French list, the other languages to the English one.
+the address to its list and checks the Cloudflare Turnstile captcha (`captchaKey`: our widget in
+the Cloudflare dashboard, its secret key set in Brevo; allowed hostnames `lecolroule.fr` and
+Brevo's `sibforms.com`, so the captcha fails on `localhost`). FR goes to the French list, the other languages to the English one.
 
 **Translation notes.** A translation may deliberately differ from a literal one (a button label
 shortened to fit on phones, a link to a site's own language version, ...). Such choices are

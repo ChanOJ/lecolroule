@@ -114,8 +114,9 @@ enableGitInfo = true
     senderName = "Le Col Roulé"
     senderEmail = "contact@lecolroule.fr"
     testEmail = "contact@lecolroule.fr"
-    # Public key of the Cloudflare Turnstile captcha of the Brevo forms
-    # (sign-up form, layouts/_partials/newsletter.html).
+    # Public key of our Cloudflare Turnstile widget (Cloudflare dashboard;
+    # its secret key is set in Brevo, which checks the tokens). Allowed
+    # hostnames: lecolroule.fr (subdomains included) and Brevo's sibforms.com.
     captchaKey = "0x4AAAAAAF9QuERzrTTM2sDd"
     address = "1165 route de l'Archaz, 73450 Valloire"
     [params.newsletter.lists]
