@@ -518,6 +518,8 @@
 						if (!answer.success)
 							throw answer;
 						form.reset();
+						// As Brevo's form did: only the confirmation is left.
+						form.classList.add('is-done');
 						newsletterMessage(form, 'success');
 					})
 					.catch(function(error) {
