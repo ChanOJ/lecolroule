@@ -111,7 +111,7 @@ enableGitInfo = true
   # English for every other language (the sign-up forms of NL/DE/IT are the
   # English one).
   [params.newsletter]
-    senderName = "Le Col Roulé"
+    senderName = "Le Col Roulé - Valloire"
     senderEmail = "contact@lecolroule.fr"
     testEmail = "contact@lecolroule.fr"
     # Public key of our Cloudflare Turnstile widget (Cloudflare dashboard;
