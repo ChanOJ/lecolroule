@@ -375,6 +375,10 @@
 
 					L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 						maxZoom: 19,
+						// The OSM tile servers require a Referer; the site's
+						// Referrer-Policy (same-origin) sends none to other sites:
+						// send the site's origin (no path) for the tiles.
+						referrerPolicy: 'strict-origin-when-cross-origin',
 						attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 					}).addTo(map);
 
