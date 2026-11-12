@@ -8,7 +8,7 @@ ogImage: /images/vue_hiver1.jpg
 
 Het dorpscentrum ligt op 10-15 minuten wandelen (bergaf). U vindt er alles, behalve een ziekenhuis {{< icon name="smile-wink" style="regular" title=";-)" >}}
 
-{{< map route="village" >}}
+{{< map route="walk-trail" gpx="village" >}}
 
 Enkele ideeën voor activiteiten in alle seizoenen:
 

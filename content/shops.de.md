@@ -12,7 +12,7 @@ translationNotes:
 
 Das Dorfzentrum liegt 10-15 Gehminuten entfernt (bergab). Dort finden Sie alles, ausser einem Spital {{< icon name="smile-wink" style="regular" title=";-)" >}}
 
-{{< map route="village" >}}
+{{< map route="walk-trail" gpx="village" >}}
 
 Einige Ideen für Aktivitäten zu jeder Jahreszeit:
 

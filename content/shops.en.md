@@ -8,7 +8,7 @@ ogImage: /images/vue_hiver1.jpg
 
 The village centre is just a 10-15 minute walk (downhill) away. You will find everything on site, except for a hospital {{< icon name="smile-wink" style="regular" title=";-)" >}}
 
-{{< map route="village" >}}
+{{< map route="walk-trail" gpx="village" >}}
 
 Some ideas for all-season activities:
 

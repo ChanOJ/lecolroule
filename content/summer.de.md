@@ -21,7 +21,7 @@ Im Sommer liegt [unsere Wohnung](/apartment) ideal, 10 Gehminuten ([idyllischer 
 
 Das Tüpfelchen auf dem i: Unsere grosse überdachte Terrasse von 20 m² bietet Ihnen genug Platz, um Ihre Ausrüstung zu verstauen!
 
-{{< map route="summer" >}}
+{{< map route="walk-trail" >}}
 
 Ob Sie mit dem Rad Pässe erklimmen, mit dem Mountainbike oder Kart die Hänge hinuntersausen, Tageswanderungen, Hüttentouren oder Biwaks unternehmen, Felswände kletternd oder am Klettersteig bezwingen, mit dem Gleitschirm oder Ultraleichtflugzeug abheben oder sich einfach auf dem Golfplatz, im Schwimmbad oder im Spa entspannen möchten: In Valloire finden Sie bestimmt Ihr Glück.
 

@@ -19,7 +19,7 @@ translationNotes:
 
 Stellen Sie sich einen aufregenden Wintermorgen vor! Adrien, 9 Jahre alt, muss um 9.15 Uhr in der Skischule sein. Um 8.50 Uhr verlassen Sie die Wohnung, ziehen Ihre Skischuhe an und nehmen Ihre Ski. Ab zur Haltestelle des Gratis-Skibusses, direkt vor den Chalets. Um 9.10 Uhr sind Sie an der Talstation der Gondelbahnen. Adrien fährt mit seiner Gruppe los, und der Rest der Familie muss nur noch hinauffahren, um die Hänge hinunterzusausen: Ein grossartiger Tag in den Bergen steht bevor!
 
-{{< map route="ski" >}}
+{{< map route="walk-road" >}}
 
 [Valloire](https://www.valloire.net/en/) verbindet die Vorzüge eines familiären, überschaubaren und lebendigen Ferienorts mit denen eines grossen Skigebiets mit 160 km Pisten an 5 Berghängen und modernsten Bergbahnen. Und für alle, die nie genug bekommen: [Les 3 Vallées](https://www.les3vallees.com/de) sind nur 35 Autominuten entfernt!
 

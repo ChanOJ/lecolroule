@@ -14,7 +14,7 @@ menu:
 
 Imaginez une matinée d'hiver excitante ! Adrien, âgé de 9 ans, doit être à son cours de ski à 9h15. À 8h50, vous quittez l'appartement, enfilez vos bottes et prenez vos skis. Direction l'arrêt du skibus gratuit, juste au pied des châlets. À 9h10 vous êtes sur le front de neige, au pied des télécabines. Adrien part skier avec son groupe, et le reste de la famille n'a plus qu'à monter pour dévaler les pentes, une journée épique en montagne en perspective !
 
-{{< map route="ski" >}}
+{{< map route="walk-road" >}}
 
 [Valloire](https://www.valloire.net/) a cela de particulier qu'elle allie les avantages d'une station familiale à taille humaine et dynamique, et ceux d'un grand domaine équipé de 160km de pistes de ski sur 5 versants avec des remontées mécaniques dernier cri. Et pour les éternels insatisfaits, [Les 3 Vallées](https://www.les3vallees.com/fr) sont à seulement 35mn en voiture !
 

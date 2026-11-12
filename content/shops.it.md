@@ -8,7 +8,7 @@ ogImage: /images/vue_hiver1.jpg
 
 Il centro del paese si trova a 10-15 minuti a piedi (in discesa). Lì si trova di tutto, tranne un ospedale {{< icon name="smile-wink" style="regular" title=";-)" >}}
 
-{{< map route="village" >}}
+{{< map route="walk-trail" gpx="village" >}}
 
 Qualche idea di attività per tutte le stagioni:
 
