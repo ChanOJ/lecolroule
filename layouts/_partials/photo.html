@@ -2,8 +2,9 @@
   The image resource to show for a photo of assets/images/, by its usual
   name: {{ partial "photo.html" "/images/salon.jpg" }}.
   A photo may exist only as its high-definition file, salon_hd.jpg: the
-  page then gets a 1200 px copy of it (JPEG quality 80; sharp on phones and
-  retina screens), the image viewer the HD file (hd-url.html). Otherwise the
+  page (and the e-mail version of a blog post) then gets a 1200 px copy of
+  it (JPEG quality 80, PNG for plans; sharp on phones and retina screens),
+  the image viewer the HD file (hd-url.html). Otherwise the
   file itself (salon.jpg). Fails the build when neither exists.
 */ -}}
 {{- $path := strings.TrimPrefix "/" . -}}
@@ -11,7 +12,10 @@
 {{- $res := false -}}
 {{- with resources.Get (printf "%s_hd%s" (strings.TrimSuffix $ext $path) $ext) -}}
   {{- $res = . -}}
-  {{- if and (in (slice ".jpg" ".jpeg") $ext) (gt .Width 1200) }}{{ $res = .Resize "1200x q80" }}{{ end -}}
+  {{- if gt .Width 1200 -}}
+    {{- if in (slice ".jpg" ".jpeg") $ext }}{{ $res = .Resize "1200x q80" }}
+    {{- else if eq $ext ".png" }}{{ $res = .Resize "1200x" }}{{ end -}}
+  {{- end -}}
 {{- else -}}
   {{- $res = resources.Get $path -}}
 {{- end -}}
