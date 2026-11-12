@@ -15,13 +15,14 @@ locals {
   ]
   csp_directives = [
     ["default-src", "'self'"],
-    # Embedded content: the Brevo newsletter form (its own page, with its
-    # Cloudflare Turnstile captcha).
-    ["frame-src", "https://*.sibforms.com"],
+    # Embedded content: the Cloudflare Turnstile captcha of the newsletter form.
+    ["frame-src", "https://challenges.cloudflare.com"],
     # Images: OpenStreetMap tiles of the route maps.
     ["img-src", "'self'", "data:", "https://tile.openstreetmap.org", "https://*.google-analytics.com", "https://*.analytics.google.com"],
-    ["connect-src", "'self'", "https://*.google-analytics.com", "https://*.analytics.google.com"],
-    ["script-src", "'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
+    # Requests: the newsletter form, posted to its Brevo form.
+    ["connect-src", "'self'", "https://*.sibforms.com", "https://*.google-analytics.com", "https://*.analytics.google.com"],
+    # Scripts: Turnstile (newsletter form).
+    ["script-src", "'self'", "'unsafe-inline'", "https://challenges.cloudflare.com", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
     ["style-src", "'self'", "'unsafe-inline'"],
     ["font-src", "'self'"],
     ["object-src", "'none'"],

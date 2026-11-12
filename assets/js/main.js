@@ -408,6 +408,184 @@
 
 			initMaps(document);
 
+		// Newsletter form (layouts/_partials/newsletter.html): posted to the
+		// Brevo form with fetch, as Brevo's own script does (JSON answer). The
+		// Cloudflare Turnstile captcha is loaded when the form comes into view
+		// (or gets the focus); it only shows when Cloudflare wants a click
+		// ("interaction-only"). Its token is sent with the form, Brevo checks it.
+			var turnstile = null,
+				newsletterObserver = 'IntersectionObserver' in window ? new IntersectionObserver(function(entries) {
+					entries.forEach(function(entry) {
+						if (entry.isIntersecting) {
+							newsletterObserver.unobserve(entry.target);
+							renderCaptcha(entry.target).catch(function() {});
+						}
+					});
+				}, { rootMargin: '200px' }) : null;
+
+			function loadTurnstile(form) {
+
+				if (!turnstile)
+					turnstile = new Promise(function(resolve, reject) {
+						var js = document.createElement('script');
+						js.src = form.getAttribute('data-captcha-js');
+						js.async = true;
+						js.onload = function() { resolve(window.turnstile); };
+						js.onerror = function() { turnstile = null; reject(new Error('Turnstile not loaded')); };
+						document.head.appendChild(js);
+					});
+
+				return turnstile;
+
+			}
+
+			function newsletterMessage(form, kind) {
+
+				var p = form.querySelector('.newsletter-message');
+
+				p.textContent = kind ? form.getAttribute('data-' + kind) : '';
+				p.classList.toggle('is-error', kind == 'invalid' || kind == 'error');
+				p.classList.toggle('is-success', kind == 'success');
+
+				// On error, a way out: the Brevo form page itself.
+				if (kind == 'error') {
+					var a = document.createElement('a');
+					a.href = form.action;
+					a.target = '_blank';
+					a.rel = 'noopener';
+					a.textContent = form.getAttribute('data-fallback');
+					p.append(' ', a);
+				}
+
+			}
+
+			function newsletterBusy(form, busy) {
+				form._busy = busy;
+				form.querySelector('input[type="submit"]').disabled = busy;
+			}
+
+			function renderCaptcha(form) {
+
+				if (!form._captcha) {
+					form._captcha = loadTurnstile(form).then(function(ts) {
+						form._widget = ts.render(form.querySelector('.newsletter-captcha'), {
+							sitekey: form.getAttribute('data-captcha-key'),
+							language: form.getAttribute('data-lang'),
+							theme: 'dark',
+							appearance: 'interaction-only',
+							'response-field': false,
+							callback: function(token) {
+								form._token = token;
+								if (form._pending) {
+									form._pending = false;
+									sendNewsletter(form);
+								}
+							},
+							'expired-callback': function() {
+								form._token = null;
+							},
+							'error-callback': function(code) {
+								console.error('Newsletter captcha', code);
+								form._token = null;
+								form._captchaFailed = true;
+								if (form._pending) {
+									form._pending = false;
+									newsletterMessage(form, 'error');
+									newsletterBusy(form, false);
+								}
+							}
+						});
+					});
+					form._captcha.catch(function() { form._captcha = null; });
+				}
+
+				return form._captcha;
+
+			}
+
+			function sendNewsletter(form) {
+
+				var data = new FormData(form);
+
+				// Brevo's page reads the token under one name or the other.
+				data.set('cf-turnstile-response', form._token);
+				data.set('g-recaptcha-response', form._token);
+				form._token = null;
+
+				fetch(form.action + '?isAjax=1', { method: 'POST', body: data })
+					.then(function(response) { return response.json(); })
+					.then(function(answer) {
+						if (!answer.success)
+							throw answer;
+						form.reset();
+						newsletterMessage(form, 'success');
+					})
+					.catch(function(error) {
+						console.error('Newsletter', error);
+						newsletterMessage(form, 'error');
+					})
+					.then(function() {
+						newsletterBusy(form, false);
+						// A token is valid once: get a new one for another sign-up.
+						window.turnstile.reset(form._widget);
+					});
+
+			}
+
+			function initNewsletter(root) {
+				root.querySelectorAll('form.newsletter').forEach(function(form) {
+
+					form.addEventListener('submit', function(event) {
+
+						var email = form.querySelector('input[type="email"]');
+
+						event.preventDefault();
+
+						if (form._busy)
+							return;
+
+						if (!email.value || !email.checkValidity()) {
+							newsletterMessage(form, 'invalid');
+							email.focus();
+							return;
+						}
+
+						newsletterBusy(form, true);
+						newsletterMessage(form, null);
+
+						renderCaptcha(form).then(function() {
+							if (form._token)
+								sendNewsletter(form);
+							else {
+								// Not ready yet (or waiting for a click): sent by the callback.
+								form._pending = true;
+								newsletterMessage(form, 'checking');
+								// After a captcha error: try again.
+								if (form._captchaFailed) {
+									form._captchaFailed = false;
+									window.turnstile.reset(form._widget);
+								}
+							}
+						}).catch(function(error) {
+							console.error('Newsletter', error);
+							newsletterMessage(form, 'error');
+							newsletterBusy(form, false);
+						});
+
+					});
+
+					form.addEventListener('focusin', function() {
+						renderCaptcha(form).catch(function() {});
+					});
+
+					if (newsletterObserver)
+						newsletterObserver.observe(form);
+
+				});
+			}
+
+			initNewsletter(document);
+
 		// Maps links: Google Maps by default, Apple Maps on Apple devices (iPhone,
 		// iPad, Mac) for the links that have one (data-apple-href). iPadOS
 		// presents itself as a Mac: both match.
@@ -683,6 +861,7 @@
 							$article.children('.close').remove();
 							setupArticle($article);
 							initMaps($article[0]);
+							initNewsletter($article[0]);
 							appleMapsLinks($article[0]);
 							$main._show(article.id);
 
