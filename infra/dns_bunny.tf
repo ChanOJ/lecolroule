@@ -102,14 +102,15 @@ locals {
   redirects_cdn_hostname = "${bunnynet_pullzone.redirects.name}.${bunnynet_pullzone.redirects.cdn_domain}"
 }
 
-# Apex of every domain: flattened CNAME (A/AAAA answered by Bunny DNS) to the
-# redirect pull zone.
+# Apex of every domain: CNAME to the redirect pull zone, which Bunny DNS
+# flattens at the apex (answers its A/AAAA records). The API refuses the
+# provider's "Flatten" type ("Unknown record type").
 resource "bunnynet_dns_record" "apex" {
   for_each = local.dns_domains
 
   zone  = bunnynet_dns_zone.this[each.key].id
   name  = ""
-  type  = "Flatten"
+  type  = "CNAME"
   value = local.redirects_cdn_hostname
   ttl   = local.dns_ttl
 }
