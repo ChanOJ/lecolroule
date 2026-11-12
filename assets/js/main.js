@@ -404,6 +404,22 @@
 
 			initMaps(document);
 
+		// Maps links: Google Maps by default, Apple Maps on Apple devices (iPhone,
+		// iPad, Mac) for the links that have one (data-apple-href). iPadOS
+		// presents itself as a Mac: both match.
+			var appleDevice = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+
+			function appleMapsLinks(root) {
+				if (appleDevice)
+					root.querySelectorAll('a[data-apple-href]').forEach(function(a) {
+						a.href = a.getAttribute('data-apple-href');
+						if (a.hasAttribute('data-apple-title'))
+							a.title = a.getAttribute('data-apple-title');
+					});
+			}
+
+			appleMapsLinks(document);
+
 		// In-site navigation.
 		//   Pages of the current language are fetched and their article swapped in
 		//   with the theme's animation; title, meta tags, alternate languages and
@@ -517,6 +533,7 @@
 							$article.children('.close').remove();
 							setupArticle($article);
 							initMaps($article[0]);
+							appleMapsLinks($article[0]);
 							$main._show(article.id);
 
 					}).catch(function() {

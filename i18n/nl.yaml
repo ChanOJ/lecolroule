@@ -5,3 +5,4 @@ logoAlt: Logo Le Col Roulé
 mapAria: "Kaart: route van {{ .from }} naar {{ .to }}"
 mapOpen: "Openen in OpenStreetMap"
 mapGpx: "GPX-track downloaden"
+appleMaps: "Kaarten (Apple)"

@@ -5,3 +5,4 @@ logoAlt: Logo Le Col Roulé
 mapAria: "Carte : itinéraire de {{ .from }} à {{ .to }}"
 mapOpen: "Ouvrir dans OpenStreetMap"
 mapGpx: "Télécharger la trace GPX"
+appleMaps: "Plans (Apple)"

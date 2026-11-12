@@ -4,6 +4,8 @@
   - page reference (e.g. "/apartment", "/booking"): resolved to that page in the
     current language, so links survive slug changes and translations;
   - "airbnb:": the Airbnb page of the current language (hugo.toml, params.airbnb);
+  - Google Maps search: also gets the same search on Apple Maps (data-apple-href),
+    used instead on Apple devices (main.js "Maps links");
   - anything else (mailto:, #anchor, /images/...): kept as is.
 */ -}}
 {{- $dest := .Destination -}}
@@ -17,5 +19,9 @@
     {{- errorf "%s: link to unknown page %q" .Page.File.Path $dest -}}
   {{- end -}}
 {{- end -}}
-<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- $apple := "" -}}
+{{- if hasPrefix $dest "https://www.google.com/maps/search/" -}}
+  {{- with (urls.Parse $dest).Query.Get "query" }}{{ $apple = printf "https://maps.apple.com/?q=%s" (urlquery .) }}{{ end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with $apple }} data-apple-href="{{ . | safeURL }}"{{ end }}{{ with .Title }} title="{{ . }}"{{ end }}{{ if $external }} target="_blank" rel="noopener"{{ end }}>{{ .Text | safeHTML }}</a>
 {{- /* */ -}}
