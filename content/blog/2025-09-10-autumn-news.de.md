@@ -12,7 +12,7 @@ Endlich sind die Fotos der kompletten Renovation der Hauptebene und ihrer Fenste
 
 Weitere Neuigkeiten in der Wohnung, eine unvollständige Liste:
 
-- 🛜 Der Internetanschluss läuft jetzt über Glasfaser: WLAN 6 und 1 Gbit/s / 500 Mbit/s, für Kenner.
+- 🛜 Der Internetanschluss läuft jetzt über Glasfaser: WLAN 6 und 1 Gbit/s / 500 Mbit/s, für Technikfans.
 - 🍳 Ein neues Set Keramikpfannen hat endlich die abgenutzten Tefal-Pfannen ersetzt.
 - 🏔️ Das Holz der Terrasse (Dielen und Geländer) wurde mit Leinöl behandelt.
 - 🛏️ 4 Memory-Foam-Kissen, die manchen etwas zu hart waren, wurden durch neue, weiche Kissen ersetzt, die allen gefallen.

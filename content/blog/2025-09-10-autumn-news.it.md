@@ -8,7 +8,7 @@ Finalmente abbiamo pubblicato le foto della ristrutturazione completa del livell
 
 Ecco un elenco non esaustivo delle ultime novità dell'appartamento:
 
-- 🛜 La connessione internet è passata alla fibra: Wifi 6 e velocità di 1 Gbps/500 Mbps, per gli intenditori.
+- 🛜 La connessione internet è passata alla fibra: Wifi 6 e velocità di 1 Gbps/500 Mbps, per chi se ne intende.
 - 🍳 Un nuovo set di padelle in ceramica ha finalmente sostituito le vecchie Tefal ormai fuori uso.
 - 🏔️ Il legno della terrazza (doghe e parapetto) è stato trattato con olio di lino.
-- 🛏️ 4 cuscini in memory foam, giudicati un po' troppo duri da alcuni, sono stati sostituiti da nuovi cuscini morbidi che mettono tutti d'accordo.
+- 🛏️ 4 cuscini in memory foam, giudicati un po' troppo duri da una parte di voi, sono stati sostituiti da nuovi cuscini morbidi che mettono d'accordo chiunque.

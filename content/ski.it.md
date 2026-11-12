@@ -16,21 +16,21 @@ Immaginate un'emozionante mattina d'inverno! Adrien, 9 anni, deve essere alla le
 
 {{< map route="walk-road" >}}
 
-[Valloire](https://www.valloire.net/it/) ha la particolarità di unire i vantaggi di una stazione familiare, a misura d'uomo e dinamica, a quelli di un grande comprensorio con 160 km di piste su 5 versanti e impianti di risalita all'avanguardia. E per gli eterni insoddisfatti, [Les 3 Vallées](https://www.les3vallees.com/en) sono a soli 35 minuti in auto!
+[Valloire](https://www.valloire.net/it/) ha la particolarità di unire i vantaggi di una stazione familiare, a misura di persona e dinamica, a quelli di un grande comprensorio con 160 km di piste su 5 versanti e impianti di risalita all'avanguardia. E per chi non si accontenta mai, [Les 3 Vallées](https://www.les3vallees.com/en) sono a soli 35 minuti in auto!
 
 ### Sci & Snowboard
 
 La varietà di [attività invernali](https://www.valloire.net/it/profiter-de-valloire/le-ski/) è enorme:
 
-- Per gli snowboarder, uno snowpark a 2300 m di altitudine.
+- Per lo snowboard, uno snowpark a 2300 m di altitudine.
 - 10 km di piste di [sci di fondo](https://www.valloire.net/it/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/) battute.
-- Due [scuole di sci (ESF ed ESI)](https://www.valloire.net/it/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) con 140 maestri e 3 giardini della neve, oltre a maestri indipendenti.
+- Due [scuole di sci (ESF ed ESI)](https://www.valloire.net/it/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) con 140 tra maestre e maestri e 3 giardini della neve, oltre a lezioni private.
 
 E se tutto questo non vi bastasse, la partenza della cabinovia per [Les 3 Vallées](https://www.les3vallees.com/en) (Courchevel, Méribel, Les Menuires, Val Thorens, Orelle), il più grande comprensorio sciistico del mondo con i suoi 600 km di piste, aperto da novembre a maggio, è a soli 35 minuti in auto!
 
-![Bambino che scia 1](/images/Enfant1-600px.jpg "-")
+![Bambini sugli sci 1](/images/Enfant1-600px.jpg "-")
 
-![Bambino che scia 2](/images/Enfant2-600px.jpg "-")
+![Bambini sugli sci 2](/images/Enfant2-600px.jpg "-")
 
 ### Altre attività
 
@@ -40,8 +40,8 @@ E se tutto questo non vi bastasse, la partenza della cabinovia per [Les 3 Vallé
 - {{< icon name="hiking" title="escursionista" >}} [Ciaspolate](https://www.valloire.net/it/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
 - {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/it/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="sci di fondo" >}} [Sci di fondo](https://www.valloire.net/it/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
-- {{< icon name="skating" title="pattinatore" >}} [Pista di pattinaggio](https://www.valloire.net/it/famille-plus/patinoire-philippe-candeloro-93457/)
-- {{< icon name="running" title="corridore" >}} [Trail running](https://www.valloire.net/it/trail/le-trail-avec-rando-montagne-4620573/)
+- {{< icon name="skating" title="pattinaggio" >}} [Pista di pattinaggio](https://www.valloire.net/it/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="running" title="corsa" >}} [Trail running](https://www.valloire.net/it/trail/le-trail-avec-rando-montagne-4620573/)
 - {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="manubri" >}} [Spa & Gym - Val'Form](https://www.valloire.net/it/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, biliardo & sala giochi](https://www.valloire.net/it/sit/bowling-le-mafayo-371455/)

@@ -13,7 +13,7 @@ menu:
 {{< icon name="male" title="homme" >}}
 {{< icon name="child" class="small" title="adolescent" >}}
 {{< icon name="child" class="smaller" title="enfant" >}}
-Nous sommes Hélène et Charles, couple avec deux enfants ayant des racines russes et savoyardes. Nous sommes heureux de vous accueillir l'espace d'un séjour dans notre cocon d'altitude !
+Nous sommes Hélène et Charles, couple avec deux enfants ayant des racines russes et savoyardes. C'est avec joie que nous vous accueillons l'espace d'un séjour dans notre cocon d'altitude !
 
 Nous sommes présents sur [Airbnb](airbnb:). Rien de plus facile pour vérifier nos disponibilités et réserver votre séjour !
 

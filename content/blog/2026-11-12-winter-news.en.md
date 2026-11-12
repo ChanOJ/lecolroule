@@ -1,5 +1,5 @@
 ---
-title: "What's new for Winter!"
+title: "Comfort for this Winter!"
 date: 2026-11-12
 image: { src: /images/floorplan-night.png, alt: Night level, caption: The queen-size beds }
 ---

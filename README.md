@@ -43,6 +43,13 @@ shortened to fit on phones, a link to a site's own language version, ...). Such 
 listed in the front matter of the translated page, under `translationNotes`, and must be kept
 when the page is translated again from French. Add a note whenever you fine-tune a translation.
 
+**Inclusive language.** Every language addresses visitors and describes people without generic
+masculines (moniteurs, Skilehrer, ciclisti...): neutral wording first (« vous y êtes », « pour qui
+en veut toujours plus », Skilehrpersonen, Einheimische, « chi ama la disciplina »), both forms when
+needed (moniteurs et monitrices, maestre e maestri), no point médian or brackets (« inscrit·e »,
+« certain(e)s »): harder to read and badly read by screen readers. Icon titles name the activity,
+not the person (randonnée, Wandern, corsa). Keep it when writing or translating a page.
+
 Adding a language = adding it in `hugo.toml` (with a flag in `assets/images/`) and `i18n/`,
 translating the files, and adding its pages to `PAGES` in `scripts/smoke_test.py`.
 

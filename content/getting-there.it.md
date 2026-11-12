@@ -10,7 +10,7 @@ translationNotes:
   - "BlaBlaCar links to the home page of blablacar.it: it has no Valloire page (only blablacar.fr and .co.uk do)."
 ---
 
-{{< icon name="car" title="auto" >}} {{< icon name="motorcycle" title="moto" >}} Il comune di Valloire ama ripeterlo: per arrivare in auto o in moto da qualsiasi grande città francese c'è un solo semaforo rosso! L'autostrada arriva infatti fino a Saint-Michel-de-Maurienne, poi dopo 25 minuti di salita siete arrivati.
+{{< icon name="car" title="auto" >}} {{< icon name="motorcycle" title="moto" >}} Il comune di Valloire ama ripeterlo: per arrivare in auto o in moto da qualsiasi grande città francese c'è un solo semaforo rosso! L'autostrada arriva infatti fino a Saint-Michel-de-Maurienne, poi dopo 25 minuti di salita ci siete.
 
 {{< icon name="train" title="treno" >}} {{< icon name="bus" title="autobus" >}} In treno e autobus basta arrivare a Saint-Michel-de-Maurienne (chiamata anche Saint-Michel Valloire) in TGV, poi prendere un autobus fino a Valloire (da prenotare in anticipo!):
 
