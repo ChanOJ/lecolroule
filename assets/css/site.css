@@ -238,6 +238,11 @@ form.newsletter {
 		}
 	}
 
+	/* Once subscribed (main.js), only the confirmation message is shown. */
+	form.newsletter.is-done > :not(.newsletter-message) {
+		display: none;
+	}
+
 	/* Brevo's honeypot field: out of sight, out of the tab order. */
 	form.newsletter .newsletter-trap {
 		position: absolute;
