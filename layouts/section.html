@@ -6,7 +6,7 @@
 							<hr/>
 							{{ .Content }}
 							{{- range .Pages.ByDate.Reverse }}
-							<section class="post">
+							<section class="post" id="{{ .File.ContentBaseName }}">
 								<h3>[{{ .Date.Format "2006-01-02" }}] {{ .Title }}</h3>
 								{{ .Content }}
 								{{- with .Params.image }}

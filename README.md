@@ -17,6 +17,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `dist/`: build output (`hugo`), not committed.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
+- `scripts/newsletter.py`: sends a blog post as the newsletter (see "Newsletter").
 - `scripts/dns_compare.py`: compares the DNS answers of Bunny and Infomaniak (see "DNS").
 - `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
 
@@ -154,6 +155,30 @@ Files are deployed as is, at the same path, to the storage zone.
   storage zone matches the target environment before deploying.
 - Locally: export the same variables, then `python3 scripts/deploy.py --dry-run`.
 - Plain Python 3, no dependencies.
+
+## Newsletter
+
+A blog post is sent as the newsletter by two Brevo campaigns, one per list: FR (`fr` posts) and
+EN (`en` posts; Dutch, German and Italian subscribers are on the English list).
+
+- Every post also has an e-mail version, built by Hugo but never deployed
+  (`dist/<lang>/blog/<post>/email.html`, `layouts/blog/page.email.html`, the `email` output format of
+  `hugo.toml`): title, text, image, a "Read on the site" button to the post on the blog page
+  (`/<lang>/blog/#<post>`), logo, and the footer with the unsubscribe link (required by Brevo).
+  Front matter `subject` and `preview` override the subject (default: title) and the preview text
+  (default: start of the text). Images and links point to the prod site.
+- Settings: `params.newsletter` in `hugo.toml` (sender, test address, list ids, postal address).
+- `scripts/newsletter.py <post> [--send]` (e.g. `2026-12-01-winter`, the file name without
+  language): creates or updates the draft campaigns "Blog <post> fr" and "Blog <post> en", then
+  sends them as test e-mails, or with `--send` to the lists. `--send` is refused when the post is
+  not on the prod blog page yet, or when one of its campaigns was already sent.
+- Workflow "Newsletter: send" (`.github/workflows/newsletter.yml`, manual): post name and mode
+  (`test` / `send`; `send` only from `main`). Repository secret `BREVO_API_KEY` (campaigns
+  read/write; the key is in Proton Pass, `brevo-api-key`, and expires after one year).
+
+Flow: write the post in French, preview it locally (the e-mail at
+`http://localhost:1313/fr/blog/<post>/email.html`), translate it, merge, deploy to test then prod,
+run the workflow in `test` mode, check the e-mails, then run it in `send` mode.
 
 ## SEO
 

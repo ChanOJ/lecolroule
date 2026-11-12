@@ -40,7 +40,9 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 # Files of the build directory never uploaded.
-SKIP = ["*.DS_Store"]
+# The e-mail versions of the blog posts (newsletter) are only read by
+# scripts/newsletter.py: not published.
+SKIP = ["*.DS_Store", "*/email.html"]
 
 # Remote paths never deleted, even if they are not in the repository
 # (fnmatch patterns, e.g. "folder/*").
@@ -90,6 +92,7 @@ def local_files(source: Path) -> dict[str, Path]:
         p.relative_to(source).as_posix(): p
         for p in sorted(source.rglob("*"))
         if p.is_file() and not matches(p.name, SKIP)
+        and not matches(p.relative_to(source).as_posix(), SKIP)
     }
 
 

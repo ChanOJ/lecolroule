@@ -106,6 +106,19 @@ enableGitInfo = true
     icon = "map-marked-alt"
     style = "solid"
 
+  # Newsletter (scripts/newsletter.py, README "Newsletter"): Brevo campaigns
+  # made from a blog post, one per Brevo list: French subscribers, and
+  # English for every other language (the sign-up forms of NL/DE/IT are the
+  # English one).
+  [params.newsletter]
+    senderName = "Le Col Roulé"
+    senderEmail = "contact@lecolroule.fr"
+    testEmail = "contact@lecolroule.fr"
+    address = "1165 route de l'Archaz, 73450 Valloire"
+    [params.newsletter.lists]
+      fr = 5
+      en = 6
+
 [languages]
   [languages.fr]
     weight = 1
@@ -164,7 +177,23 @@ enableGitInfo = true
       ogLocale = "it_IT"
       brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
+# E-mail version of the blog posts (newsletter: scripts/newsletter.py).
+[mediaTypes."text/x-email-html"]
+  suffixes = ["html"]
+
+[outputFormats.email]
+  mediaType = "text/x-email-html"
+  baseName = "email"
+  isHTML = true
+  notAlternative = true
+
 [minify]
   # Minified HTML, XML and JSON output (stylesheets and scripts are minified
   # by layouts/_partials/asset-url.html and styles.html).
   minifyOutput = true
+  # Quoted attributes and closing tags kept: e-mail clients (newsletter,
+  # layouts/blog/page.email.html) need them; a few % on the pages.
+  [minify.tdewolff.html]
+    keepQuotes = true
+    keepEndTags = true
+    keepDocumentTags = true

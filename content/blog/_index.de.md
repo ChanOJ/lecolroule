@@ -7,11 +7,15 @@ ogImage: /images/niveau_principal.jpg
 menu:
   main:
     weight: 4
-# Posts are shown on this page only (no page of their own for now).
+# Posts are shown on this page only: no HTML page of their own, but an
+# e-mail version (newsletter, layouts/blog/page.email.html), not in the sitemap.
 cascade:
   - build:
-      render: never
+      render: always
       list: always
+    outputs: [email]
+    sitemap:
+      disable: true
     target:
       kind: page
 # Deliberate choices of this translation: keep them when updating it from

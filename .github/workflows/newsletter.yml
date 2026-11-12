@@ -1,0 +1,60 @@
+name: "Newsletter: send"
+
+# Sends a blog post as the newsletter: one Brevo campaign per list (FR, EN),
+# built from the post's e-mail version (scripts/newsletter.py).
+# - mode "test": creates or updates the draft campaigns and sends them as test
+#   e-mails to params.newsletter.testEmail (hugo.toml);
+# - mode "send": sends them to the lists. Only from main, only once the post is
+#   on the prod site, never twice.
+#
+# Repository secret: BREVO_API_KEY (campaigns read/write).
+
+on:
+  workflow_dispatch:
+    inputs:
+      post:
+        description: "Post file name, without language and extension (e.g. 2026-12-01-winter)"
+        type: string
+        required: true
+      mode:
+        description: "test: test e-mails only; send: send to the lists"
+        type: choice
+        options: [test, send]
+        default: test
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: "0.169.0"
+
+concurrency:
+  group: newsletter
+  cancel-in-progress: false
+
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refuse sending from another branch than main
+        if: inputs.mode == 'send' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Sending is only allowed from main."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb
+
+      - name: Build
+        run: hugo --quiet
+
+      - name: Newsletter (${{ inputs.mode }})
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          POST: ${{ inputs.post }}
+          MODE: ${{ inputs.mode }}
+        run: python3 scripts/newsletter.py "$POST" $([ "$MODE" = send ] && echo --send)
