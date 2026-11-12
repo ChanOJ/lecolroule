@@ -5,6 +5,8 @@
   (main.js), which browses every high-definition photo of the site: the
   gallery's ones first, then the others, as hidden links, with the captions
   their pages give them in this language.
+  The photos are the very files of the pages (800 px), not resized versions:
+  a visitor who opens a page then has them in the browser cache already.
 */ -}}
 {{- /* Every zoomable image of the site in this language: HD URL -> caption, in page order. */ -}}
 {{- $captions := dict -}}
@@ -26,7 +28,7 @@
 	{{- range $i, $src := site.Params.homeGallery -}}
 	{{- $hd := partial "hd-url.html" $src -}}
 	{{- $shown = $shown | append $hd }}
-	{{ partial "img.html" (dict "src" $src "alt" (index $captions $hd | default site.Title) "eager" (and $home (eq $i 0)) "zoom" true "caption" (index $captions $hd) "resize" (cond (eq $i 0) "1200x webp q80" "600x webp q80")) }}
+	{{ partial "img.html" (dict "src" $src "alt" (index $captions $hd | default site.Title) "eager" (and $home (eq $i 0)) "zoom" true "caption" (index $captions $hd)) }}
 	{{- end }}
 	{{- range $order }}{{ if not (in $shown .) }}
 	<a class="zoom" href="{{ . }}" data-caption="{{ index $captions . }}" hidden></a>
