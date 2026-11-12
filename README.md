@@ -52,7 +52,7 @@ On top of it:
 | External link (opens in a new tab) | `[Valloire](https://www.valloire.net/)` |
 | Airbnb page of the current language (`airbnb` in `hugo.toml`) | `[Airbnb](airbnb:)`, `{{< button href="airbnb:" >}}Book{{< /button >}}` |
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
-| Clickable image, shown full screen in high definition | add `assets/images/x_hd.jpg` next to `x.jpg` (same name + `_hd`); without it the image is not clickable |
+| Clickable image, shown full screen in high definition | add `assets/images/x_hd.jpg` next to `x.jpg` (same name + `_hd`): the page then shows a 1200 px copy of it (sharp on phones and retina screens), the viewer the HD file (at most 2560 px); without it the image is not clickable |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
 | Route map (OpenStreetMap) | `{{< map route="getting-there" height="350" >}}` (route = `assets/maps/<route>.json`, see below) |
@@ -64,6 +64,11 @@ images of the page that have one. Decided at build time (`img.html`): images wit
 plain images. The default share image (`ogImage` in `hugo.toml`) is also published at the
 fixed URL `/cover.jpg` (no fingerprint, 5-minute browser cache), for listings asking for an
 image URL (OpenStreetMap...).
+
+**Home page photos**: `homeGallery` in `hugo.toml` (the first one big, the next 4 in a 2x2
+grid, all 3:2; on phones the first one only), in the header (`layouts/_partials/home-gallery.html`).
+A click opens the viewer on every high-definition photo of the site, with the captions their pages
+give them.
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers

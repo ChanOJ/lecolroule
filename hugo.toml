@@ -35,6 +35,9 @@ enableGitInfo = true
   # Content-Security-Policy still allows it (infra module option "analytics").
   # googleAnalyticsID = "G-2MX2EV8ZZE"
   twitter = "@LeColRoule"
+  # Photos of the home page (layouts/_partials/home-gallery.html): the first
+  # one big (the only one on phones), the next 4 in a 2x2 grid.
+  homeGallery = ["/images/vue_ete3.jpg", "/images/niveau_principal.jpg", "/images/salon.jpg", "/images/chambre1b.jpg", "/images/cabine.jpg"]
   # Default share image, also published as /cover.jpg (layouts/home.html).
   ogImage = "/images/vue_ete3.jpg"
   copyrightYears = "2021-2026"
