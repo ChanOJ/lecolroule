@@ -52,7 +52,7 @@ On top of it:
 | External link (opens in a new tab) | `[Valloire](https://www.valloire.net/)` |
 | Airbnb page of the current language (`airbnb` in `hugo.toml`) | `[Airbnb](airbnb:)`, `{{< button href="airbnb:" >}}Book{{< /button >}}` |
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
-| Clickable image, shown full screen in high definition | add `assets/images/x_hd.jpg` next to `x.jpg` (same name + `_hd`); without it the image is not clickable |
+| Clickable image, shown full screen in high definition | add `assets/images/x_hd.jpg` next to `x.jpg` (same name + `_hd`): the page then shows a 1200 px copy of it (sharp on phones and retina screens), the viewer the HD file (at most 2560 px); without it the image is not clickable |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
 | Route map (OpenStreetMap) | `{{< map route="getting-there" height="350" >}}` (route = `assets/maps/<route>.json`, see below) |
