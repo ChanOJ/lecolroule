@@ -35,7 +35,7 @@ In het dorp zal een pumptrack van 240 m, verdeeld over 3 niveaus, de liefhebbers
 ![Col du Galibier](/images/col-du-galibier.jpg "De Col du Galibier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/le-velo/" icon="info-circle" >}}Meer info{{< /button >}}
+{{< button href="https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/le-velo/" icon="biking" >}}Meer info{{< /button >}}
 {{< /buttons >}}
 
 ### Wandelen
@@ -45,7 +45,7 @@ Valloire wordt door zijn inwoners de Gouden Vallei genoemd, dankzij de uitzonder
 ![Hooggebergte](/images/valloire-haute-montagne.jpg "Wandelen boven Valloire")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="info-circle" >}}Meer info{{< /button >}}
+{{< button href="https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="hiking" >}}Meer info{{< /button >}}
 {{< /buttons >}}
 
 ### Klimmen
@@ -55,7 +55,7 @@ Grotendeels midden in het dorp beantwoorden 3 via ferrata's en honderden klimrou
 ![Via ferrata](/images/via-ferrata.jpg "Via ferrata aan de Poingt Ravier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/nl/sit/sites-descalade-et-de-via-ferrata-512633/" icon="info-circle" >}}Meer info{{< /button >}}
+{{< button href="https://www.valloire.net/nl/sit/sites-descalade-et-de-via-ferrata-512633/" icon="mountain" >}}Meer info{{< /button >}}
 {{< /buttons >}}
 
 ### Andere activiteiten
@@ -65,15 +65,15 @@ Grotendeels midden in het dorp beantwoorden 3 via ferrata's en honderden klimrou
 - {{< icon name="skating" title="schaatser" >}} [Schaatsbaan](https://www.valloire.net/nl/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="swimming-pool" title="zwembad" >}} [Verwarmd openluchtzwembad met glijbaan](https://www.valloire.net/nl/activites-aquatiques/piscine-de-valloire-371454/)
 - {{< icon name="horse" title="paard" >}} [Manege](https://www.valloire.net/nl/sit/centre-equestre-de-valloire-prejvall-371453/)
-- {{< icon name="table-tennis" title="ja, ik weet het, dit is een pingpongbatje..." >}} [Tennis](https://www.valloire.net/nl/sit/court-de-tennis-a-louer-371460/)
+- {{< icon name="baseball-ball" title="tennis" >}} [Tennis](https://www.valloire.net/nl/sit/court-de-tennis-a-louer-371460/)
 - {{< icon name="tree" title="boom" >}} [Boomklimpark](https://www.valloire.net/nl/sit/la-foret-de-lenfer-parc-accrobranche-68131/)
 - {{< icon name="mountain" title="berg" >}} [3 ziplines, waaronder een reuzenzipline](https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/sur-les-hauteurs/)
-- {{< icon name="mountain" title="berg" >}} [Bob-Kart](https://www.valloire.net/nl/sit/activite-bob-kart-371390/) en [Mountain Cart](https://www.valloire.net/nl/sit/descente-en-mountain-kart-lete-6971906/)
-- {{< icon name="mountain" title="berg" >}} [Mountainboard](https://www.valloire.net/nl/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
+- {{< icon name="car-side" title="kart" >}} [Bob-Kart](https://www.valloire.net/nl/sit/activite-bob-kart-371390/) en [Mountain Cart](https://www.valloire.net/nl/sit/descente-en-mountain-kart-lete-6971906/)
+- {{< icon name="snowboarding" title="board" >}} [Mountainboard](https://www.valloire.net/nl/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
 - {{< icon name="water" title="water" >}} [Canyoning](https://www.valloire.net/nl/activites-aquatiques/sorties-canyoning-avec-benexpe-5504504/)
 - {{< icon name="bullseye" title="doelwit" >}} [Boogschieten](https://www.valloire.net/nl/sit/tir-a-larc-590455/)
 - {{< icon name="fort-awesome" style="brands" title="fort" >}} [Bezoek aan het Fort du Télégraphe](https://www.valloire.net/nl/sit/le-fort-du-telegraphe-436553/)
-- {{< icon name="bicycle" title="fiets" >}} [Elektrische mountainbikes](https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
+- {{< icon name="biking" title="fiets" >}} [Elektrische mountainbikes](https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
 - {{< icon name="parachute-box" title="parachute" >}} [Paragliden, speedriding & ULM](https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/dans-les-airs/)
 - {{< icon name="plane" title="vliegtuig" >}} [Vliegclub](https://www.aeroclub-de-valloire.com/)
 - {{< icon name="golf-ball" title="golf" >}} [Golf](https://www.valloire.net/nl/sit/golf-des-verneys-371458/)
@@ -92,14 +92,14 @@ Grotendeels midden in het dorp beantwoorden 3 via ferrata's en honderden klimrou
 - {{< icon name="landmark" title="museum" >}} [Opinel-museum](https://www.opinel.com/nl-int/het-museum) (45 min)
 - {{< icon name="sleigh" title="slee" >}} [Norma Loops (rodelbaan, 4 seizoenen)](https://normaloops.fr/) (55 min)
 - {{< icon name="tree" title="boom" >}} [Parcobranche du Diable (boomklimpark, reuzenziplines)](https://www.parcdudiable.fr/) (55 min)
-- {{< icon name="swimming-pool" title="zwemmen" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) en [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1u)
+- {{< icon name="swimmer" title="zwemmen" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) en [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1u)
 - {{< icon name="angle-double-right" title="en meer" >}} en tientallen andere activiteiten!
 
 #### op minder dan twee uur
 
 - {{< icon name="water" title="water" >}} [Wam Park Savoie - Montailleur (waterskilift, wakeboard, boomklimpark, waterspelen, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1u15)
 - {{< icon name="water" title="water" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1u25)
-- {{< icon name="bicycle" title="fiets" >}} [Elektrische mountainbikes](https://serre-chevalier.bike/) (1u40)
+- {{< icon name="biking" title="fiets" >}} [Elektrische mountainbikes](https://serre-chevalier.bike/) (1u40)
 - {{< icon name="mountain" title="berg" >}} [Reuzenzipline - Serre Chevalier](https://www.serre-chevalier.com/en/altitude-area/giant-zipline-summer) (2u)
 - {{< icon name="angle-double-right" title="en meer" >}} en tientallen andere activiteiten!
 

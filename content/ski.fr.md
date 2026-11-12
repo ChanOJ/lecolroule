@@ -36,9 +36,9 @@ Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallée
 
 #### sur place
 
-- {{< icon name="route" title="zig zag" >}} [Snake Gliss](https://www.valloire.net/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="sleigh" title="luge" >}} [Snake Gliss](https://www.valloire.net/sit/descente-en-snake-gliss-grande-aventure-388984/)
 - {{< icon name="hiking" title="marcheur" >}} [Balades en raquettes](https://www.valloire.net/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
-- {{< icon name="mountain" title="montagne" >}} [Mountain Kart](https://www.valloire.net/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="ski de fond" >}} [Ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/trail/le-trail-avec-rando-montagne-4620573/)

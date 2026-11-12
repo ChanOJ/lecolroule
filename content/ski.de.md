@@ -41,9 +41,9 @@ Und wenn Ihnen das alles nicht genügt: Die Talstation der Gondelbahn in [Les 3 
 
 #### vor Ort
 
-- {{< icon name="route" title="Zickzack" >}} [Snake Gliss](https://www.valloire.net/en/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="sleigh" title="Schlitten" >}} [Snake Gliss](https://www.valloire.net/en/sit/descente-en-snake-gliss-grande-aventure-388984/)
 - {{< icon name="hiking" title="Wanderer" >}} [Schneeschuhwanderungen](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
-- {{< icon name="mountain" title="Berg" >}} [Mountain Kart](https://www.valloire.net/en/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="car-side" title="Kart" >}} [Mountain Kart](https://www.valloire.net/en/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="Langlauf" >}} [Langlauf](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="Eisläufer" >}} [Eisbahn](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="Läufer" >}} [Trailrunning](https://www.valloire.net/en/trail/le-trail-avec-rando-montagne-4620573/)

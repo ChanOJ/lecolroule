@@ -31,7 +31,7 @@ Dans le village, une Pump Track de 240m répartis en 3 niveaux ravira aussi les 
 ![Col du Galibier](/images/col-du-galibier.jpg "Le Col du Galibier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/profiter-de-valloire/activites-outdoor/le-velo/" icon="info-circle" >}}Plus d'infos{{< /button >}}
+{{< button href="https://www.valloire.net/profiter-de-valloire/activites-outdoor/le-velo/" icon="biking" >}}Plus d'infos{{< /button >}}
 {{< /buttons >}}
 
 ### Randonnées
@@ -41,7 +41,7 @@ Valloire est surnommée La Vallée d'Or par ses habitants du fait de son ensolei
 ![Haute Montagne](/images/valloire-haute-montagne.jpg "Randonnée au dessus de Valloire")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="info-circle" >}}Plus d'infos{{< /button >}}
+{{< button href="https://www.valloire.net/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="hiking" >}}Plus d'infos{{< /button >}}
 {{< /buttons >}}
 
 ### Escalade
@@ -51,7 +51,7 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 ![Via Ferrata](/images/via-ferrata.jpg "Via Ferrata au Poingt Ravier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/sit/sites-descalade-et-de-via-ferrata-512633/" icon="info-circle" >}}Plus d'infos{{< /button >}}
+{{< button href="https://www.valloire.net/sit/sites-descalade-et-de-via-ferrata-512633/" icon="mountain" >}}Plus d'infos{{< /button >}}
 {{< /buttons >}}
 
 ### Autres activités
@@ -61,15 +61,15 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 - {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="swimming-pool" title="piscine" >}} [Piscine exterieure chauffée avec toboggan](https://www.valloire.net/activites-aquatiques/piscine-de-valloire-371454/)
 - {{< icon name="horse" title="cheval" >}} [Centre équestre](https://www.valloire.net/sit/centre-equestre-de-valloire-prejvall-371453/)
-- {{< icon name="table-tennis" title="oui je sais c'est une raquette de ping-pong..." >}} [Tennis](https://www.valloire.net/sit/court-de-tennis-a-louer-371460/)
+- {{< icon name="baseball-ball" title="tennis" >}} [Tennis](https://www.valloire.net/sit/court-de-tennis-a-louer-371460/)
 - {{< icon name="tree" title="arbre" >}} [Accrobranche](https://www.valloire.net/sit/la-foret-de-lenfer-parc-accrobranche-68131/)
 - {{< icon name="mountain" title="montagne" >}} [3 tyroliennes, dont une géante](https://www.valloire.net/profiter-de-valloire/activites-outdoor/sur-les-hauteurs/)
-- {{< icon name="mountain" title="montagne" >}} [Bob-Kart](https://www.valloire.net/sit/activite-bob-kart-371390/) et [Mountain Cart](https://www.valloire.net/sit/descente-en-mountain-kart-lete-6971906/)
-- {{< icon name="mountain" title="montagne" >}} [Mountainboard](https://www.valloire.net/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
+- {{< icon name="car-side" title="kart" >}} [Bob-Kart](https://www.valloire.net/sit/activite-bob-kart-371390/) et [Mountain Cart](https://www.valloire.net/sit/descente-en-mountain-kart-lete-6971906/)
+- {{< icon name="snowboarding" title="planche" >}} [Mountainboard](https://www.valloire.net/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
 - {{< icon name="water" title="eau" >}} [Canyoning](https://www.valloire.net/activites-aquatiques/sorties-canyoning-avec-benexpe-5504504/)
 - {{< icon name="bullseye" title="cible" >}} [Tir à l'arc](https://www.valloire.net/sit/tir-a-larc-590455/)
 - {{< icon name="fort-awesome" style="brands" title="fort" >}} [Visite du Fort du Télégraphe](https://www.valloire.net/sit/le-fort-du-telegraphe-436553/)
-- {{< icon name="bicycle" title="vélo" >}} [VTT / MTB électriques](https://www.valloire.net/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
+- {{< icon name="biking" title="vélo" >}} [VTT / MTB électriques](https://www.valloire.net/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
 - {{< icon name="parachute-box" title="parachute" >}} [Parapente, Speed-riding & ULM](https://www.valloire.net/profiter-de-valloire/activites-outdoor/dans-les-airs/)
 - {{< icon name="plane" title="avion" >}} [Aéroclub](https://www.aeroclub-de-valloire.com/)
 - {{< icon name="golf-ball" title="golf" >}} [Golf](https://www.valloire.net/sit/golf-des-verneys-371458/)
@@ -88,14 +88,14 @@ Pour la plupart en plein village, 3 via ferrata et des centaines de voies d'esca
 - {{< icon name="landmark" title="musée" >}} [Musée Opinel](https://www.opinel.com/fr-fr/le-musee-opinel) (45mn)
 - {{< icon name="sleigh" title="luge" >}} [Norma Loops (Luge 4 Saisons)](https://normaloops.fr/) (55mn)
 - {{< icon name="tree" title="arbre" >}} [Parcobranche du Diable (Accrobranche, Tyroliennes géantes)](https://www.parcdudiable.fr/) (55mn)
-- {{< icon name="swimming-pool" title="baignade" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) et [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1h)
+- {{< icon name="swimmer" title="baignade" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) et [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1h)
 - {{< icon name="angle-double-right" title="et plus" >}} et des dizaines d'autres activités !
 
 #### à moins de deux heures
 
 - {{< icon name="water" title="eau" >}} [Wam Park Savoie - Montailleur (Teleski, Wakeboard, Accrobranche, Water games, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1h15)
 - {{< icon name="water" title="eau" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/) (1h25)
-- {{< icon name="bicycle" title="vélo" >}} [VTT / MTB électriques](https://serre-chevalier.bike/) (1h40)
+- {{< icon name="biking" title="vélo" >}} [VTT / MTB électriques](https://serre-chevalier.bike/) (1h40)
 - {{< icon name="mountain" title="montagne" >}} [Tyrolienne géante - Serre Chevalier](https://www.serre-chevalier.com/fr/domaine-altitude/tyrolienne-geante-ete) (2h)
 - {{< icon name="angle-double-right" title="et plus" >}} et des dizaines d'autres activités !
 

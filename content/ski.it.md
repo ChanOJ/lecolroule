@@ -36,9 +36,9 @@ E se tutto questo non vi bastasse, la partenza della cabinovia per [Les 3 Vallé
 
 #### sul posto
 
-- {{< icon name="route" title="zig zag" >}} [Snake Gliss](https://www.valloire.net/it/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="sleigh" title="slittino" >}} [Snake Gliss](https://www.valloire.net/it/sit/descente-en-snake-gliss-grande-aventure-388984/)
 - {{< icon name="hiking" title="escursionista" >}} [Ciaspolate](https://www.valloire.net/it/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
-- {{< icon name="mountain" title="montagna" >}} [Mountain Kart](https://www.valloire.net/it/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/it/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="sci di fondo" >}} [Sci di fondo](https://www.valloire.net/it/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="pattinatore" >}} [Pista di pattinaggio](https://www.valloire.net/it/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="corridore" >}} [Trail running](https://www.valloire.net/it/trail/le-trail-avec-rando-montagne-4620573/)
