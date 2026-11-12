@@ -16,7 +16,7 @@ In the summer, [our flat](/apartment) is perfectly positioned, just a 10-minute 
 
 And to top it off, our generous 215 sqft covered terrace provides ample room for storing your equipment!
 
-{{< map src="https://www.google.com/maps/embed?pb=!1m24!1m12!1m3!1d2813.224470421059!2d6.429567016766291!3d45.16230418207441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m9!3e2!4m3!3m2!1d45.1617107!2d6.4344164!4m3!3m2!1d45.1640249!2d6.4300391999999995!5e0!3m2!1sen!2sfr!4v1602361450794!5m2!1sen!2sfr" >}}
+{{< map route="summer" >}}
 
 Whether you're here to conquer mountain passes on your bike, descend thrilling mountain biking trails, enjoy a day of hiking, experience refuge or bivouac stays, scale cliffs through climbing or via ferrata, take to the skies with paragliding or ultralight flying, or simply unwind on the golf course, by the pool, or at the spa, Valloire has something tailor-made for you.
 

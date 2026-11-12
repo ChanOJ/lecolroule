@@ -53,8 +53,15 @@ On top of it:
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
-| Embedded Google map (shown on click) | `{{< map src="https://www.google.com/maps/embed?..." height="350" >}}` |
+| Route map (OpenStreetMap) | `{{< map route="getting-there" height="350" >}}` (route = `assets/maps/<route>.json`, see below) |
 | Social network icons | `{{< social >}}` |
+
+**Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
+`mode` = `car` or `foot`, `from`, `to`, `distance` in metres). The 3 routes were computed once
+with the OSRM servers of openstreetmap.de and simplified, e.g. for a walk:
+`https://routing.openstreetmap.de/routed-foot/route/v1/driving/<lon>,<lat>;<lon>,<lat>?overview=full&geometries=geojson`
+(`routed-car` for driving). `main.js` loads Leaflet (`assets/vendor/`) and draws a map when it
+comes into view; a caption gives the distance and a link to the route on openstreetmap.org.
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 
@@ -148,7 +155,8 @@ ePrivacy rules), so it has no cookie banner:
 - Google Analytics is disabled: `googleAnalyticsID` is commented out in `hugo.toml`
   (`layouts/_partials/head.html` adds it back to every page when set; it would then need a
   consent banner).
-- Embedded Google maps (`map` shortcode) only load when the visitor clicks "Show the map".
+- Maps are OpenStreetMap (`map` shortcode, Leaflet): no cookie; the tiles come from
+  tile.openstreetmap.org (light use, within its usage policy, attribution shown).
 - `lcr_lang` (language menu) only stores a choice the visitor made.
 - The newsletter form is a Brevo page in an iframe; its captcha is Cloudflare Turnstile, which
   sets no cookie (Google reCAPTCHA is gone).

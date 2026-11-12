@@ -16,7 +16,7 @@ En été [notre appartement](/apartment) est idéalement situé à 10mn à pied 
 
 Cerise sur le gâteau, notre grande terrasse abritée de 20m² vous offre toute la place nécessaire pour ranger votre matériel !
 
-{{< map src="https://www.google.com/maps/embed?pb=!1m24!1m12!1m3!1d2813.224470421059!2d6.429567016766291!3d45.16230418207441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m9!3e2!4m3!3m2!1d45.1617107!2d6.4344164!4m3!3m2!1d45.1640249!2d6.4300391999999995!5e0!3m2!1sen!2sfr!4v1602361450794!5m2!1sen!2sfr" >}}
+{{< map route="summer" >}}
 
 Que vous veniez pour gravir les cols à vélo, dévaler les pentes en VTT ou en kart, faire de la randonnée à la journée, en refuge ou en bivouac, parcourir les falaises en escalade ou en via ferrata, prendre l'air en parapente ou en ulm, ou tout simplement vous détendre sur le golf, à la piscine ou au spa, vous trouverez forcément votre bonheur à Valloire.
 

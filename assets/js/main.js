@@ -321,31 +321,88 @@
 
 			}, true);
 
-		// Maps: Google Maps sets cookies, so an embedded map is only loaded when
-		// the visitor asks for it (layouts/_shortcodes/map.html). Captured:
-		// articles stop clicks from bubbling.
-			document.addEventListener('click', function(event) {
+		// Maps (layouts/_shortcodes/map.html): a route drawn on OpenStreetMap
+		// with Leaflet. Leaflet and the route are only loaded when a map comes
+		// into view; maps of articles swapped in later go through initMaps too.
+			var leaflet = null,
+				mapObserver = 'IntersectionObserver' in window ? new IntersectionObserver(function(entries) {
+					entries.forEach(function(entry) {
+						if (entry.isIntersecting) {
+							mapObserver.unobserve(entry.target);
+							drawMap(entry.target);
+						}
+					});
+				}, { rootMargin: '200px' }) : null;
 
-				var button = event.target.closest('.map-embed .map-load');
+			function loadLeaflet(el) {
 
-				if (!button)
-					return;
+				if (!leaflet)
+					leaflet = new Promise(function(resolve, reject) {
+						var css = document.createElement('link'),
+							js = document.createElement('script');
+						css.rel = 'stylesheet';
+						css.href = el.getAttribute('data-leaflet-css');
+						js.src = el.getAttribute('data-leaflet-js');
+						js.onload = resolve;
+						js.onerror = reject;
+						document.head.appendChild(css);
+						document.head.appendChild(js);
+					});
 
-				event.preventDefault();
-				event.stopPropagation();
+				return leaflet;
 
-				var box = button.closest('.map-embed'),
-					iframe = document.createElement('iframe');
+			}
 
-				iframe.src = box.getAttribute('data-src');
-				iframe.title = button.textContent;
-				iframe.setAttribute('allowfullscreen', '');
-				iframe.setAttribute('sandbox', 'allow-scripts allow-popups');
-				box.textContent = '';
-				box.appendChild(iframe);
-				box.classList.add('is-loaded');
+			function drawMap(el) {
 
-			}, true);
+				Promise.all([
+					loadLeaflet(el),
+					fetch(el.getAttribute('data-route')).then(function(r) { return r.json(); })
+				]).then(function(results) {
+
+					var route = results[1],
+						coords = route.geometry.coordinates,
+						map = L.map(el, {
+							scrollWheelZoom: false,
+							// One finger scrolls the page on phones, two move the map.
+							dragging: !L.Browser.mobile
+						}),
+						line = L.geoJSON(route, { style: { color: '#ff6a00', weight: 5, opacity: 0.85 } });
+
+					// The view first: vector layers cannot be added to a map without one.
+					map.fitBounds(line.getBounds(), { padding: [20, 20] });
+					line.addTo(map);
+
+					L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+						maxZoom: 19,
+						attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+					}).addTo(map);
+
+					[[coords[0], route.properties.from], [coords[coords.length - 1], route.properties.to]].forEach(function(end) {
+						L.circleMarker([end[0][1], end[0][0]], { radius: 7, color: '#ffffff', weight: 2, fillColor: '#ff6a00', fillOpacity: 1 })
+							.bindTooltip(end[1])
+							.addTo(map);
+					});
+
+					el.classList.add('is-ready');
+
+				}).catch(function(error) {
+					console.error('Map', error);
+					el.classList.add('is-failed');
+				});
+
+			}
+
+			function initMaps(root) {
+				root.querySelectorAll('.osm-map').forEach(function(el) {
+					if (mapObserver)
+						mapObserver.observe(el);
+					else
+						drawMap(el);
+				});
+			}
+
+			initMaps(document);
 
 		// In-site navigation.
 		//   Pages of the current language are fetched and their article swapped in
@@ -459,6 +516,7 @@
 							var $article = $(document.importNode(article, true)).hide().appendTo($main);
 							$article.children('.close').remove();
 							setupArticle($article);
+							initMaps($article[0]);
 							$main._show(article.id);
 
 					}).catch(function() {

@@ -3,5 +3,6 @@
 language: Sprache
 close: Schliessen
 logoAlt: Logo Le Col Roulé
-showMap: "Karte anzeigen"
-mapNote: "Google-Maps-Karte: Sobald sie angezeigt wird, setzt sie Cookies von Google."
+mapAria: "Karte: Route von {{ .from }} nach {{ .to }}"
+mapOnFoot: "zu Fuss"
+mapOpen: "In OpenStreetMap öffnen"

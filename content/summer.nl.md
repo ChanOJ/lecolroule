@@ -20,7 +20,7 @@ In de zomer ligt [ons appartement](/apartment) ideaal op 10 minuten wandelen ([i
 
 Kers op de taart: ons groot overdekt terras van 20 m² biedt u alle plaats om uw materiaal op te bergen!
 
-{{< map src="https://www.google.com/maps/embed?pb=!1m24!1m12!1m3!1d2813.224470421059!2d6.429567016766291!3d45.16230418207441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m9!3e2!4m3!3m2!1d45.1617107!2d6.4344164!4m3!3m2!1d45.1640249!2d6.4300391999999995!5e0!3m2!1snl!2sfr!4v1602361450794!5m2!1snl!2sfr" >}}
+{{< map route="summer" >}}
 
 Of u nu komt om cols te beklimmen per fiets, hellingen af te razen per mountainbike of kart, dagtochten te wandelen, met overnachting in een berghut of in bivak, rotswanden te bedwingen al klimmend of via ferrata, de lucht in te gaan met een paraglider of ULM, of gewoon te ontspannen op de golf, in het zwembad of in de spa: in Valloire vindt u gegarandeerd uw geluk.
 
