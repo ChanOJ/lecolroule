@@ -10,14 +10,14 @@ The village centre is just a 10-15 minute walk (downhill) away. You will find ev
 
 {{< map route="village" >}}
 
-Some ideas for all-season activities :
+Some ideas for all-season activities:
 
 - {{< icon name="spa" title="spa / massage" >}} [Spa](https://www.les-sens-des-cimes.com/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)
 - {{< icon name="skating" title="ice rink" >}} [Ice rink](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="film" title="cinema" >}} [Cinema](https://www.valloire.net/en/profiter-de-valloire/lagenda/le-programme-cinema-de-valloire/)
 
-Some [shops](https://www.valloire.net/en/preparer-son-sejour/commerces-et-services/commerces/) in the area :
+Some [shops](https://www.valloire.net/en/preparer-son-sejour/commerces-et-services/commerces/) in the area:
 
 - {{< icon name="bread-slice" title="bakery" >}} Bakeries
 - {{< icon name="store" title="shop" >}} Gift shops
@@ -30,7 +30,7 @@ Some [shops](https://www.valloire.net/en/preparer-son-sejour/commerces-et-servic
 - {{< icon name="shopping-basket" title="market" >}} Market (Every Friday morning, at least)
 - {{< icon name="tshirt" title="tshirt" >}} Sports shops
 
-Finally some commodities :
+Finally some commodities:
 
 - {{< icon name="paw" title="dog day care" >}} [Dog day care](https://www.facebook.com/You-Ski-en-Terre-Happy-108482330944460/)
 - {{< icon name="info-circle" title="infos" >}} Tourist Office

@@ -24,6 +24,6 @@ We are present on [Airbnb](airbnb:). It's easy to check our availability and boo
 {{< button href="mailto:contact@lecolroule.fr" icon="envelope" fit=true >}}Information{{< /button >}}
 {{< /buttons >}}
 
-<br/>{{< icon hand-point-down >}}&nbsp;&nbsp;Follow us on the social networks !&nbsp;&nbsp;{{< icon hand-point-down >}}
+<br/>{{< icon hand-point-down >}}&nbsp;&nbsp;Follow us on the social networks!&nbsp;&nbsp;{{< icon hand-point-down >}}
 
 {{< social >}}

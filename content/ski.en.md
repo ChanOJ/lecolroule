@@ -20,7 +20,7 @@ What makes [Valloire](https://www.valloire.net/en/) so special is that it combin
 
 ### Ski & Snowboard
 
-The diversity of the [winter activities](https://www.valloire.net/en/profiter-de-valloire/le-ski/) is plethoric :
+The diversity of the [winter activities](https://www.valloire.net/en/profiter-de-valloire/le-ski/) is plethoric:
 
 - For snowboarders, Snow Park at an altitude of 2300m.
 - 6.2 miles of groomed [cross-country ski](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/) trails.

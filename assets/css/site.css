@@ -54,6 +54,13 @@ html, body {
 	src: url(/webfonts/source-sans-pro-5.3.0-latin-600-italic.woff2) format('woff2');
 }
 
+/* A paragraph introducing a list (it ends with ":") sits right above it,
+   instead of the theme's 2rem paragraph margin. Only plain Markdown lists
+   (no class): not the rows of buttons nor the social icons. */
+p:has(+ ul:not([class])) {
+	margin-bottom: 0.5rem;
+}
+
 /* Space between a list item's leading icon and its text. */
 li > .icon:first-child {
 	margin-right: 0.5em;

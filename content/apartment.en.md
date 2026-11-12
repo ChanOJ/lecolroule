@@ -35,12 +35,12 @@ The main level hosts a spacious living/dining room-kitchen featuring an entrance
 
 ### Beds
 
-Bedding with duvets or blankets at your choice (sheets and towels not provided, available for rent at extra cost) :
+Bedding with duvets or blankets at your choice (sheets and towels not provided, available for rent at extra cost):
 
-- living room (320 sqft) : 1 sofa bed of 150x190 cm
-- bedroom 1 (110 sqft) : 1 queen-size bed of 160x200 cm + 1 child's folding bed {{< icon baby >}} + 1 foldable mattress
-- bedroom 2 (75 sqft) : 1 queen-size bed of 160x200 cm
-- cabin room : 2 bunk beds of 80x190 cm
+- living room (320 sqft): 1 sofa bed of 150x190 cm
+- bedroom 1 (110 sqft): 1 queen-size bed of 160x200 cm + 1 child's folding bed {{< icon baby >}} + 1 foldable mattress
+- bedroom 2 (75 sqft): 1 queen-size bed of 160x200 cm
+- cabin room: 2 bunk beds of 80x190 cm
 
 ![Double room 1](/images/chambre1b.jpg)
 
