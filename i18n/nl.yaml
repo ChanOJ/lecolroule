@@ -3,5 +3,4 @@ language: Taal
 close: Sluiten
 logoAlt: Logo Le Col Roulé
 mapAria: "Kaart: route van {{ .from }} naar {{ .to }}"
-mapOnFoot: "te voet"
 mapOpen: "Openen in OpenStreetMap"

@@ -62,7 +62,7 @@ On top of it:
 with the OSRM servers of openstreetmap.de and simplified, e.g. for a walk:
 `https://routing.openstreetmap.de/routed-foot/route/v1/driving/<lon>,<lat>;<lon>,<lat>?overview=full&geometries=geojson`
 (`routed-car` for driving). `main.js` loads Leaflet (`assets/vendor/`) and draws a map when it
-comes into view; a caption gives the distance and a link to the route on openstreetmap.org.
+comes into view (without JavaScript: a link to the route on openstreetmap.org).
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 

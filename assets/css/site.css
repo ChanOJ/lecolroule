@@ -160,7 +160,7 @@ li > .icon:first-child {
 .osm-map {
 	display: block !important;
 	width: 100%;
-	margin-bottom: 0.5rem !important;
+	margin-bottom: 2rem !important;
 	background: rgba(255, 255, 255, 0.05);
 	border-radius: 4px;
 	z-index: 0;
@@ -168,16 +168,6 @@ li > .icon:first-child {
 
 	.osm-map .leaflet-control-attribution a {
 		border-bottom: 0;
-	}
-
-.map-caption {
-	display: block;
-	margin: 0 0 2rem 0;
-	font-size: 0.8rem;
-}
-
-	.map-caption .icon {
-		margin-right: 0.35em;
 	}
 
 /* Newsletter (Brevo form in an iframe, layouts/_partials/newsletter.html):
