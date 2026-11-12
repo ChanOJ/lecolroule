@@ -94,7 +94,8 @@ image: { src: /images/blog/2026-01-31-photo.jpg, alt: Alt text, caption: Optiona
 Post text in Markdown.
 ```
 
-Posts are listed on the blog page, newest first.
+Posts are listed on the blog page, newest first. The date in the file name and the `date` of the
+front matter must be the same: the build fails otherwise (`layouts/section.html`).
 
 ## How it works (do not break)
 

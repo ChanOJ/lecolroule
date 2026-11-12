@@ -6,6 +6,11 @@
 							<hr/>
 							{{ .Content }}
 							{{- range .Pages.ByDate.Reverse }}
+							{{- /* The file name starts with the post date (YYYY-MM-DD-name): it must match the front matter date. */ -}}
+							{{- $fileDate := index (findRE `^\d{4}-\d{2}-\d{2}` .File.ContentBaseName) 0 | default "" }}
+							{{- if ne $fileDate (.Date.Format "2006-01-02") }}
+							{{- errorf "%s: the file name date (%q) and the front matter date (%s) differ" .File.Path $fileDate (.Date.Format "2006-01-02") }}
+							{{- end }}
 							<section class="post" id="{{ .File.ContentBaseName }}">
 								<h3>[{{ .Date.Format "2006-01-02" }}] {{ .Title }}</h3>
 								{{ .Content }}
