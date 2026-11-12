@@ -1,6 +1,6 @@
 {{- /* Social network icons (list in hugo.toml, params.social). */ -}}
 <ul class="icons">
 {{- range site.Params.social }}
-	<li><a href="{{ .url }}" target="_blank" rel="noopener" class="icon {{ .style }} fa-{{ .icon }}" title="{{ .name }}"></a></li>
+	<li><a href="{{ .url }}"{{ with .appleUrl }} data-apple-href="{{ . }}" data-apple-title="{{ i18n "appleMaps" }}"{{ end }} target="_blank" rel="noopener" class="icon {{ .style }} fa-{{ .icon }}" title="{{ .name }}"></a></li>
 {{- end }}
 </ul>

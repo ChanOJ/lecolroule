@@ -101,6 +101,10 @@ Posts are listed on the blog page, newest first.
   has, else English; query string and hash are kept. Without JavaScript it shows the flags.
   bunny.net edge rules cannot do it: they split `Accept-Language` at commas, so they cannot tell
   which language a browser prefers.
+- Map links: Google Maps by default, Apple Maps on Apple devices (iPhone, iPad, Mac; `main.js`
+  "Maps links"). The map icon of `params.social` has an `appleUrl` (the Apple Maps listing);
+  Markdown links to a Google Maps search get the same search on Apple Maps. Apple Maps opens in
+  the device's language; the icon's title is translated (`appleMaps` in `i18n/`).
 - Every 404 is answered with `/404.html` (`content/not-found.fr.md`), through the storage zone "404 File path" setting: that
   file must not be renamed or removed.
 - Edge rules (`infra/modules/site/edgerules.tf`): security headers, page cache and the 301 from

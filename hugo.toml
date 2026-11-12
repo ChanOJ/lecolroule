@@ -93,9 +93,12 @@ enableGitInfo = true
     url = "https://www.youtube.com/channel/UCOglkzCFo1V95EHQb4eHKHg"
     icon = "youtube"
     style = "brands"
+  # Map link: Google Maps, replaced on Apple devices by the Apple Maps listing
+  # (appleUrl, see main.js "Maps links").
   [[params.social]]
     name = "google maps"
     url = "https://maps.app.goo.gl/ng9N1mwDaAWFdeH87"
+    appleUrl = "https://maps.apple/p/N-qZ7Ut20C~wpH"
     icon = "map-marked-alt"
     style = "solid"
 
