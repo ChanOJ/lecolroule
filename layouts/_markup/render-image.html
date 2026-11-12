@@ -7,7 +7,7 @@
 */ -}}
 {{- $caption := .Title | default .Text -}}
 {{- if hasPrefix .Destination "/images/" -}}
-<span class="image main">{{ partial "img.html" (dict "src" .Destination "alt" .Text "eager" (eq .Ordinal 0)) }}{{ if ne $caption "-" }}
+<span class="image main">{{ partial "img.html" (dict "src" .Destination "alt" .Text "eager" (eq .Ordinal 0) "zoom" true "caption" (cond (eq $caption "-") .Text $caption)) }}{{ if ne $caption "-" }}
 	{{ $caption }}{{ end }}</span>
 {{- else -}}
 <span class="image main"><img src="{{ .Destination | safeURL }}" alt="{{ .Text }}" loading="lazy" decoding="async" />{{ if ne $caption "-" }}

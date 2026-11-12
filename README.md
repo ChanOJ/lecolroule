@@ -52,10 +52,18 @@ On top of it:
 | External link (opens in a new tab) | `[Valloire](https://www.valloire.net/)` |
 | Airbnb page of the current language (`airbnb` in `hugo.toml`) | `[Airbnb](airbnb:)`, `{{< button href="airbnb:" >}}Book{{< /button >}}` |
 | Image with caption (caption = alt text by default) | `![Alt text](/images/x.jpg "Caption")`, `"-"` for no caption |
+| Clickable image, shown full screen in high definition | add `assets/images/x_hd.jpg` next to `x.jpg` (same name + `_hd`); without it the image is not clickable |
 | Font Awesome icon ([list](https://fontawesome.com/v5/search?m=free)) | `{{< icon skiing >}}`, `{{< icon name="map" style="regular" >}}`, `style="brands"` |
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
 | Route map (OpenStreetMap) | `{{< map route="getting-there" height="350" >}}` (route = `assets/maps/<route>.json`, see below) |
 | Social network icons | `{{< social >}}` |
+
+**Images**: an image of a page or a blog post that has an `_hd` version is clickable: it opens
+full screen (`main.js`, "Image viewer"), with arrows (also keyboard and swipe) to the other
+images of the page that have one. Decided at build time (`img.html`): images without `_hd` are
+plain images. The default share image (`ogImage` in `hugo.toml`) is also published at the
+fixed URL `/cover.jpg` (no fingerprint, 5-minute browser cache), for listings asking for an
+image URL (OpenStreetMap...).
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres). `village` (flat → village

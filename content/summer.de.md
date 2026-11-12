@@ -36,7 +36,7 @@ Im Dorf begeistert ein 240 m langer Pumptrack mit 3 Niveaus die Fans dieser Disz
 ![Col du Galibier](/images/col-du-galibier.jpg "Der Col du Galibier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/le-velo/" icon="info-circle" >}}Mehr Infos{{< /button >}}
+{{< button href="https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/le-velo/" icon="biking" >}}Mehr Infos{{< /button >}}
 {{< /buttons >}}
 
 ### Wandern
@@ -46,7 +46,7 @@ Valloire wird von seinen Bewohnern das Goldene Tal genannt, wegen seiner ausserg
 ![Hochgebirge](/images/valloire-haute-montagne.jpg "Wandern oberhalb von Valloire")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="info-circle" >}}Mehr Infos{{< /button >}}
+{{< button href="https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/la-randonnee/" icon="hiking" >}}Mehr Infos{{< /button >}}
 {{< /buttons >}}
 
 ### Klettern
@@ -56,7 +56,7 @@ Meist mitten im Dorf erfüllen 3 Klettersteige und Hunderte von Kletterrouten al
 ![Klettersteig](/images/via-ferrata.jpg "Klettersteig am Poingt Ravier (c) Valloire.net")
 
 {{< buttons >}}
-{{< button href="https://www.valloire.net/en/sit/sites-descalade-et-de-via-ferrata-512633/" icon="info-circle" >}}Mehr Infos{{< /button >}}
+{{< button href="https://www.valloire.net/en/sit/sites-descalade-et-de-via-ferrata-512633/" icon="mountain" >}}Mehr Infos{{< /button >}}
 {{< /buttons >}}
 
 ### Weitere Aktivitäten
@@ -66,15 +66,15 @@ Meist mitten im Dorf erfüllen 3 Klettersteige und Hunderte von Kletterrouten al
 - {{< icon name="skating" title="Eisläufer" >}} [Eisbahn](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="swimming-pool" title="Schwimmbad" >}} [Beheiztes Freibad mit Rutsche](https://www.valloire.net/en/activites-aquatiques/piscine-de-valloire-371454/)
 - {{< icon name="horse" title="Pferd" >}} [Reitzentrum](https://www.valloire.net/en/sit/centre-equestre-de-valloire-prejvall-371453/)
-- {{< icon name="table-tennis" title="ja, ich weiss, das ist ein Tischtennisschläger..." >}} [Tennis](https://www.valloire.net/en/sit/court-de-tennis-a-louer-371460/)
+- {{< icon name="baseball-ball" title="Tennis" >}} [Tennis](https://www.valloire.net/en/sit/court-de-tennis-a-louer-371460/)
 - {{< icon name="tree" title="Baum" >}} [Seilpark](https://www.valloire.net/en/sit/la-foret-de-lenfer-parc-accrobranche-68131/)
 - {{< icon name="mountain" title="Berg" >}} [3 Ziplines, darunter eine Riesen-Zipline](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/sur-les-hauteurs/)
-- {{< icon name="mountain" title="Berg" >}} [Bob-Kart](https://www.valloire.net/en/sit/activite-bob-kart-371390/) und [Mountain Cart](https://www.valloire.net/en/sit/descente-en-mountain-kart-lete-6971906/)
-- {{< icon name="mountain" title="Berg" >}} [Mountainboard](https://www.valloire.net/en/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
+- {{< icon name="car-side" title="Kart" >}} [Bob-Kart](https://www.valloire.net/en/sit/activite-bob-kart-371390/) und [Mountain Cart](https://www.valloire.net/en/sit/descente-en-mountain-kart-lete-6971906/)
+- {{< icon name="snowboarding" title="Board" >}} [Mountainboard](https://www.valloire.net/en/sit/lecole-francaise-de-mountainboard-glisse-ete-371392/)
 - {{< icon name="water" title="Wasser" >}} [Canyoning](https://www.valloire.net/en/activites-aquatiques/sorties-canyoning-avec-benexpe-5504504/)
 - {{< icon name="bullseye" title="Zielscheibe" >}} [Bogenschiessen](https://www.valloire.net/en/sit/tir-a-larc-590455/)
 - {{< icon name="fort-awesome" style="brands" title="Fort" >}} [Besichtigung des Fort du Télégraphe](https://www.valloire.net/en/sit/le-fort-du-telegraphe-436553/)
-- {{< icon name="bicycle" title="Fahrrad" >}} [Elektro-Mountainbikes](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
+- {{< icon name="biking" title="Fahrrad" >}} [Elektro-Mountainbikes](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/le-velo/le-vae-a-valloire/)
 - {{< icon name="parachute-box" title="Fallschirm" >}} [Gleitschirm, Speedriding & Ultraleichtflug](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/dans-les-airs/)
 - {{< icon name="plane" title="Flugzeug" >}} [Fliegerclub](https://www.aeroclub-de-valloire.com/)
 - {{< icon name="golf-ball" title="Golf" >}} [Golf](https://www.valloire.net/en/sit/golf-des-verneys-371458/)
@@ -93,14 +93,14 @@ Meist mitten im Dorf erfüllen 3 Klettersteige und Hunderte von Kletterrouten al
 - {{< icon name="landmark" title="Museum" >}} [Opinel-Museum](https://www.opinel.com/de-int/das-museum) (45 Min.)
 - {{< icon name="sleigh" title="Rodel" >}} [Norma Loops (Rodelbahn, 4 Jahreszeiten)](https://normaloops.fr/) (55 Min.)
 - {{< icon name="tree" title="Baum" >}} [Parcobranche du Diable (Seilpark, Riesen-Ziplines)](https://www.parcdudiable.fr/) (55 Min.)
-- {{< icon name="swimming-pool" title="Baden" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) und [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1 Std.)
+- {{< icon name="swimmer" title="Baden" >}} [St Alban Plage](https://plage-lac-aiguebelette.com/) und [Lac des Hurtières](https://www.google.com/maps/search/?api=1&query=Lac+des+Hurti%C3%A8res) (1 Std.)
 - {{< icon name="angle-double-right" title="und mehr" >}} und Dutzende weitere Aktivitäten!
 
 #### in weniger als zwei Stunden
 
 - {{< icon name="water" title="Wasser" >}} [Wam Park Savoie - Montailleur (Wasserskilift, Wakeboard, Seilpark, Wasserspiele, ...)](https://www.wampark.fr/base/savoie-montailleur/) (1 Std. 15)
 - {{< icon name="water" title="Wasser" >}} [Rafting Serre Chevalier](https://www.youraft-serrechevalier.com/en/) (1 Std. 25)
-- {{< icon name="bicycle" title="Fahrrad" >}} [Elektro-Mountainbikes](https://serre-chevalier.bike/) (1 Std. 40)
+- {{< icon name="biking" title="Fahrrad" >}} [Elektro-Mountainbikes](https://serre-chevalier.bike/) (1 Std. 40)
 - {{< icon name="mountain" title="Berg" >}} [Riesen-Zipline - Serre Chevalier](https://www.serre-chevalier.com/en/altitude-area/giant-zipline-summer) (2 Std.)
 - {{< icon name="angle-double-right" title="und mehr" >}} und Dutzende weitere Aktivitäten!
 

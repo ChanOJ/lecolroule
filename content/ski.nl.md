@@ -36,9 +36,9 @@ En is dat allemaal nog niet genoeg: het vertrekpunt van de gondel naar [Les 3 Va
 
 #### ter plaatse
 
-- {{< icon name="route" title="zigzag" >}} [Snake Gliss](https://www.valloire.net/nl/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="sleigh" title="slee" >}} [Snake Gliss](https://www.valloire.net/nl/sit/descente-en-snake-gliss-grande-aventure-388984/)
 - {{< icon name="hiking" title="wandelaar" >}} [Sneeuwschoenwandelingen](https://www.valloire.net/nl/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
-- {{< icon name="mountain" title="berg" >}} [Mountain Kart](https://www.valloire.net/nl/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/nl/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="langlaufen" >}} [Langlaufen](https://www.valloire.net/nl/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="schaatser" >}} [Schaatsbaan](https://www.valloire.net/nl/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="loper" >}} [Trailrunning](https://www.valloire.net/nl/trail/le-trail-avec-rando-montagne-4620573/)

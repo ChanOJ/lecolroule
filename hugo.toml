@@ -35,6 +35,7 @@ enableGitInfo = true
   # Content-Security-Policy still allows it (infra module option "analytics").
   # googleAnalyticsID = "G-2MX2EV8ZZE"
   twitter = "@LeColRoule"
+  # Default share image, also published as /cover.jpg (layouts/home.html).
   ogImage = "/images/vue_ete3.jpg"
   copyrightYears = "2021-2026"
 

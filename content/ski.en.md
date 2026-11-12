@@ -36,9 +36,9 @@ And if all that wasn't enough, the departure of the [3 Vallées](https://www.les
 
 #### in the village
 
-- {{< icon name="route" title="zig zag" >}} [Snake Gliss](https://www.valloire.net/en/sit/descente-en-snake-gliss-grande-aventure-388984/)
+- {{< icon name="sleigh" title="sledge" >}} [Snake Gliss](https://www.valloire.net/en/sit/descente-en-snake-gliss-grande-aventure-388984/)
 - {{< icon name="hiking" title="hike" >}} [Snowshoe](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
-- {{< icon name="mountain" title="mountain" >}} [Mountain Kart](https://www.valloire.net/en/actualites/descente-en-mountain-kart-lhiver-5413556/)
+- {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/en/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="nordic skiing" >}} [Cross-country skiing](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
 - {{< icon name="skating" title="skater" >}} [Ice Rink](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="running" title="runner" >}} [Trail running](https://www.valloire.net/en/trail/le-trail-avec-rando-montagne-4620573/)

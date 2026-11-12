@@ -1,2 +1,7 @@
 {{- /* Home page: header and navigation only, no article. */ -}}
+{{- /* /cover.jpg: the cover image (params.ogImage) at a fixed URL, without
+       fingerprint, for listings that ask for an image URL (OpenStreetMap...):
+       it always serves the current cover. Short browser cache: infra
+       page_patterns. */ -}}
+{{- with resources.Get (strings.TrimPrefix "/" site.Params.ogImage) }}{{ $_ := (. | resources.Copy "cover.jpg").RelPermalink }}{{ end -}}
 {{ define "main" }}{{ end }}

@@ -144,7 +144,9 @@ resource "bunnynet_pullzone_edgerule" "legacy_redirect" {
 # visitors get a new version quickly after a deployment. Fingerprinted assets
 # keep the long cache of the origin.
 locals {
-  page_patterns = ["${local.base_url}/", "${local.base_url}/*/", "${local.base_url}/*.html", "${local.base_url}/*.xml", "${local.base_url}/*.txt"]
+  # Pages, plus the files at a fixed URL that change with the site
+  # (/cover.jpg, the cover image without fingerprint).
+  page_patterns = ["${local.base_url}/", "${local.base_url}/*/", "${local.base_url}/*.html", "${local.base_url}/*.xml", "${local.base_url}/*.txt", "${local.base_url}/cover.jpg"]
 }
 
 resource "bunnynet_pullzone_edgerule" "page_browser_cache" {

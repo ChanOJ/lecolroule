@@ -4,7 +4,11 @@
   Usage: {{ partial "img.html" (dict "src" "/images/x.jpg" "alt" "..." "eager" false) }}
   Options: "resize" (Hugo image processing spec, e.g. "240x webp"), "priority"
   (fetchpriority="high", for an eager image that is the largest of the page),
-  "width" and "height" (required for SVG files, whose size Hugo cannot read).
+  "width" and "height" (required for SVG files, whose size Hugo cannot read),
+  "zoom" (when assets/images/<name>_hd.<ext> exists, a click opens that
+  high-definition version in the viewer of main.js; images without one are
+  not clickable and not part of the viewer's navigation),
+  "caption" (shown by the viewer).
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
 {{- $res := resources.Get $path -}}
@@ -13,7 +17,16 @@
 {{- $width := .width -}}
 {{- $height := .height -}}
 {{- if not $width }}{{ $width = $res.Width }}{{ $height = $res.Height }}{{ end -}}
+{{- $zoom := "" -}}
+{{- if .zoom -}}
+  {{- $ext := path.Ext $path -}}
+  {{- with resources.Get (printf "%s_hd%s" (strings.TrimSuffix $ext $path) $ext) -}}
+    {{- $zoom = (. | fingerprint "md5").RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- with $zoom }}<a class="zoom" href="{{ . }}"{{ with $.caption }} data-caption="{{ . }}"{{ end }}>{{ end -}}
 <img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
 	{{- with $width }} width="{{ . }}" height="{{ $height }}"{{ end }}
 	{{- if .eager }}{{ if .priority }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }} decoding="async" />
+{{- if $zoom }}</a>{{ end -}}
 {{- /* */ -}}

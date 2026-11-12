@@ -270,7 +270,7 @@
 
 			$window.on('keyup', function(event) {
 
-				if (event.keyCode != 27)
+				if (event.keyCode != 27 || viewerOpen() || viewerJustClosed())
 					return;
 
 				if (languageMenuOpen()) {
@@ -419,6 +419,145 @@
 			}
 
 			appleMapsLinks(document);
+
+		// Image viewer: a click on an image of the article (a.zoom, see
+		// layouts/_partials/img.html) shows it full screen, in high definition
+		// when there is an "_hd" version, with the previous/next images of the
+		// article: arrows, keyboard (left/right, Escape) and swipe.
+			var viewer = null,
+				viewerClosedAt = 0;
+
+			function viewerOpen() {
+				return !!(viewer && viewer.el.classList.contains('is-open'));
+			}
+
+			// The Escape that closed the viewer (keydown) must not close the
+			// article too (keyup handler).
+			function viewerJustClosed() {
+				return Date.now() - viewerClosedAt < 500;
+			}
+
+			function buildViewer() {
+
+				var el = document.createElement('div');
+				el.className = 'viewer';
+				el.setAttribute('role', 'dialog');
+				el.setAttribute('aria-modal', 'true');
+				el.innerHTML = '<figure><img alt="" /><figcaption></figcaption></figure>'
+					+ '<button type="button" class="viewer-prev" aria-label="&larr;">&#8249;</button>'
+					+ '<button type="button" class="viewer-next" aria-label="&rarr;">&#8250;</button>'
+					+ '<button type="button" class="viewer-close" aria-label="&times;">&times;</button>'
+					+ '<span class="viewer-count"></span>';
+				document.body.appendChild(el);
+
+				var v = { el: el, img: el.querySelector('img'), caption: el.querySelector('figcaption'),
+					count: el.querySelector('.viewer-count'), links: [], index: 0 };
+
+				// Clicks stay in the viewer (the body handler would close the article).
+				el.addEventListener('click', function(event) {
+					event.stopPropagation();
+					if (event.target.closest('.viewer-prev'))
+						showImage(v.index - 1);
+					else if (event.target.closest('.viewer-next'))
+						showImage(v.index + 1);
+					else if (!event.target.closest('img'))
+						closeViewer();
+				});
+
+				var startX = null;
+				el.addEventListener('touchstart', function(event) {
+					startX = event.touches.length == 1 ? event.touches[0].clientX : null;
+				}, { passive: true });
+				el.addEventListener('touchend', function(event) {
+					if (startX === null)
+						return;
+					var dx = event.changedTouches[0].clientX - startX;
+					if (Math.abs(dx) > 50)
+						showImage(v.index + (dx < 0 ? 1 : -1));
+					startX = null;
+				});
+
+				return v;
+
+			}
+
+			function showImage(index) {
+
+				var links = viewer.links,
+					n = links.length;
+
+				viewer.index = (index + n) % n;
+
+				var a = links[viewer.index],
+					thumb = a.querySelector('img');
+
+				viewer.img.src = a.getAttribute('href');
+				viewer.img.alt = thumb ? thumb.alt : '';
+				viewer.caption.textContent = a.getAttribute('data-caption') || '';
+				viewer.count.textContent = n > 1 ? (viewer.index + 1) + ' / ' + n : '';
+				viewer.el.classList.toggle('is-single', n < 2);
+
+				// Preload the neighbours.
+				[1, -1].forEach(function(d) {
+					if (n > 1)
+						(new Image()).src = links[(viewer.index + d + n) % n].getAttribute('href');
+				});
+
+			}
+
+			function openViewer(link) {
+
+				if (!viewer)
+					viewer = buildViewer();
+
+				var article = link.closest('article') || document;
+				viewer.links = Array.prototype.slice.call(article.querySelectorAll('a.zoom'));
+				showImage(viewer.links.indexOf(link));
+				viewer.el.classList.add('is-open');
+				document.documentElement.classList.add('viewer-is-open');
+				viewer.el.querySelector('.viewer-close').focus();
+
+			}
+
+			function closeViewer() {
+				viewer.el.classList.remove('is-open');
+				document.documentElement.classList.remove('viewer-is-open');
+				viewer.img.removeAttribute('src');
+				viewerClosedAt = Date.now();
+			}
+
+			// Captured: articles stop clicks from bubbling.
+			document.addEventListener('click', function(event) {
+
+				var link = event.target.closest('a.zoom');
+
+				if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+					return;
+
+				event.preventDefault();
+				event.stopPropagation();
+				openViewer(link);
+
+			}, true);
+
+			document.addEventListener('keydown', function(event) {
+
+				if (!viewerOpen())
+					return;
+
+				if (event.key == 'ArrowLeft')
+					showImage(viewer.index - 1);
+				else if (event.key == 'ArrowRight')
+					showImage(viewer.index + 1);
+				else if (event.key == 'Escape')
+					closeViewer();
+				else
+					return;
+
+				event.preventDefault();
+				event.stopPropagation();
+
+			}, true);
 
 		// In-site navigation.
 		//   Pages of the current language are fetched and their article swapped in

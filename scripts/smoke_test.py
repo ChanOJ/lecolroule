@@ -200,6 +200,13 @@ def main() -> int:
         assert r.body.decode().strip() == key, "wrong content"
         return f"/{key}.txt"
     report.check("IndexNow key file", indexnow_key)
+
+    def cover():
+        r = fetch(f"{base}/cover.jpg")
+        expect_status(r, 200)
+        assert r.header("Content-Type").startswith("image/jpeg"), f"Content-Type {r.header('Content-Type')!r}"
+        return f"{len(r.body)} bytes"
+    report.check("Cover image /cover.jpg", cover)
     report.check("HTTP redirects to HTTPS", expect_redirect(f"http://{host}/fr/", f"{base}/fr/"))
 
     # Legacy URLs: 301 to their new address, unknown ones: 404.
