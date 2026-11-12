@@ -1,5 +1,5 @@
 ---
-title: "Les nouveautés pour cet Hiver !"
+title: "Du confort pour cet Hiver !"
 date: 2026-11-12
 image: { src: /images/floorplan-night.png, alt: Niveau Nuit, caption: Les lits queen-size }
 ---

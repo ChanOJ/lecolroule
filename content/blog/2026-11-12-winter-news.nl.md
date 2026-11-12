@@ -1,5 +1,5 @@
 ---
-title: "Het nieuws voor deze winter!"
+title: "Comfort voor deze winter!"
 date: 2026-11-12
 image: { src: /images/floorplan-night.png, alt: Slaapniveau, caption: De queen-size bedden }
 ---

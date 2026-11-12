@@ -1,5 +1,5 @@
 ---
-title: "Die Neuigkeiten für diesen Winter!"
+title: "Mehr Komfort für diesen Winter!"
 date: 2026-11-12
 image: { src: /images/floorplan-night.png, alt: Schlafebene, caption: Die Queen-Size-Betten }
 # Deliberate choices of this translation: keep them when updating it from

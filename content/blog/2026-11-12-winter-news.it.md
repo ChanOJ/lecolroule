@@ -1,5 +1,5 @@
 ---
-title: "Le novità di quest'inverno!"
+title: "Comfort per quest'inverno!"
 date: 2026-11-12
 image: { src: /images/floorplan-night.png, alt: Zona notte, caption: I letti queen size }
 ---
