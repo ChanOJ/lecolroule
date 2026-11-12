@@ -66,6 +66,13 @@ li > .icon:first-child {
 	margin-right: 0.5em;
 }
 
+/* The theme darkens every image with a dotted, half-transparent layer
+   (".image:before": overlay.png on rgba(19, 21, 25, 0.5), opacity 0.5):
+   photos are shown as they are. */
+.image:before {
+	display: none;
+}
+
 /* Images carry their real width and height (no layout shift while loading):
    keep the ratio when the theme stretches them to the full width. */
 .image.main img {
