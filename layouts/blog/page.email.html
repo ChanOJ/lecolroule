@@ -16,6 +16,10 @@
 {{- $body := .Content -}}
 {{- $body = replaceRE `(href|src)="/` (printf `$1="%s/` $site) $body -}}
 {{- $body = replaceRE `<img ` `<img style="display:block;max-width:100%;height:auto;border-radius:4px;" ` $body -}}
+{{- /* A paragraph introducing a list (ending with ":") sits right above it, as on
+  the site (site.css, p:has(+ ul)); mail clients ignore :has. The content
+  pattern matches anything but "</p>", so it never spans two paragraphs. */ -}}
+{{- $body = replaceRE `<p>((?:[^<]|<[^/]|</[^p]|</p[^>])*)</p>\s*<(ul|ol)>` `<p style="margin:0 0 4px 0;">$1</p><$2>` $body -}}
 {{- $body = replaceRE `<p>` `<p style="margin:0 0 16px 0;">` $body -}}
 {{- /* Lists: same space below as paragraphs (mail clients drop the default margins). */ -}}
 {{- $body = replaceRE `<(ul|ol)>` `<$1 style="margin:0 0 16px 0;padding-left:24px;">` $body -}}
