@@ -156,19 +156,40 @@ li > .icon:first-child {
 				outline-offset: 2px;
 			}
 
-/* Route maps (layouts/_shortcodes/map.html, drawn by main.js with Leaflet). */
-.osm-map {
-	display: block !important;
-	width: 100%;
-	margin-bottom: 2rem !important;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 4px;
-	z-index: 0;
+/* Route maps (layouts/_shortcodes/map.html, drawn by main.js with Leaflet):
+   the map, then the GPX download link when there is one. Spaced like the
+   images of the pages (theme ".image.main"). */
+.osm-block {
+	margin: 2rem 0;
 }
 
-	.osm-map .leaflet-control-attribution a {
+	@media screen and (max-width: 480px) {
+		.osm-block {
+			margin: 1.5rem 0;
+		}
+	}
+
+	.osm-map {
+		width: 100%;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 4px;
+		z-index: 0;
+	}
+
+		.osm-map .leaflet-control-attribution a {
+			border-bottom: 0;
+		}
+
+	.osm-block .map-gpx {
+		display: inline-block;
+		margin-top: 0.5rem;
+		font-size: 0.8rem;
 		border-bottom: 0;
 	}
+
+		.osm-block .map-gpx:before {
+			margin-right: 0.5em;
+		}
 
 /* Newsletter (Brevo form in an iframe, layouts/_partials/newsletter.html):
    the iframe does not grow with its content, so it gets the height of the

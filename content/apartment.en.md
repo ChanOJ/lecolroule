@@ -16,7 +16,7 @@ translationNotes:
 
 ![Lunch with view from the terrace of the flat in summer](/images/vue_ete3.jpg)
 
-Our 680 sqft (63 m²) duplex, with 3 bedrooms, terrace and parking (2 spaces, including a 7 kW EV charging point), constructed in 2010 for optimal thermal comfort, occupies an ideal location just [a 10-15 minute walk (downhill)](https://www.viewgpx.com/route/bMjNJt5p) from Valloire's center (detailed information available on our [winter](/ski) and [summer](/summer) pages), shops, cable cars, and activities. Despite this proximity, it boasts a serene tranquility, free from the disturbances of traffic and neighboring noise.
+Our 680 sqft (63 m²) duplex, with 3 bedrooms, terrace and parking (2 spaces, including a 7 kW EV charging point), constructed in 2010 for optimal thermal comfort, occupies an ideal location just [a 10-15 minute walk (downhill)](/shops) from Valloire's center (detailed information available on our [winter](/ski) and [summer](/summer) pages), shops, cable cars, and activities. Despite this proximity, it boasts a serene tranquility, free from the disturbances of traffic and neighboring noise.
 
 {{< buttons >}}
 {{< button page="/shops" icon="store" title="commodities" >}}Commodities{{< /button >}}

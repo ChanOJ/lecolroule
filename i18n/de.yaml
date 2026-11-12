@@ -5,3 +5,4 @@ close: Schliessen
 logoAlt: Logo Le Col Roulé
 mapAria: "Karte: Route von {{ .from }} nach {{ .to }}"
 mapOpen: "In OpenStreetMap öffnen"
+mapGpx: "GPX-Track herunterladen"

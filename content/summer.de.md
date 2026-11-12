@@ -17,7 +17,7 @@ translationNotes:
 
 ![Mittagessen mit Aussicht auf der Terrasse der Wohnung](/images/vue_ete3.jpg)
 
-Im Sommer liegt [unsere Wohnung](/apartment) ideal, 10 Gehminuten ([idyllischer Wanderweg](https://www.viewgpx.com/route/bMjNJt5p), 15 Minuten bergauf) vom Zentrum von Valloire, den Geschäften und Aktivitäten sowie der Gondelbahn Crêt de la Brive (im Sommer für Fussgänger und Mountainbikes geöffnet) und 18-20 Gehminuten vom Freizeitzentrum (Schwimmbad, Eisbahn, Wellness) entfernt. Bei Bedarf ist natürlich alles auch mit dem Auto erreichbar (2 private Parkplätze im Mietpreis inbegriffen, dazu eine eigene 7-kW-Ladestation, T2S + TE, für Elektroautos).
+Im Sommer liegt [unsere Wohnung](/apartment) ideal, 10 Gehminuten ([idyllischer Wanderweg](/shops), 15 Minuten bergauf) vom Zentrum von Valloire, den Geschäften und Aktivitäten sowie der Gondelbahn Crêt de la Brive (im Sommer für Fussgänger und Mountainbikes geöffnet) und 18-20 Gehminuten vom Freizeitzentrum (Schwimmbad, Eisbahn, Wellness) entfernt. Bei Bedarf ist natürlich alles auch mit dem Auto erreichbar (2 private Parkplätze im Mietpreis inbegriffen, dazu eine eigene 7-kW-Ladestation, T2S + TE, für Elektroautos).
 
 Das Tüpfelchen auf dem i: Unsere grosse überdachte Terrasse von 20 m² bietet Ihnen genug Platz, um Ihre Ausrüstung zu verstauen!
 

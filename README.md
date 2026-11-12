@@ -58,8 +58,11 @@ On top of it:
 | Social network icons | `{{< social >}}` |
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
-`mode` = `car` or `foot`, `from`, `to`, `distance` in metres). The 3 routes were computed once
-with the OSRM servers of openstreetmap.de and simplified, e.g. for a walk:
+`mode` = `car` or `foot`, `from`, `to`, `distance` in metres). `village` (flat → village
+centre, shops page) is converted from our own GPX track `assets/maps/village.gpx` (drawn with
+gpx.studio); when `<route>.gpx` exists, a "Download the GPX track" link is shown under the map.
+The other routes were computed once with the OSRM servers of openstreetmap.de and simplified,
+e.g. for a walk:
 `https://routing.openstreetmap.de/routed-foot/route/v1/driving/<lon>,<lat>;<lon>,<lat>?overview=full&geometries=geojson`
 (`routed-car` for driving). `main.js` loads Leaflet (`assets/vendor/`) and draws a map when it
 comes into view (without JavaScript: a link to the route on openstreetmap.org).

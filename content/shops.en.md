@@ -6,7 +6,9 @@ description: "Bakeries, restaurants, supermarkets, spa, ice rink, cinema: everyt
 ogImage: /images/vue_hiver1.jpg
 ---
 
-The village centre is just [a 10-15 minute walk (downhill)](https://www.viewgpx.com/route/bMjNJt5p) away. You will find everything on site, except for a hospital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+The village centre is just a 10-15 minute walk (downhill) away. You will find everything on site, except for a hospital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+
+{{< map route="village" >}}
 
 Some ideas for all-season activities :
 
@@ -40,5 +42,4 @@ Finally some commodities :
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Go back{{< /button >}}
-{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}See the map{{< /button >}}
 {{< /buttons >}}

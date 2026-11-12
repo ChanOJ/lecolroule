@@ -12,7 +12,7 @@ menu:
 
 ![Déjeuner avec vue depuis la terrasse de l'appartement](/images/vue_ete3.jpg)
 
-En été [notre appartement](/apartment) est idéalement situé à 10mn à pied ([chemin de petite randonnée bucolique](https://www.viewgpx.com/route/bMjNJt5p), 15mn en remontée) du centre de Valloire, des commerces et activités, et de la télécabine du Crêt de la Brive (ouverte en été pour les piétons et les VTT), et à 18-20mn à pied de la base de loisirs (piscine, patinoire, espace bien-être). Si besoin, tout est bien entendu faisable en voiture (2 places de parking privées incluses dans la location, avec en prime une borne de charge VE privative 7 kW T2S + TE pour véhicule électriques).
+En été [notre appartement](/apartment) est idéalement situé à 10mn à pied ([chemin de petite randonnée bucolique](/shops), 15mn en remontée) du centre de Valloire, des commerces et activités, et de la télécabine du Crêt de la Brive (ouverte en été pour les piétons et les VTT), et à 18-20mn à pied de la base de loisirs (piscine, patinoire, espace bien-être). Si besoin, tout est bien entendu faisable en voiture (2 places de parking privées incluses dans la location, avec en prime une borne de charge VE privative 7 kW T2S + TE pour véhicule électriques).
 
 Cerise sur le gâteau, notre grande terrasse abritée de 20m² vous offre toute la place nécessaire pour ranger votre matériel !
 
