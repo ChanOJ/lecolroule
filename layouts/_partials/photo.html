@@ -1,0 +1,19 @@
+{{- /*
+  The image resource to show for a photo of assets/images/, by its usual
+  name: {{ partial "photo.html" "/images/salon.jpg" }}.
+  A photo may exist only as its high-definition file, salon_hd.jpg: the
+  page then gets a 1200 px copy of it (JPEG quality 80; sharp on phones and
+  retina screens), the image viewer the HD file (hd-url.html). Otherwise the
+  file itself (salon.jpg). Fails the build when neither exists.
+*/ -}}
+{{- $path := strings.TrimPrefix "/" . -}}
+{{- $ext := path.Ext $path -}}
+{{- $res := false -}}
+{{- with resources.Get (printf "%s_hd%s" (strings.TrimSuffix $ext $path) $ext) -}}
+  {{- $res = . -}}
+  {{- if and (in (slice ".jpg" ".jpeg") $ext) (gt .Width 1200) }}{{ $res = .Resize "1200x q80" }}{{ end -}}
+{{- else -}}
+  {{- $res = resources.Get $path -}}
+{{- end -}}
+{{- if not $res }}{{ errorf "image %q (or its _hd version) not found in assets/" $path }}{{ end -}}
+{{- return $res -}}

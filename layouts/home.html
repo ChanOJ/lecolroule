@@ -6,5 +6,5 @@
        page_patterns. Published from inside the "main" block: any output or
        code outside the blocks would make Hugo render this template without
        baseof.html. */ -}}
-{{- with resources.Get (strings.TrimPrefix "/" site.Params.ogImage) }}{{ $_ := (. | resources.Copy "cover.jpg").RelPermalink }}{{ end -}}
+{{- $_ := (partial "photo.html" site.Params.ogImage | resources.Copy "cover.jpg").RelPermalink -}}
 {{ end }}

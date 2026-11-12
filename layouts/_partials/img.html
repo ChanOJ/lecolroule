@@ -9,20 +9,17 @@
   high-definition version in the viewer of main.js; images without one are
   not clickable and not part of the viewer's navigation),
   "caption" (shown by the viewer).
-  A JPEG photo with an "_hd" version is shown as a 1200 px copy of that
-  version (see below).
+  The image shown comes from photo.html: a photo may exist only as its
+  "_hd" file, of which the page shows a 1200 px copy.
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
-{{- $res := resources.Get $path -}}
-{{- if not $res }}{{ errorf "image %q not found in assets/" $path }}{{ end -}}
-{{- /* Photos with an "_hd" version: the page shows a 1200 px copy of it
-       (sharp on high-density screens: phones, retina displays), the viewer
-       the HD file; two versions only. Without "_hd": the file itself. */ -}}
-{{- $ext := path.Ext $path -}}
-{{- if and (not .resize) (in (slice ".jpg" ".jpeg") $ext) -}}
-  {{- with resources.Get (printf "%s_hd%s" (strings.TrimSuffix $ext $path) $ext) -}}
-    {{- if gt .Width 1200 }}{{ $res = .Resize "1200x q80" }}{{ end -}}
-  {{- end -}}
+{{- $res := false -}}
+{{- if or .width .resize -}}
+  {{- /* SVG files (sizes given) and explicitly resized images: the file. */ -}}
+  {{- $res = resources.Get $path -}}
+  {{- if not $res }}{{ errorf "image %q not found in assets/" $path }}{{ end -}}
+{{- else -}}
+  {{- $res = partial "photo.html" .src -}}
 {{- end -}}
 {{- with .resize }}{{ $res = $res.Resize . }}{{ end -}}
 {{- $width := .width -}}
