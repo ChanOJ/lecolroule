@@ -514,8 +514,10 @@
 				if (!viewer)
 					viewer = buildViewer();
 
-				var article = link.closest('article') || document;
-				viewer.links = Array.prototype.slice.call(article.querySelectorAll('a.zoom'));
+				// The images of the article, or of a set such as the home gallery
+				// (which also holds hidden links to the other photos of the site).
+				var set = link.closest('[data-viewer-set]') || link.closest('article') || document;
+				viewer.links = Array.prototype.slice.call(set.querySelectorAll('a.zoom'));
 				showImage(viewer.links.indexOf(link));
 				viewer.el.classList.add('is-open');
 				document.documentElement.classList.add('viewer-is-open');
@@ -575,6 +577,11 @@
 
 			// Is this link a page of the site in the current language?
 				function isPageLink(a) {
+					var raw = a.getAttribute('href') || '';
+					// Not the controls of the maps (Leaflet's zoom buttons are
+					// links to "#"), nor anchors within the page.
+					if (raw.charAt(0) == '#' || a.closest('.leaflet-container'))
+						return false;
 					return a.origin === location.origin
 						&& a.pathname.indexOf('/' + lang + '/') === 0
 						&& !a.target

@@ -65,6 +65,11 @@ plain images. The default share image (`ogImage` in `hugo.toml`) is also publish
 fixed URL `/cover.jpg` (no fingerprint, 5-minute browser cache), for listings asking for an
 image URL (OpenStreetMap...).
 
+**Home page photos**: `homeGallery` in `hugo.toml` (the first one big, the next 4 in a 2x2
+grid, all 3:2; on phones the first one only), in the header (`layouts/_partials/home-gallery.html`).
+A click opens the viewer on every high-definition photo of the site, with the captions their pages
+give them.
+
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers
 of openstreetmap.de and simplified: `getting-there` (Saint-Michel → Valloire by car), `walk-trail`

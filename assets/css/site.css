@@ -319,3 +319,41 @@ html.viewer-is-open {
 	.viewer.is-single .viewer-next {
 		display: none;
 	}
+
+/* Home page photos (layouts/_partials/home-gallery.html): one big photo and
+   a 2x2 grid, all 3:2; on phones the first one only. */
+.home-gallery {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr;
+	gap: 0.5rem;
+	margin: 1.5rem 0 0 0;
+}
+
+	.home-gallery a.zoom {
+		display: block;
+		border-bottom: 0;
+		cursor: zoom-in;
+	}
+
+		.home-gallery a.zoom:first-child {
+			grid-row: span 2;
+		}
+
+	.home-gallery img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 3 / 2;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+
+	@media screen and (max-width: 736px) {
+		.home-gallery {
+			grid-template-columns: 1fr;
+		}
+
+			.home-gallery a.zoom:not(:first-child) {
+				display: none;
+			}
+	}
