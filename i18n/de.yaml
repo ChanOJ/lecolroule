@@ -4,5 +4,4 @@ language: Sprache
 close: Schliessen
 logoAlt: Logo Le Col Roulé
 mapAria: "Karte: Route von {{ .from }} nach {{ .to }}"
-mapOnFoot: "zu Fuss"
 mapOpen: "In OpenStreetMap öffnen"

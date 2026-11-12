@@ -3,5 +3,4 @@ language: Langue
 close: Fermer
 logoAlt: Logo Le Col Roulé
 mapAria: "Carte : itinéraire de {{ .from }} à {{ .to }}"
-mapOnFoot: "à pied"
 mapOpen: "Ouvrir dans OpenStreetMap"
