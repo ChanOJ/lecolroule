@@ -7,7 +7,7 @@
 */ -}}
 {{- $l := site.Params.lodging -}}
 {{- $home := site.Home -}}
-{{- $image := partial "asset-url.html" (or .Params.ogImage site.Params.ogImage) | absURL -}}
+{{- $image := (partial "photo.html" (or .Params.ogImage site.Params.ogImage)).RelPermalink | absURL -}}
 {{- $address := dict
     "@type" "PostalAddress"
     "streetAddress" $l.streetAddress
@@ -74,7 +74,7 @@
   {{- $posts := slice -}}
   {{- range .Pages.ByDate.Reverse -}}
     {{- $post := dict "@type" "BlogPosting" "headline" .Title "datePublished" (.Date.Format "2006-01-02") "inLanguage" site.Language.Lang "articleBody" (.Plain | strings.TrimSpace) -}}
-    {{- with .Params.image }}{{ $post = merge $post (dict "image" (partial "asset-url.html" .src | absURL)) }}{{ end -}}
+    {{- with .Params.image }}{{ $post = merge $post (dict "image" ((partial "photo.html" .src).RelPermalink | absURL)) }}{{ end -}}
     {{- $posts = $posts | append $post -}}
   {{- end -}}
   {{- $data = dict
