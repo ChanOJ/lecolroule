@@ -157,10 +157,17 @@ li > .icon:first-child {
 			}
 
 /* Route maps (layouts/_shortcodes/map.html, drawn by main.js with Leaflet):
-   the map, then the GPX download link when there is one. */
+   the map, then the GPX download link when there is one. Spaced like the
+   images of the pages (theme ".image.main"). */
 .osm-block {
-	margin: 0 0 2rem 0;
+	margin: 2rem 0;
 }
+
+	@media screen and (max-width: 480px) {
+		.osm-block {
+			margin: 1.5rem 0;
+		}
+	}
 
 	.osm-map {
 		width: 100%;
