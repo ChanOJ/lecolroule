@@ -50,7 +50,8 @@
 <a href="{{ site.Home.Permalink }}" style="color:#3e8e8f;">{{ strings.TrimSuffix "/" site.Home.Permalink }}</a><br><br>
 {{ i18n "emailSentTo" }} {{ "{{ contact.EMAIL }}" }}<br>
 {{ i18n "emailWhy" }}<br>
-<a href="{{ "{{ unsubscribe }}" }}" style="color:#3e8e8f;">{{ i18n "emailUnsubscribe" }}</a>
+{{- /* Brevo's placeholder, written as is: in an href, Go templates would percent-encode it. */}}
+{{ `<a href="{{ unsubscribe }}" style="color:#3e8e8f;">` | safeHTML }}{{ i18n "emailUnsubscribe" }}</a>
 </td></tr>
 </table>
 </td></tr>
