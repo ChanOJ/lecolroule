@@ -17,6 +17,8 @@
 {{- $body = replaceRE `(href|src)="/` (printf `$1="%s/` $site) $body -}}
 {{- $body = replaceRE `<img ` `<img style="display:block;max-width:100%;height:auto;border-radius:4px;" ` $body -}}
 {{- $body = replaceRE `<p>` `<p style="margin:0 0 16px 0;">` $body -}}
+{{- /* Lists: same space below as paragraphs (mail clients drop the default margins). */ -}}
+{{- $body = replaceRE `<(ul|ol)>` `<$1 style="margin:0 0 16px 0;padding-left:24px;">` $body -}}
 {{- $body = replaceRE `<a ` `<a style="color:#3e8e8f;" ` $body -}}
 {{- $logo := (resources.Get "images/logo-256-noborder.png").Resize "160x png" -}}
 <!DOCTYPE html>
@@ -47,7 +49,7 @@
 <tr><td style="padding:24px 32px;background:#eef1f5;border-radius:0 0 12px 12px;text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#555555;">
 <strong style="font-size:14px;color:#333333;">{{ site.Title }}</strong><br>
 {{ site.Params.newsletter.address }}<br>
-<a href="{{ site.Home.Permalink }}" style="color:#3e8e8f;">{{ strings.TrimSuffix "/" site.Home.Permalink }}</a><br><br>
+<a href="{{ site.Home.Permalink }}" style="color:#3e8e8f;">{{ site.Home.Permalink }}</a><br><br>
 {{ i18n "emailSentTo" }} {{ "{{ contact.EMAIL }}" }}<br>
 {{ i18n "emailWhy" }}<br>
 {{- /* Brevo's placeholder, written as is: in an href, Go templates would percent-encode it. */}}
