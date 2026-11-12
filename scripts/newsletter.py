@@ -45,10 +45,9 @@ SITE = "https://www.lecolroule.fr"
 
 def settings() -> dict:
     """params.newsletter of hugo.toml: its plain `key = value` lines (strings,
-    integers), the [params.newsletter.lists] and
-    [params.newsletter.unsubscribePages] tables as "lists" and
-    "unsubscribePages" (no tomllib in Python 3.9)."""
-    cfg, table = {"lists": {}, "unsubscribePages": {}}, None
+    integers), the [params.newsletter.lists] table as "lists" (no tomllib in
+    Python 3.9)."""
+    cfg, table = {"lists": {}}, None
     for line in (REPO_ROOT / "hugo.toml").read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line.startswith("["):
@@ -59,8 +58,6 @@ def settings() -> dict:
             cfg[m[1]] = m[2] if m[2] is not None else int(m[3])
         elif m and table == "params.newsletter.lists":
             cfg["lists"][m[1]] = int(m[3])
-        elif m and table == "params.newsletter.unsubscribePages" and m[2]:
-            cfg["unsubscribePages"][m[1]] = m[2]
     return cfg
 
 
@@ -138,10 +135,6 @@ def main() -> int:
     for lang, list_id, name, subject, preview, content, existing in plans:
         campaign = {"name": name, "subject": subject, "previewText": preview, "sender": sender,
                     "htmlContent": content, "recipients": {"listIds": [list_id]}}
-        # Unsubscribe page in the language of the list (else Brevo's default
-        # page, in the language of the visitor's browser).
-        if lang in cfg["unsubscribePages"]:
-            campaign["unsubscriptionPageId"] = cfg["unsubscribePages"][lang]
         if existing:
             cid = existing[0]["id"]
             brevo("PUT", f"/emailCampaigns/{cid}", campaign)

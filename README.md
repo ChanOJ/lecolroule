@@ -177,8 +177,7 @@ EN (`en` posts; Dutch, German and Italian subscribers are on the English list).
   (`/<lang>/blog/#<post>`), logo, and the footer with the unsubscribe link (required by Brevo).
   Front matter `subject` and `preview` override the subject (default: title) and the preview text
   (default: start of the text). Images and links point to the prod site.
-- Settings: `params.newsletter` in `hugo.toml` (sender, test address, list ids, postal address,
-  unsubscribe page of each list: without one, Brevo's default page follows the browser's language).
+- Settings: `params.newsletter` in `hugo.toml` (sender, test address, list ids, postal address).
 - `scripts/newsletter.py <post> [--send]` (e.g. `2026-12-01-winter`, the file name without
   language): creates or updates the draft campaigns "Blog <post> fr" and "Blog <post> en", then
   sends them as test e-mails, or with `--send` to the lists. `--send` is refused when the post is
