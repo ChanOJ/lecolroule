@@ -2,16 +2,6 @@
 # Swiss spelling: "ss", no sharp s.
 language: Sprache
 close: Schliessen
-newsletterTitle: "Newsletter 🏔️"
-newsletterText: "Kein Spam, versprochen! Nur ein paar E-Mails pro Jahr (auf Englisch), um Sie über die Öffnung der Buchungen für die kommenden Saisons und über unsere grossen Neuigkeiten zu informieren."
-newsletterLabel: Geben Sie Ihre E-Mail-Adresse ein
-newsletterHelp: "Geben Sie Ihre E-Mail-Adresse an, um sich anzumelden. Z. B.: abc@xyz.com"
-newsletterButton: Anmelden
-newsletterError: "Ihre Anmeldung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
-newsletterSuccess: Ihre Anmeldung war erfolgreich.
-brevoCountryCode: Bitte wählen Sie eine Landesvorwahl
-brevoInvalid: "Die angegebenen Informationen sind ungültig. Bitte überprüfen Sie das Format der Felder und versuchen Sie es erneut."
-brevoRequired: "Dieses Feld darf nicht leer bleiben. "
 logoAlt: Logo Le Col Roulé
 showMap: "Karte anzeigen"
 mapNote: "Google-Maps-Karte: Sobald sie angezeigt wird, setzt sie Cookies von Google."

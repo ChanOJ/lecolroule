@@ -34,7 +34,6 @@ enableGitInfo = true
   # banner under EU law). Uncomment to put it back on every page; the prod
   # Content-Security-Policy still allows it (infra module option "analytics").
   # googleAnalyticsID = "G-2MX2EV8ZZE"
-  recaptchaSiteKey = "6LflesIqAAAAAOjZvfGc0s_DN1VHLHQSiG2ePmSi"
   twitter = "@LeColRoule"
   ogImage = "/images/vue_ete3.jpg"
   copyrightYears = "2021-2026"
@@ -110,7 +109,9 @@ enableGitInfo = true
       # Booking page; used by links and buttons written "airbnb:" in content.
       airbnb = "https://www.airbnb.fr/rooms/48075207"
       ogLocale = "fr_FR"
-      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFAKFA-m-7SD2GvTdZ_cN1O6lGrKAhBM27iGXAq0_J_OeNBrmoCmaFG3yJI3yNmwbFDy42WJgbczqOzgMMi77KVt4sEPSD_y0B_63vE6LRIcJCsGQXUwjgD5XSNTPc2v-QhriIu3eI_mHBGOxZ8SV45kHFaCh6TqRUPQGj5IL24o8YSI5aFc9pyxEpKP41m9VEeVNCN7VzTdTi"
+      # Newsletter: Brevo form, embedded as an iframe (its own page, with its
+      # Cloudflare Turnstile captcha). NL/DE/IT: the English form for now.
+      brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAPq_UEzIEbBV6xJvh6_2WU2I9fVKvP_yzNN_008vCH74nIM_Jlh8Tv6ZUuCpLwKuqpUuE0ej5yIDHAPGO3Ltv8UIY9_N0XwYp8VHzbcsTljm2M6RmDRhSkpYr0DvN7kF-uxtPZBqu6148-fYZ5DgLvMi-_nfjJsk5CJMKg4cwd5L_NiaCgF03nRVk39iWl7xYzgJ4U3nlDEc"
 
   [languages.en]
     weight = 2
@@ -120,12 +121,12 @@ enableGitInfo = true
       flag = "/images/uk.svg"
       airbnb = "https://www.airbnb.com/rooms/48075207"
       ogLocale = "en_GB"
-      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+      brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
   # NL, DE and IT: Dutch also for Flanders, German in Swiss spelling (ss, no
   # sharp s) also for Switzerland; hreflang uses the plain language codes, so
   # every region of each language gets these pages. Newsletter: the English
-  # Brevo form until a form exists for the language.
+  # Brevo form until a form exists for the language (brevoForm).
   [languages.nl]
     weight = 3
     label = "Nederlands"
@@ -134,9 +135,7 @@ enableGitInfo = true
       flag = "/images/nl.svg"
       airbnb = "https://www.airbnb.nl/rooms/48075207"
       ogLocale = "nl_BE"
-      # Locale of the Brevo form used (the English one).
-      brevoLocale = "en"
-      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+      brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
   [languages.de]
     weight = 4
@@ -146,9 +145,7 @@ enableGitInfo = true
       flag = "/images/de.svg"
       airbnb = "https://www.airbnb.de/rooms/48075207"
       ogLocale = "de_CH"
-      # Locale of the Brevo form used (the English one).
-      brevoLocale = "en"
-      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+      brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
   [languages.it]
     weight = 5
@@ -158,9 +155,7 @@ enableGitInfo = true
       flag = "/images/it.svg"
       airbnb = "https://www.airbnb.it/rooms/48075207"
       ogLocale = "it_IT"
-      # Locale of the Brevo form used (the English one).
-      brevoLocale = "en"
-      brevoFormAction = "https://c9a5d88e.sibforms.com/serve/MUIFADyVvH8rc1LnLGI7_yGghpYw7nvxcJxyzEQx2w2RleGdErp3aMQ4qARCiZKdHWgQSZ_u5-3QuLDnxoUsn7x-rhhtNx9nYpzkXRkuNSUZaZS9Io0Z37mMq2IRSKeAKmALuW0oBNHV7aPMtryG5FkTKqnxm6HX3NfDjwSsT_lmxRe0TFXIQ33jLiAl6oqUCFe6C_LD1pQV_XIQ"
+      brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
 [minify]
   # Minified HTML, XML and JSON output (stylesheets and scripts are minified

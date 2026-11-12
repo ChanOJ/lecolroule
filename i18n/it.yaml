@@ -1,16 +1,6 @@
 # Interface strings (everything that is not page content).
 language: Lingua
 close: Chiudi
-newsletterTitle: "Newsletter 🏔️"
-newsletterText: "Niente spam, promesso! Solo poche email all'anno (in inglese) per informarvi sull'apertura delle prenotazioni per le stagioni successive e sulle nostre grandi novità."
-newsletterLabel: Inserite il vostro indirizzo email
-newsletterHelp: "Indicate il vostro indirizzo email per iscrivervi. Es.: abc@xyz.com"
-newsletterButton: Iscriviti
-newsletterError: "Non è stato possibile registrare la vostra iscrizione. Riprovate."
-newsletterSuccess: La vostra iscrizione è andata a buon fine.
-brevoCountryCode: Scegliete un prefisso internazionale
-brevoInvalid: "Le informazioni fornite non sono valide. Verificate il formato dei campi e riprovate."
-brevoRequired: "Questo campo non può essere lasciato vuoto. "
 logoAlt: Logo Le Col Roulé
 showMap: "Mostra la mappa"
 mapNote: "Mappa di Google Maps: una volta mostrata, imposta cookie di Google."

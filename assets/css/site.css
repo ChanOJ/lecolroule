@@ -187,3 +187,20 @@ li > .icon:first-child {
 			height: 100%;
 			border: 0;
 		}
+
+/* Newsletter (Brevo form in an iframe, layouts/_partials/newsletter.html):
+   the iframe does not grow with its content, so it gets the height of the
+   form, taller on narrow screens where its text wraps. */
+iframe.newsletter {
+	display: block;
+	width: 100%;
+	height: 550px;
+	border: 0;
+	margin: 0 0 1rem 0;
+}
+
+	@media screen and (max-width: 480px) {
+		iframe.newsletter {
+			height: 610px;
+		}
+	}
