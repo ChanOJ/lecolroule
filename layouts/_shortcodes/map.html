@@ -16,13 +16,15 @@
 {{- $start := index $coords 0 -}}
 {{- $end := index $coords (sub (len $coords) 1) -}}
 {{- $osm := printf "https://www.openstreetmap.org/directions?engine=fossgis_osrm_%s&route=%v,%v;%v,%v" $p.mode (index $start 1) (index $start 0) (index $end 1) (index $end 0) -}}
-<span class="image main osm-map" style="height: {{ .Get "height" | default "350" }}px"
+<div class="osm-block">
+<div class="osm-map" style="height: {{ .Get "height" | default "350" }}px"
 	data-route="{{ ($res | fingerprint "md5").RelPermalink }}"
 	data-leaflet-js="{{ partial "asset-url.html" "vendor/leaflet-1.9.4.min.js" }}"
 	data-leaflet-css="{{ partial "asset-url.html" "vendor/leaflet-1.9.4.css" }}"
-	role="img" aria-label="{{ i18n "mapAria" (dict "from" $p.from "to" $p.to) }}"></span>
+	role="img" aria-label="{{ i18n "mapAria" (dict "from" $p.from "to" $p.to) }}"></div>
 <noscript><a href="{{ $osm | safeURL }}">{{ i18n "mapOpen" }}</a></noscript>
 {{- with resources.Get (printf "maps/%s.gpx" $name) }}
 <a class="map-gpx icon solid fa-download" href="{{ (. | fingerprint "md5").RelPermalink }}" download="le-col-roule-{{ $name }}.gpx">{{ i18n "mapGpx" }}</a>
 {{- end }}
+</div>
 {{- /* */ -}}
