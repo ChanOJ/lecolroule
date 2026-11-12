@@ -333,8 +333,22 @@ html.viewer-is-open {
 	display: grid;
 	grid-template-columns: 2fr 1fr 1fr;
 	gap: 0.5rem;
-	margin: 1.5rem 0 0 0;
+	/* As much space above as below (the header's padding: 3rem, 2.5rem on
+	   narrow screens). */
+	margin: 3rem 0 0 0;
 }
+
+	@media screen and (max-width: 768px) {
+		.home-gallery {
+			margin-top: 2.5rem;
+		}
+	}
+
+	/* The theme caps the header text block at 40rem (for its unfolding
+	   intro, no longer used): the photos made it taller and were cut. */
+	#header .content .inner {
+		max-height: none;
+	}
 
 	.home-gallery a.zoom {
 		display: block;
