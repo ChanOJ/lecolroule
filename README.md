@@ -298,6 +298,12 @@ as the origin says (stylesheets, scripts and images have a content fingerprint i
 
 Other zones of the bunny.net account belong to other projects and are not managed here.
 
+**Public repository.** The repository is public (since 2026-11-12): never commit a secret value
+(API keys, passwords, tokens, unencrypted state or plan), only references (`infra/secrets.env`) and
+GitHub secrets. `.gitignore` ignores the usual secret files; GitHub secret scanning with push
+protection rejects a push containing a known secret format; pull requests from outside
+contributors need an approval before their workflows run (and never get the secrets).
+
 **Secrets.** The state contains secrets (storage zone passwords, pull zone token auth key), so it is
 always encrypted (`enforced = true`) and the encrypted `infra/terraform.tfstate` is committed, so
 it can be shared with CI. Commit it after every `tofu apply`. Three values are needed:

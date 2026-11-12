@@ -2,16 +2,42 @@
 node_modules/
 dist/
 
+# Secrets: never committed. Secret values live in Proton Pass and in GitHub
+# secrets; infra/secrets.env only holds Proton Pass references (pass://...).
+.env
+.env.*
+*.env
+!infra/secrets.env
+*.tfvars
+*.tfvars.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
 # OpenTofu / Terraform
 .terraform/
 *.tfstate
 # The infra state is encrypted (infra/encryption.tf, enforced) and is shared through git.
 !infra/terraform.tfstate
 *.tfstate.*
+# Plan files (encrypted too, but local working files).
+*.tfplan
+*.plan
 crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
 # Lock files of tools (Hugo build lock, ...). Not .terraform.lock.hcl, which is committed.
 *.lock
 
 # Hugo
 /resources/_gen/
+
+# Claude Code: personal settings (permissions, local paths). .claude/launch.json is shared.
+.claude/settings.local.json

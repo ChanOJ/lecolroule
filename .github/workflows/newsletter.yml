@@ -42,7 +42,7 @@ jobs:
           echo "::error::Sending is only allowed from main."
           exit 1
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Hugo
         run: |
