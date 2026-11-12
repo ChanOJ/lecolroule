@@ -8,7 +8,7 @@ Gli ultimi grandi lavori del Col Roulé stanno per finire! Da quest'inverno potr
 
 Negli ultimi due anni il duplex è stato quindi completamente rinnovato, è stata aperta una grande vetrata e tutta la biancheria da letto, divano letto compreso, è stata sostituita con materiale di alta gamma.
 
-Per aiutarci a finanziare tutti questi grandi lavori, che alcuni di voi avevano chiesto nelle recensioni, non esitate a lasciarci una valutazione:
+Per aiutarci a finanziare tutti questi grandi lavori, che diversi di voi avevano chiesto nelle recensioni, non esitate a lasciarci una valutazione:
 - su [Mappe di Apple](https://maps.apple/p/N-qZ7Ut20C~wpH)
 - su [Google Maps](https://maps.app.goo.gl/ng9N1mwDaAWFdeH87)
 

@@ -8,7 +8,7 @@ Ca y est, nous avons enfin mis en ligne les photos de la rénovation complète d
 
 Concernant les dernières nouveautés de l'appartement, en voici une liste non exhaustive :
 
-- 🛜 La connexion internet est passée à la fibre : Wifi 6 et débit de 1Gbps/500Mbps, pour les connaisseurs.
+- 🛜 La connexion internet est passée à la fibre : Wifi 6 et débit de 1Gbps/500Mbps, pour qui s'y connaît.
 - 🍳 Un nouveau jeu de poêles céramiques a enfin remplacé les vieilles Tefal hors d'usage.
 - 🏔️ Les bois de la terrasse (lames et garde corps) ont été nourris à l'huile de lin.
-- 🛏️ 4 oreillers à mémoire de forme, jugés un peu trop durs par certains, ont été remplacés par de nouveaux oreillers moelleux plus consensuels.
+- 🛏️ 4 oreillers à mémoire de forme, jugés un peu trop durs par une partie d'entre vous, ont été remplacés par de nouveaux oreillers moelleux plus consensuels.

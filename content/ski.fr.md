@@ -16,32 +16,32 @@ Imaginez une matinée d'hiver excitante ! Adrien, âgé de 9 ans, doit être à 
 
 {{< map route="walk-road" >}}
 
-[Valloire](https://www.valloire.net/) a cela de particulier qu'elle allie les avantages d'une station familiale à taille humaine et dynamique, et ceux d'un grand domaine équipé de 160km de pistes de ski sur 5 versants avec des remontées mécaniques dernier cri. Et pour les éternels insatisfaits, [Les 3 Vallées](https://www.les3vallees.com/fr) sont à seulement 35mn en voiture !
+[Valloire](https://www.valloire.net/) a cela de particulier qu'elle allie les avantages d'une station familiale à taille humaine et dynamique, et ceux d'un grand domaine équipé de 160km de pistes de ski sur 5 versants avec des remontées mécaniques dernier cri. Et pour qui en veut toujours plus, [Les 3 Vallées](https://www.les3vallees.com/fr) sont à seulement 35mn en voiture !
 
 ### Ski & Snowboard
 
 La diversité des [activités d'hiver](https://www.valloire.net/profiter-de-valloire/le-ski/) est pléthorique :
 
-- Pour les snowboarders, Snow Park à 2300m d'altitude.
+- Pour le snowboard, Snow Park à 2300m d'altitude.
 - 10km de pistes de [ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/) aménagées.
-- Deux [écoles de ski (ESF et ESI)](https://www.valloire.net/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) comportant 140 moniteurs et 3 jardins d'enfants, ainsi que des moniteurs indépendants.
+- Deux [écoles de ski (ESF et ESI)](https://www.valloire.net/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) comportant 140 moniteurs et monitrices et 3 jardins d'enfants, sans compter les cours particuliers en indépendant.
 
 Et si tout cela ne vous suffisait pas, le départ de télécabine des [3 Vallées](https://www.les3vallees.com/fr) (Courchevel, Méribel, Les Ménuires, Val-Thorens, Orelle), le plus grand domaine skiable du monde avec ses 600 km de pistes, et ouvert de novembre à mai, est à seulement 35mn en voiture !
 
-![Skieur enfant 1](/images/Enfant1-600px.jpg "-")
+![Enfant à ski 1](/images/Enfant1-600px.jpg "-")
 
-![Skieur enfant 2](/images/Enfant2-600px.jpg "-")
+![Enfant à ski 2](/images/Enfant2-600px.jpg "-")
 
 ### Autres activités
 
 #### sur place
 
 - {{< icon name="sleigh" title="luge" >}} [Snake Gliss](https://www.valloire.net/sit/descente-en-snake-gliss-grande-aventure-388984/)
-- {{< icon name="hiking" title="marcheur" >}} [Balades en raquettes](https://www.valloire.net/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
+- {{< icon name="hiking" title="randonnée" >}} [Balades en raquettes](https://www.valloire.net/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
 - {{< icon name="car-side" title="kart" >}} [Mountain Kart](https://www.valloire.net/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="ski de fond" >}} [Ski de fond](https://www.valloire.net/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
-- {{< icon name="skating" title="patineur" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
-- {{< icon name="running" title="coureur" >}} [Trail running](https://www.valloire.net/trail/le-trail-avec-rando-montagne-4620573/)
+- {{< icon name="skating" title="patinage" >}} [Patinoire](https://www.valloire.net/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="running" title="course à pied" >}} [Trail running](https://www.valloire.net/trail/le-trail-avec-rando-montagne-4620573/)
 - {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="haltères" >}} [Spa & Gym - Val'Form](https://www.valloire.net/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/sit/bowling-le-mafayo-371455/)

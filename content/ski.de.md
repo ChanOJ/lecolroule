@@ -27,9 +27,9 @@ Stellen Sie sich einen aufregenden Wintermorgen vor! Adrien, 9 Jahre alt, muss u
 
 Das Angebot an [Winteraktivitäten](https://www.valloire.net/en/profiter-de-valloire/le-ski/) ist riesig:
 
-- Für Snowboarder ein Snowpark auf 2300 m Höhe.
+- Für Snowboard-Fans ein Snowpark auf 2300 m Höhe.
 - 10 km präparierte [Langlaufloipen](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/).
-- Zwei [Skischulen (ESF und ESI)](https://www.valloire.net/en/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) mit 140 Skilehrern und 3 Kindergärten sowie unabhängige Skilehrer.
+- Zwei [Skischulen (ESF und ESI)](https://www.valloire.net/en/profiter-de-valloire/le-ski/se-preparer-a-skier/apprendre-le-ski-a-valloire/) mit 140 Skilehrpersonen und 3 Kindergärten sowie unabhängigen Skilehrpersonen.
 
 Und wenn Ihnen das alles nicht genügt: Die Talstation der Gondelbahn in [Les 3 Vallées](https://www.les3vallees.com/de) (Courchevel, Méribel, Les Menuires, Val Thorens, Orelle), dem grössten Skigebiet der Welt mit 600 km Pisten, geöffnet von November bis Mai, ist nur 35 Autominuten entfernt!
 
@@ -42,11 +42,11 @@ Und wenn Ihnen das alles nicht genügt: Die Talstation der Gondelbahn in [Les 3 
 #### vor Ort
 
 - {{< icon name="sleigh" title="Schlitten" >}} [Snake Gliss](https://www.valloire.net/en/sit/descente-en-snake-gliss-grande-aventure-388984/)
-- {{< icon name="hiking" title="Wanderer" >}} [Schneeschuhwanderungen](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
+- {{< icon name="hiking" title="Wandern" >}} [Schneeschuhwanderungen](https://www.valloire.net/en/profiter-de-valloire/activites-outdoor/balades-a-pied-ou-en-raquettes-a-valloire/)
 - {{< icon name="car-side" title="Kart" >}} [Mountain Kart](https://www.valloire.net/en/actualites/descente-en-mountain-kart-lhiver-5413556/)
 - {{< icon name="skiing-nordic" title="Langlauf" >}} [Langlauf](https://www.valloire.net/en/profiter-de-valloire/le-ski/la-glisse-pour-tous/ski-de-fond/)
-- {{< icon name="skating" title="Eisläufer" >}} [Eisbahn](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
-- {{< icon name="running" title="Läufer" >}} [Trailrunning](https://www.valloire.net/en/trail/le-trail-avec-rando-montagne-4620573/)
+- {{< icon name="skating" title="Eislaufen" >}} [Eisbahn](https://www.valloire.net/en/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="running" title="Laufen" >}} [Trailrunning](https://www.valloire.net/en/trail/le-trail-avec-rando-montagne-4620573/)
 - {{< icon name="spa" title="Spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="Hanteln" >}} [Spa & Gym - Val'Form](https://www.valloire.net/en/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="Bowling" >}} [Bowling, Billard & Arcade](https://www.valloire.net/en/sit/bowling-le-mafayo-371455/)

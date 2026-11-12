@@ -6,7 +6,7 @@ description: "Accès à Valloire en voiture par l'A43, ou en TGV jusqu'à Saint-
 ogImage: /images/vue_ete1.jpg
 ---
 
-{{< icon name="car" title="voiture" >}} {{< icon name="motorcycle" title="moto" >}} La mairie de Valloire se plait à le dire, pour venir en voiture ou moto depuis toutes les métropoles de France il n'y a qu'un seul feu rouge ! En effet, l'autoroute mène jusque Saint-Michel-de-Maurienne, puis après 25mn de montée vous êtes arrivé.
+{{< icon name="car" title="voiture" >}} {{< icon name="motorcycle" title="moto" >}} La mairie de Valloire se plait à le dire, pour venir en voiture ou moto depuis toutes les métropoles de France il n'y a qu'un seul feu rouge ! En effet, l'autoroute mène jusque Saint-Michel-de-Maurienne, puis après 25mn de montée vous y êtes.
 
 {{< icon name="train" title="train" >}} {{< icon name="bus" title="bus" >}} En train+bus il vous suffit d'aller à Saint-Michel-de-Maurienne (aussi appelé Saint-Michel Valloire) en TGV, puis de prendre un bus jusqu'à Valloire (à réserver à l'avance !) :
 

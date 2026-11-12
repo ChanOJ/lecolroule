@@ -16,7 +16,7 @@ translationNotes:
 
 ![Pranzo con vista sulla terrazza dell'appartamento](/images/vue_ete3.jpg)
 
-In estate [il nostro appartamento](/apartment) si trova in posizione ideale, a 10 minuti a piedi ([sentiero bucolico](/shops), 15 minuti in salita) dal centro di Valloire, dai negozi e dalle attività, e dalla cabinovia del Crêt de la Brive (aperta in estate per pedoni e mountain bike), e a 18-20 minuti a piedi dal centro ricreativo (piscina, pista di pattinaggio, centro benessere). Se necessario, tutto è ovviamente raggiungibile anche in auto (2 posti auto privati inclusi nell'affitto, con in più una colonnina di ricarica privata da 7 kW, T2S + TE, per auto elettriche).
+In estate [il nostro appartamento](/apartment) si trova in posizione ideale, a 10 minuti a piedi ([sentiero bucolico](/shops), 15 minuti in salita) dal centro di Valloire, dai negozi e dalle attività, e dalla cabinovia del Crêt de la Brive (utilizzabile in estate a piedi e in mountain bike), e a 18-20 minuti a piedi dal centro ricreativo (piscina, pista di pattinaggio, centro benessere). Se necessario, tutto è ovviamente raggiungibile anche in auto (2 posti auto privati inclusi nell'affitto, con in più una colonnina di ricarica privata da 7 kW, T2S + TE, per auto elettriche).
 
 La ciliegina sulla torta: la nostra grande terrazza coperta di 20 m² vi offre tutto lo spazio necessario per riporre la vostra attrezzatura!
 
@@ -26,11 +26,11 @@ Che veniate per scalare i colli in bici, scendere a tutta velocità in mountain 
 
 ### Ciclismo
 
-Valloire si trova tra il Col du Télégraphe e il Col du Galibier, a nord del Col du Lautaret, resi celebri dal [Tour de France](https://www.letour.fr/en/), nel cuore della valle della Maurienne, che si definisce il più grande comprensorio ciclistico del mondo. I ciclisti, amatori o professionisti, potranno soddisfare la loro voglia di bici, da strada o elettrica (e-bike a noleggio sul posto)!
+Valloire si trova tra il Col du Télégraphe e il Col du Galibier, a nord del Col du Lautaret, resi celebri dal [Tour de France](https://www.letour.fr/en/), nel cuore della valle della Maurienne, che si definisce il più grande comprensorio ciclistico del mondo. Che pedaliate per passione o per sport, potrete soddisfare la vostra voglia di bici, da strada o elettrica (e-bike a noleggio sul posto)!
 
-Anche gli appassionati di mountain bike saranno accontentati. Valloire è un paradiso per i biker... 155 km di percorsi segnalati di tutti i livelli e 1 bike park (all'arrivo della cabinovia del Crêt de la Brive). In pochi minuti la cabinovia vi porta infatti a 2100 m di altitudine, verso discese di vari livelli, tra cui un percorso per famiglie di 9 km che si snoda tra alpeggi e boschi.
+Anche con la mountain bike non resterete delusi. Valloire è un paradiso per la MTB... 155 km di percorsi segnalati di tutti i livelli e 1 bike park (all'arrivo della cabinovia del Crêt de la Brive). In pochi minuti la cabinovia vi porta infatti a 2100 m di altitudine, verso discese di vari livelli, tra cui un percorso per famiglie di 9 km che si snoda tra alpeggi e boschi.
 
-In paese, una pump track di 240 m su 3 livelli farà la gioia degli appassionati della disciplina, in bici o in monopattino. Ad accesso libero, si trova proprio accanto allo skate park e alla pista di pattinaggio.
+In paese, una pump track di 240 m su 3 livelli farà la gioia di chi ama la disciplina, in bici o in monopattino. Ad accesso libero, si trova proprio accanto allo skate park e alla pista di pattinaggio.
 
 ![Col du Galibier](/images/col-du-galibier.jpg "Il Col du Galibier (c) Valloire.net")
 
@@ -40,7 +40,7 @@ In paese, una pump track di 240 m su 3 livelli farà la gioia degli appassionati
 
 ### Escursioni
 
-Valloire è soprannominata dai suoi abitanti la Valle d'Oro per il suo soleggiamento eccezionale, che non ha nulla da invidiare alle Alpi del Sud, dall'altra parte del Col du Galibier. I 14.000 ettari di alta montagna intorno al Mont Thabor e alle Aiguilles d'Arves ospitano una fauna e una flora preservate che sapranno soddisfare la vostra voglia di natura. E se dopo qualche soggiorno nella nostra valle voleste cambiare valle, a soli 45 minuti in auto la Meije e gli Écrins vi offriranno nuovi territori da scoprire.
+Valloire è soprannominata in paese la Valle d'Oro per il suo soleggiamento eccezionale, che non ha nulla da invidiare alle Alpi del Sud, dall'altra parte del Col du Galibier. I 14.000 ettari di alta montagna intorno al Mont Thabor e alle Aiguilles d'Arves ospitano una fauna e una flora preservate che sapranno soddisfare la vostra voglia di natura. E se dopo qualche soggiorno nella nostra valle voleste cambiare valle, a soli 45 minuti in auto la Meije e gli Écrins vi offriranno nuovi territori da scoprire.
 
 ![Alta montagna](/images/valloire-haute-montagne.jpg "Escursione sopra Valloire")
 
@@ -62,7 +62,7 @@ Per lo più in pieno paese, 3 vie ferrate e centinaia di vie di arrampicata sapr
 
 #### sul posto
 
-- {{< icon name="skating" title="pattinatore" >}} [Pista di pattinaggio](https://www.valloire.net/it/famille-plus/patinoire-philippe-candeloro-93457/)
+- {{< icon name="skating" title="pattinaggio" >}} [Pista di pattinaggio](https://www.valloire.net/it/famille-plus/patinoire-philippe-candeloro-93457/)
 - {{< icon name="swimming-pool" title="piscina" >}} [Piscina all'aperto riscaldata con scivolo](https://www.valloire.net/it/activites-aquatiques/piscine-de-valloire-371454/)
 - {{< icon name="horse" title="cavallo" >}} [Centro equestre](https://www.valloire.net/it/sit/centre-equestre-de-valloire-prejvall-371453/)
 - {{< icon name="baseball-ball" title="tennis" >}} [Tennis](https://www.valloire.net/it/sit/court-de-tennis-a-louer-371460/)
@@ -78,7 +78,7 @@ Per lo più in pieno paese, 3 vie ferrate e centinaia di vie di arrampicata sapr
 - {{< icon name="plane" title="aereo" >}} [Aeroclub](https://www.aeroclub-de-valloire.com/)
 - {{< icon name="golf-ball" title="golf" >}} [Golf](https://www.valloire.net/it/sit/golf-des-verneys-371458/)
 - {{< icon name="fish" title="pesce" >}} [Pesca](https://www.valloire.net/it/profiter-de-valloire/activites-outdoor/les-pieds-dans-leau/)
-- {{< icon name="running" title="corridore" >}} [Trail running](https://www.valloire.net/it/profiter-de-valloire/activites-outdoor/la-randonnee/le-trail-a-valloire/)
+- {{< icon name="running" title="corsa" >}} [Trail running](https://www.valloire.net/it/profiter-de-valloire/activites-outdoor/la-randonnee/le-trail-a-valloire/)
 - {{< icon name="spa" title="spa" >}} [Spa - Sens des Cimes](https://www.les-sens-des-cimes.com/)
 - {{< icon name="dumbbell" title="manubri" >}} [Spa & Gym - Val'Form](https://www.valloire.net/it/profiter-de-valloire/bien-etre/)
 - {{< icon name="bowling-ball" title="bowling" >}} [Bowling, biliardo & sala giochi](https://www.valloire.net/it/sit/bowling-le-mafayo-371455/)
