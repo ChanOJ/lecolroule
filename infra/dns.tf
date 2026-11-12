@@ -1,6 +1,7 @@
 # DNS records of the website in the lecolroule.fr zone, hosted at Infomaniak.
 #
-# Only the records pointing to bunny.net are managed here. The rest of the zone
+# Only the records pointing to bunny.net and the Google Search Console
+# verification are managed here. The rest of the zone
 # stays managed in the Infomaniak manager: mail (MX, SPF, DKIM, DMARC, BIMI) and
 # the apex A/AAAA/TXT records that belong to Infomaniak's web redirection
 # (lecolroule.fr -> https://www.lecolroule.fr/valloire/). The zone itself is
@@ -30,5 +31,15 @@ resource "infomaniak_record" "test" {
   type      = "CNAME"
   source    = "test"
   target    = "${local.test_name}.b-cdn.net"
+  ttl       = 3600
+}
+
+# Google Search Console: proof of ownership of the domain (also in
+# dns_bunny.tf, for when the domain is delegated to Bunny).
+resource "infomaniak_record" "google_site_verification" {
+  zone_fqdn = local.zone
+  type      = "TXT"
+  source    = "."
+  target    = "google-site-verification=D3Y2KhznVBAMJY05TDKwWZiBqteuLRvoufknwr0mFDc"
   ttl       = 3600
 }
