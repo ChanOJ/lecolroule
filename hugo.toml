@@ -114,6 +114,10 @@ enableGitInfo = true
     senderName = "Le Col Roulé"
     senderEmail = "contact@lecolroule.fr"
     testEmail = "contact@lecolroule.fr"
+    # Public key of our Cloudflare Turnstile widget (Cloudflare dashboard;
+    # its secret key is set in Brevo, which checks the tokens). Allowed
+    # hostnames: lecolroule.fr (subdomains included) and Brevo's sibforms.com.
+    captchaKey = "0x4AAAAAAF9QuERzrTTM2sDd"
     address = "1165 route de l'Archaz, 73450 Valloire"
     [params.newsletter.lists]
       fr = 5
@@ -129,8 +133,8 @@ enableGitInfo = true
       # Booking page; used by links and buttons written "airbnb:" in content.
       airbnb = "https://www.airbnb.fr/rooms/48075207"
       ogLocale = "fr_FR"
-      # Newsletter: Brevo form, embedded as an iframe (its own page, with its
-      # Cloudflare Turnstile captcha). NL/DE/IT: the English form for now.
+      # Newsletter: the Brevo form our form is sent to (its Brevo list:
+      # French subscribers). NL/DE/IT: the English form (English list).
       brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAPq_UEzIEbBV6xJvh6_2WU2I9fVKvP_yzNN_008vCH74nIM_Jlh8Tv6ZUuCpLwKuqpUuE0ej5yIDHAPGO3Ltv8UIY9_N0XwYp8VHzbcsTljm2M6RmDRhSkpYr0DvN7kF-uxtPZBqu6148-fYZ5DgLvMi-_nfjJsk5CJMKg4cwd5L_NiaCgF03nRVk39iWl7xYzgJ4U3nlDEc"
 
   [languages.en]
@@ -146,7 +150,7 @@ enableGitInfo = true
   # NL, DE and IT: Dutch also for Flanders, German in Swiss spelling (ss, no
   # sharp s) also for Switzerland; hreflang uses the plain language codes, so
   # every region of each language gets these pages. Newsletter: the English
-  # Brevo form until a form exists for the language (brevoForm).
+  # Brevo form (brevoForm), i.e. the English list.
   [languages.nl]
     weight = 3
     label = "Nederlands"
@@ -178,11 +182,10 @@ enableGitInfo = true
       brevoForm = "https://c9a5d88e.sibforms.com/v2/serve/MUIFAMRl0U4gTT9XYnv_YPxTm2KonMfz4nCYChc4B3gxXirLmHJJmY0thDUOeiVcypnrXHmJG6UKBP67DMsgjn5fbyEBTwagOjUG_0TrG2H1sHLgNsVS__XdogO9EA2Bjx32FH0i_bYNyNbsOH8N6Gfz8cq-ibiZFlN_bwLrZgJ3OxpVvBbDJKpAxrf4uuv-gF8sWAaG3Qff6ReE"
 
 # E-mail version of the blog posts (newsletter: scripts/newsletter.py).
-[mediaTypes."text/x-email-html"]
-  suffixes = ["html"]
-
+# Plain text/html: a media type of its own with the "html" suffix would make
+# `hugo server` serve every .html page with that type (shown as text).
 [outputFormats.email]
-  mediaType = "text/x-email-html"
+  mediaType = "text/html"
   baseName = "email"
   isHTML = true
   notAlternative = true

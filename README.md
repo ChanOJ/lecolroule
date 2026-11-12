@@ -31,10 +31,12 @@ front matter (the block between `---` lines), together with the title and the me
 Languages: `fr` (reference: other languages follow its content), `en`, `nl` (neutral Dutch, also
 for Flanders), `de` (Swiss spelling, "ss" and no "ß", fine for Germany and Austria too), `it`.
 External links point to the page in the visitor's language when the site has one, else to its
-English version (valloire.net has no German version). The newsletter form is a Brevo form,
-embedded as an iframe (`brevoForm` in `hugo.toml`, `layouts/_partials/newsletter.html`): its
-texts, style and captcha (Cloudflare Turnstile) are edited in Brevo. NL/DE/IT use the English
-form until Brevo has one in their language.
+English version (valloire.net has no German version). The newsletter sign-up form is our own
+(`layouts/_partials/newsletter.html`, texts `newsletter*` in `i18n/`, `main.js` "Newsletter
+form"): it is posted to the Brevo form of the language (`brevoForm` in `hugo.toml`), which adds
+the address to its list and checks the Cloudflare Turnstile captcha (`captchaKey`: our widget in
+the Cloudflare dashboard, its secret key set in Brevo; allowed hostnames `lecolroule.fr` and
+Brevo's `sibforms.com`, so the captcha fails on `localhost`). FR goes to the French list, the other languages to the English one.
 
 **Translation notes.** A translation may deliberately differ from a literal one (a button label
 shortened to fit on phones, a link to a site's own language version, ...). Such choices are
@@ -206,8 +208,8 @@ ePrivacy rules), so it has no cookie banner:
 - Maps are OpenStreetMap (`map` shortcode, Leaflet): no cookie; the tiles come from
   tile.openstreetmap.org (light use, within its usage policy, attribution shown).
 - `lcr_lang` (language menu) only stores a choice the visitor made.
-- The newsletter form is a Brevo page in an iframe; its captcha is Cloudflare Turnstile, which
-  sets no cookie (Google reCAPTCHA is gone).
+- The newsletter form is posted to Brevo only when the visitor subscribes; its captcha,
+  Cloudflare Turnstile, sets no cookie and is loaded only when the form comes into view (blog page).
 
 ## Performance and icons
 

@@ -1,9 +1,33 @@
 {{- /*
-  Newsletter sign-up: the Brevo form of the language (brevoForm in hugo.toml),
-  embedded as an iframe. The form is a Brevo page: its texts, its dark style
-  and its Cloudflare Turnstile captcha (no cookie, unlike reCAPTCHA) are set
-  in Brevo. No Brevo script runs in the site's pages.
+  Newsletter sign-up form: our own HTML (texts in i18n/, the site's style),
+  sent to the Brevo form of the language (brevoForm in hugo.toml), which adds
+  the address to its Brevo list. main.js ("Newsletter form") loads the
+  Cloudflare Turnstile captcha (no cookie) when the form comes into view and
+  posts the form to Brevo, which checks the captcha. Without JavaScript there
+  is no captcha: a note asks to enable it.
 */ -}}
 {{- with site.Language.Params.brevoForm }}
-							<iframe class="newsletter" src="{{ . }}" title="Newsletter" loading="lazy" scrolling="auto"></iframe>
+							<form class="newsletter" method="post" action="{{ . }}" novalidate
+								data-captcha-key="{{ site.Params.newsletter.captchaKey }}"
+								data-captcha-js="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+								data-lang="{{ site.Language.Lang }}"
+								data-checking="{{ i18n "newsletterChecking" }}"
+								data-invalid="{{ i18n "newsletterInvalid" }}"
+								data-success="{{ i18n "newsletterSuccess" }}"
+								data-error="{{ i18n "newsletterError" }}"
+								data-fallback="{{ i18n "newsletterFallback" }}">
+								<h3>{{ i18n "newsletterTitle" }}</h3>
+								<p>{{ i18n "newsletterText" }}</p>
+								<div class="newsletter-row">
+									<label for="newsletter-email">{{ i18n "newsletterLabel" }}</label>
+									<input type="email" id="newsletter-email" name="EMAIL" autocomplete="email" required />
+									<input type="submit" class="primary" value="{{ i18n "newsletterButton" }}" />
+								</div>
+								{{- /* Brevo's honeypot: left empty by people, filled by bots. */}}
+								<input type="text" name="email_address_check" value="" class="newsletter-trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+								<input type="hidden" name="locale" value="{{ site.Language.Lang }}" />
+								<div class="newsletter-captcha"></div>
+								<p class="newsletter-message" role="status" aria-live="polite"></p>
+								<noscript><p class="newsletter-message is-error">{{ i18n "newsletterNoscript" }}</p></noscript>
+							</form>
 {{- end }}

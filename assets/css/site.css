@@ -5,9 +5,9 @@
 	color-scheme: dark;
 }
 
-/* Nothing may widen the page beyond the screen: on a phone, the reCAPTCHA
-   badge of the newsletter form (fixed, partly off-screen on the right)
-   widened the blog page and pushed the language menu out of view. */
+/* Nothing may widen the page beyond the screen: on a phone, a fixed badge
+   partly off-screen on the right (the former reCAPTCHA one) widened the blog
+   page and pushed the language menu out of view. */
 html, body {
 	overflow-x: hidden;
 	overflow-x: clip;
@@ -205,22 +205,68 @@ li > .icon:first-child {
 			margin-right: 0.5em;
 		}
 
-/* Newsletter (Brevo form in an iframe, layouts/_partials/newsletter.html):
-   the iframe does not grow with its content, so it gets the height of the
-   form, taller on narrow screens where its text wraps. */
-iframe.newsletter {
-	display: block;
-	width: 100%;
-	height: 550px;
-	border: 0;
-	margin: 0 0 1rem 0;
+/* Newsletter sign-up form (layouts/_partials/newsletter.html, main.js
+   "Newsletter form"): the address and the button on one line, stacked on
+   phones. */
+form.newsletter {
+	margin: 0 0 2rem 0;
 }
 
+	form.newsletter .newsletter-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 1rem;
+	}
+
+		form.newsletter .newsletter-row label {
+			flex: 0 0 100%;
+			margin: 0 0 -0.5rem 0;
+		}
+
+		form.newsletter .newsletter-row input[type="email"] {
+			flex: 1 1 15rem;
+		}
+
+		form.newsletter .newsletter-row input[type="submit"] {
+			flex: 0 0 auto;
+		}
+
 	@media screen and (max-width: 480px) {
-		iframe.newsletter {
-			height: 610px;
+		form.newsletter .newsletter-row input[type="submit"] {
+			flex: 1 1 100%;
 		}
 	}
+
+	/* Brevo's honeypot field: out of sight, out of the tab order. */
+	form.newsletter .newsletter-trap {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+	}
+
+	/* The captcha only shows when Cloudflare asks the visitor to click. */
+	form.newsletter .newsletter-captcha:not(:empty) {
+		margin: 1rem 0 0 0;
+	}
+
+	form.newsletter .newsletter-message {
+		margin: 1rem 0 0 0;
+	}
+
+		form.newsletter .newsletter-message:empty {
+			display: none;
+		}
+
+		form.newsletter .newsletter-message.is-error {
+			color: #ffb3b3;
+		}
+
+		form.newsletter .newsletter-message.is-success {
+			font-weight: 600;
+		}
 
 /* Image viewer (main.js "Image viewer"): images of the articles open full
    screen on click. */
