@@ -122,6 +122,13 @@ enableGitInfo = true
     [params.newsletter.lists]
       fr = 5
       en = 6
+    # Unsubscribe page of each list's campaigns, in its language (Brevo:
+    # Contacts > Forms > Unsubscribe; the 24-character id is in the URL of the
+    # page editor). Without one, Brevo's default page is used, in the language
+    # of the visitor's browser.
+    [params.newsletter.unsubscribePages]
+      # fr = "..."
+      # en = "..."
 
 [languages]
   [languages.fr]
