@@ -748,6 +748,14 @@
 					if (articles().length > 0)
 						$main._show(articles().first().attr('id'), true);
 
+					// Link to a blog post (e.g. from the newsletter): /fr/blog/#<post>.
+					if (location.hash.length > 1)
+						window.setTimeout(function() {
+							var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+							if (target)
+								target.scrollIntoView();
+						}, 400);
+
 					window.setTimeout(function() {
 						$body.removeClass('is-preload');
 					}, 100);

@@ -1,0 +1,59 @@
+{{- /*
+  E-mail version of a blog post, for the newsletter (scripts/newsletter.py
+  sends it as a Brevo campaign). Plain, table-based HTML with inline styles,
+  absolute URLs, a 600 px column: what e-mail clients understand. Same layout
+  as the earlier newsletters: title, text, photo, button to the post on the
+  website, logo, footer with the unsubscribe link (required by Brevo, which
+  adds its own badge on the free plan).
+  Front matter of the post, optional: "subject" (default: the title) and
+  "preview" (preview text of inboxes; default: the beginning of the text).
+*/ -}}
+{{- $site := strings.TrimSuffix "/" site.BaseURL -}}
+{{- $subject := .Params.subject | default .Title -}}
+{{- $preview := .Params.preview | default (.Plain | strings.TrimSpace | truncate 140) -}}
+{{- $postURL := printf "%s#%s" .Parent.Permalink .File.ContentBaseName -}}
+{{- /* Relative links and images of the text: absolute; images: fluid. */ -}}
+{{- $body := .Content -}}
+{{- $body = replaceRE `(href|src)="/` (printf `$1="%s/` $site) $body -}}
+{{- $body = replaceRE `<img ` `<img style="display:block;max-width:100%;height:auto;border-radius:4px;" ` $body -}}
+{{- $body = replaceRE `<p>` `<p style="margin:0 0 16px 0;">` $body -}}
+{{- $body = replaceRE `<a ` `<a style="color:#3e8e8f;" ` $body -}}
+{{- $logo := (resources.Get "images/logo-256-noborder.png").Resize "160x png" -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="preview" content="{{ $preview }}">
+<title>{{ $subject }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{ $preview }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:12px;">
+<tr><td style="padding:32px 32px 8px 32px;text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:32px;line-height:1.25;font-weight:bold;color:#1f2d3d;">{{ .Title }}</td></tr>
+<tr><td style="padding:24px 32px 8px 32px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#333333;">{{ $body | safeHTML }}</td></tr>
+{{- with .Params.image }}
+<tr><td style="padding:8px 32px 8px 32px;">
+<img src="{{ (partial "photo.html" .src).RelPermalink | absURL }}" alt="{{ .alt }}" width="536" style="display:block;width:100%;max-width:536px;height:auto;border-radius:4px;">
+{{- with .caption }}<div style="padding-top:8px;text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:13px;font-style:italic;color:#666666;">{{ . }}</div>{{ end }}
+</td></tr>
+{{- end }}
+<tr><td align="center" style="padding:32px;">
+<a href="{{ $postURL }}" style="display:inline-block;padding:12px 32px;background:#4a9fa0;border-radius:4px;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">{{ i18n "emailRead" }}</a>
+</td></tr>
+<tr><td align="center" style="padding:0 32px 32px 32px;"><a href="{{ site.Home.Permalink }}"><img src="{{ $logo.RelPermalink | absURL }}" alt="{{ site.Title }}" width="80" height="80" style="display:block;width:80px;height:80px;"></a></td></tr>
+<tr><td style="padding:24px 32px;background:#eef1f5;border-radius:0 0 12px 12px;text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#555555;">
+<strong style="font-size:14px;color:#333333;">{{ site.Title }}</strong><br>
+{{ site.Params.newsletter.address }}<br>
+<a href="{{ site.Home.Permalink }}" style="color:#3e8e8f;">{{ strings.TrimSuffix "/" site.Home.Permalink }}</a><br><br>
+{{ i18n "emailSentTo" }} {{ "{{ contact.EMAIL }}" }}<br>
+{{ i18n "emailWhy" }}<br>
+<a href="{{ "{{ unsubscribe }}" }}" style="color:#3e8e8f;">{{ i18n "emailUnsubscribe" }}</a>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
