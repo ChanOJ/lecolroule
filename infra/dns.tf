@@ -40,6 +40,13 @@ resource "infomaniak_record" "google_site_verification" {
   zone_fqdn = local.zone
   type      = "TXT"
   source    = "."
-  target    = "google-site-verification=D3Y2KhznVBAMJY05TDKwWZiBqteuLRvoufknwr0mFDc"
-  ttl       = 3600
+  # Infomaniak stores TXT values with their quotes.
+  target = "\"google-site-verification=D3Y2KhznVBAMJY05TDKwWZiBqteuLRvoufknwr0mFDc\""
+  ttl    = 3600
+}
+
+# Created by hand in the Infomaniak manager before the apply.
+import {
+  to = infomaniak_record.google_site_verification
+  id = "lecolroule.fr,39510579"
 }
