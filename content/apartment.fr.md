@@ -11,7 +11,7 @@ menu:
 
 ![Déjeuner avec vue depuis la terrasse de l'appartement en été](/images/vue_ete3.jpg)
 
-Notre duplex de 63 m², comportant 3 chambres avec terrasse et parking (2 places, avec borne de recharge), et construit en 2010 (très bon confort thermique), est idéalement situé à [10-15 minutes à pied (en descente) du centre de Valloire](https://www.viewgpx.com/route/bMjNJt5p) (voir le détail sur les pages [hiver](/ski) et [été](/summer)), des commerces, télécabines et activités, tout en étant parfaitement au calme, à l'écart du boucan du centre-village, sans circulation ni bruits de voisinage.
+Notre duplex de 63 m², comportant 3 chambres avec terrasse et parking (2 places, avec borne de recharge), et construit en 2010 (très bon confort thermique), est idéalement situé à [10-15 minutes à pied (en descente) du centre de Valloire](/shops) (voir le détail sur les pages [hiver](/ski) et [été](/summer)), des commerces, télécabines et activités, tout en étant parfaitement au calme, à l'écart du boucan du centre-village, sans circulation ni bruits de voisinage.
 
 {{< buttons >}}
 {{< button page="/shops" icon="store" title="commerces" >}}A proximité{{< /button >}}

@@ -6,7 +6,9 @@ description: "Bakkers, restaurants, supermarkten, spa, schaatsbaan, bioscoop: al
 ogImage: /images/vue_hiver1.jpg
 ---
 
-Het dorpscentrum ligt op [10-15 minuten wandelen](https://www.viewgpx.com/route/bMjNJt5p) (bergaf). U vindt er alles, behalve een ziekenhuis {{< icon name="smile-wink" style="regular" title=";-)" >}}
+Het dorpscentrum ligt op 10-15 minuten wandelen (bergaf). U vindt er alles, behalve een ziekenhuis {{< icon name="smile-wink" style="regular" title=";-)" >}}
+
+{{< map route="village" >}}
 
 Enkele ideeën voor activiteiten in alle seizoenen:
 
@@ -40,5 +42,4 @@ En tot slot de praktische voorzieningen:
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Terug{{< /button >}}
-{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}Bekijk de kaart{{< /button >}}
 {{< /buttons >}}

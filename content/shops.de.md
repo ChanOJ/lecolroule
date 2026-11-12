@@ -10,7 +10,9 @@ translationNotes:
   - "Swiss spelling: 'ss', never the sharp s (Strasse, gross, geniessen), readable in Germany and Austria too."
 ---
 
-Das Dorfzentrum liegt [10-15 Gehminuten](https://www.viewgpx.com/route/bMjNJt5p) entfernt (bergab). Dort finden Sie alles, ausser einem Spital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+Das Dorfzentrum liegt 10-15 Gehminuten entfernt (bergab). Dort finden Sie alles, ausser einem Spital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+
+{{< map route="village" >}}
 
 Einige Ideen für Aktivitäten zu jeder Jahreszeit:
 
@@ -44,5 +46,4 @@ Und schliesslich die praktischen Dienste:
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Zurück{{< /button >}}
-{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}Karte ansehen{{< /button >}}
 {{< /buttons >}}

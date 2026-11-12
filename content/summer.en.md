@@ -12,7 +12,7 @@ menu:
 
 ![Lunch with view from the terrace of the flat](/images/vue_ete3.jpg)
 
-In the summer, [our flat](/apartment) is perfectly positioned, just a 10-minute walk downhill (15 minutes back up) along a [scenic hiking trail](https://www.viewgpx.com/route/bMjNJt5p) from the center of Valloire, its shops, activities, and the Crêt de la Brive gondolas (operational in summer for pedestrians and mountain bikers). Additionally, it's an 18-20 minute walk from the leisure center, which includes a swimming pool, ice rink, and wellness area. If needed, you can always opt for the convenience of your car (2 private parking spaces are included with the rental, complemented by a 7 kW T2S + TE private charging point for electric vehicles).
+In the summer, [our flat](/apartment) is perfectly positioned, just a 10-minute walk downhill (15 minutes back up) along a [scenic hiking trail](/shops) from the center of Valloire, its shops, activities, and the Crêt de la Brive gondolas (operational in summer for pedestrians and mountain bikers). Additionally, it's an 18-20 minute walk from the leisure center, which includes a swimming pool, ice rink, and wellness area. If needed, you can always opt for the convenience of your car (2 private parking spaces are included with the rental, complemented by a 7 kW T2S + TE private charging point for electric vehicles).
 
 And to top it off, our generous 215 sqft covered terrace provides ample room for storing your equipment!
 

@@ -16,7 +16,7 @@ translationNotes:
 
 ![Lunch met uitzicht op het terras van het appartement](/images/vue_ete3.jpg)
 
-In de zomer ligt [ons appartement](/apartment) ideaal op 10 minuten wandelen ([idyllisch wandelpad](https://www.viewgpx.com/route/bMjNJt5p), 15 minuten bergop) van het centrum van Valloire, de winkels en activiteiten, en de gondel van de Crêt de la Brive (in de zomer open voor wandelaars en mountainbikes), en op 18-20 minuten wandelen van het recreatiecentrum (zwembad, schaatsbaan, wellness). Indien nodig kan alles uiteraard ook met de auto (2 privéparkeerplaatsen inbegrepen in de huur, met als extraatje een eigen laadpaal van 7 kW, T2S + TE, voor elektrische wagens).
+In de zomer ligt [ons appartement](/apartment) ideaal op 10 minuten wandelen ([idyllisch wandelpad](/shops), 15 minuten bergop) van het centrum van Valloire, de winkels en activiteiten, en de gondel van de Crêt de la Brive (in de zomer open voor wandelaars en mountainbikes), en op 18-20 minuten wandelen van het recreatiecentrum (zwembad, schaatsbaan, wellness). Indien nodig kan alles uiteraard ook met de auto (2 privéparkeerplaatsen inbegrepen in de huur, met als extraatje een eigen laadpaal van 7 kW, T2S + TE, voor elektrische wagens).
 
 Kers op de taart: ons groot overdekt terras van 20 m² biedt u alle plaats om uw materiaal op te bergen!
 

@@ -6,7 +6,9 @@ description: "Boulangeries, restaurants, supermarchés, spa, patinoire, cinéma 
 ogImage: /images/vue_hiver1.jpg
 ---
 
-Le centre village se trouve à [10-15 minutes à pied](https://www.viewgpx.com/route/bMjNJt5p) (en descente). On y trouve tout sur place, à part un hôpital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+Le centre village se trouve à 10-15 minutes à pied (en descente). On y trouve tout sur place, à part un hôpital {{< icon name="smile-wink" style="regular" title=";-)" >}}
+
+{{< map route="village" >}}
 
 Quelques idées d'activités toutes saisons :
 
@@ -40,5 +42,4 @@ Et enfin des commodités :
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Retour{{< /button >}}
-{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}Voir la carte{{< /button >}}
 {{< /buttons >}}

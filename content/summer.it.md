@@ -16,7 +16,7 @@ translationNotes:
 
 ![Pranzo con vista sulla terrazza dell'appartamento](/images/vue_ete3.jpg)
 
-In estate [il nostro appartamento](/apartment) si trova in posizione ideale, a 10 minuti a piedi ([sentiero bucolico](https://www.viewgpx.com/route/bMjNJt5p), 15 minuti in salita) dal centro di Valloire, dai negozi e dalle attività, e dalla cabinovia del Crêt de la Brive (aperta in estate per pedoni e mountain bike), e a 18-20 minuti a piedi dal centro ricreativo (piscina, pista di pattinaggio, centro benessere). Se necessario, tutto è ovviamente raggiungibile anche in auto (2 posti auto privati inclusi nell'affitto, con in più una colonnina di ricarica privata da 7 kW, T2S + TE, per auto elettriche).
+In estate [il nostro appartamento](/apartment) si trova in posizione ideale, a 10 minuti a piedi ([sentiero bucolico](/shops), 15 minuti in salita) dal centro di Valloire, dai negozi e dalle attività, e dalla cabinovia del Crêt de la Brive (aperta in estate per pedoni e mountain bike), e a 18-20 minuti a piedi dal centro ricreativo (piscina, pista di pattinaggio, centro benessere). Se necessario, tutto è ovviamente raggiungibile anche in auto (2 posti auto privati inclusi nell'affitto, con in più una colonnina di ricarica privata da 7 kW, T2S + TE, per auto elettriche).
 
 La ciliegina sulla torta: la nostra grande terrazza coperta di 20 m² vi offre tutto lo spazio necessario per riporre la vostra attrezzatura!
 

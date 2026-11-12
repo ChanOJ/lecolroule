@@ -11,7 +11,7 @@ menu:
 
 ![Lunch met uitzicht op het terras van het appartement in de zomer](/images/vue_ete3.jpg)
 
-Onze duplex van 63 m², met 3 slaapkamers, terras en parking (2 plaatsen, met laadpaal), gebouwd in 2010 (zeer goed thermisch comfort), ligt ideaal op [10-15 minuten wandelen (bergaf) van het centrum van Valloire](https://www.viewgpx.com/route/bMjNJt5p) (zie de details op de pagina's [winter](/ski) en [zomer](/summer)), van de winkels, gondels en activiteiten. Toch is het er heerlijk rustig, weg van de drukte van het dorpscentrum, zonder verkeer of burenlawaai.
+Onze duplex van 63 m², met 3 slaapkamers, terras en parking (2 plaatsen, met laadpaal), gebouwd in 2010 (zeer goed thermisch comfort), ligt ideaal op [10-15 minuten wandelen (bergaf) van het centrum van Valloire](/shops) (zie de details op de pagina's [winter](/ski) en [zomer](/summer)), van de winkels, gondels en activiteiten. Toch is het er heerlijk rustig, weg van de drukte van het dorpscentrum, zonder verkeer of burenlawaai.
 
 {{< buttons >}}
 {{< button page="/shops" icon="store" title="winkels" >}}In de buurt{{< /button >}}

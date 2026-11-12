@@ -6,7 +6,9 @@ description: "Panetterie, ristoranti, supermercati, spa, pista di pattinaggio, c
 ogImage: /images/vue_hiver1.jpg
 ---
 
-Il centro del paese si trova a [10-15 minuti a piedi](https://www.viewgpx.com/route/bMjNJt5p) (in discesa). Lì si trova di tutto, tranne un ospedale {{< icon name="smile-wink" style="regular" title=";-)" >}}
+Il centro del paese si trova a 10-15 minuti a piedi (in discesa). Lì si trova di tutto, tranne un ospedale {{< icon name="smile-wink" style="regular" title=";-)" >}}
+
+{{< map route="village" >}}
 
 Qualche idea di attività per tutte le stagioni:
 
@@ -40,5 +42,4 @@ E infine i servizi:
 
 {{< buttons >}}
 {{< button page="/apartment" icon="arrow-alt-circle-left" >}}Indietro{{< /button >}}
-{{< button href="https://www.google.com/maps/search/?api=1&query=Mairie+de+Valloire" icon="map-marker-alt" primary=true >}}Vedi la mappa{{< /button >}}
 {{< /buttons >}}

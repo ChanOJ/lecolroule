@@ -170,6 +170,18 @@ li > .icon:first-child {
 		border-bottom: 0;
 	}
 
+/* GPX download link under a route map. */
+.map-gpx {
+	display: inline-block;
+	margin: -1.25rem 0 2rem 0;
+	font-size: 0.8rem;
+	border-bottom: 0;
+}
+
+	.map-gpx:before {
+		margin-right: 0.5em;
+	}
+
 /* Newsletter (Brevo form in an iframe, layouts/_partials/newsletter.html):
    the iframe does not grow with its content, so it gets the height of the
    form, taller on narrow screens where its text wraps. */

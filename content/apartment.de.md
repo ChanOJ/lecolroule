@@ -15,7 +15,7 @@ translationNotes:
 
 ![Mittagessen mit Aussicht auf der Terrasse der Wohnung im Sommer](/images/vue_ete3.jpg)
 
-Unsere Duplexwohnung mit 63 m², 3 Schlafzimmern, Terrasse und Parkplatz (2 Plätze, mit Ladestation), 2010 gebaut (sehr guter Wärmekomfort), liegt ideal, [10-15 Gehminuten (bergab) vom Zentrum von Valloire](https://www.viewgpx.com/route/bMjNJt5p) (Details auf den Seiten [Winter](/ski) und [Sommer](/summer)), von den Geschäften, Gondelbahnen und Aktivitäten. Und doch ist es hier herrlich ruhig, abseits vom Trubel des Dorfzentrums, ohne Verkehr und ohne Lärm von Nachbarn.
+Unsere Duplexwohnung mit 63 m², 3 Schlafzimmern, Terrasse und Parkplatz (2 Plätze, mit Ladestation), 2010 gebaut (sehr guter Wärmekomfort), liegt ideal, [10-15 Gehminuten (bergab) vom Zentrum von Valloire](/shops) (Details auf den Seiten [Winter](/ski) und [Sommer](/summer)), von den Geschäften, Gondelbahnen und Aktivitäten. Und doch ist es hier herrlich ruhig, abseits vom Trubel des Dorfzentrums, ohne Verkehr und ohne Lärm von Nachbarn.
 
 {{< buttons >}}
 {{< button page="/shops" icon="store" title="Geschäfte" >}}In der Nähe{{< /button >}}
