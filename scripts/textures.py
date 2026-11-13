@@ -12,9 +12,13 @@ small image files in assets/3d/textures/, one per texture, named after its key
   with every texture as a data URI (the model stays one file, with or without
   Hugo).
 
+Textures are embedded in the model's bundle, so keep them small: about 5 px per
+centimetre of the picture in the model, at most MAX_SIDE px on the longest side
+(e.g. on macOS: sips -Z 400 name.jpg). A larger image is an error.
+
 Run it after adding, changing or removing a texture. With --check it changes
-nothing and fails if a texture still has metadata or the module is not up to
-date (the deployment workflow runs it before building the site).
+nothing and fails if a texture still has metadata, is too large or the module
+is not up to date (the deployment workflow runs it before building the site).
 
 Usage:
   python3 scripts/textures.py
@@ -32,6 +36,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEXTURES = REPO_ROOT / "assets" / "3d" / "textures"
 MODULE = REPO_ROOT / "assets" / "js" / "visit3d-textures.js"
+MAX_SIDE = 1024
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
 
 # PNG chunks kept: image data and colour information; text, dates and EXIF go.
@@ -84,6 +89,23 @@ def strip_png(data: bytes) -> bytes:
     return b"".join(out)
 
 
+def size(data: bytes) -> tuple[int, int]:
+    """Width and height of a PNG or JPEG image."""
+    if data[:8] == b"\x89PNG\r\n\x1a\n":
+        return struct.unpack(">II", data[16:24])
+    i = 2
+    while i < len(data):
+        marker = data[i + 1]
+        if marker == 0xFF:
+            i += 1
+            continue
+        if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):   # start of frame
+            h, w = struct.unpack(">HH", data[i + 5:i + 9])
+            return w, h
+        i += 2 + struct.unpack(">H", data[i + 2:i + 4])[0]
+    raise ValueError("no JPEG frame header")
+
+
 def stripped(path: Path) -> bytes:
     data = path.read_bytes()
     return strip_png(data) if path.suffix.lower() == ".png" else strip_jpeg(data)
@@ -116,6 +138,9 @@ def main() -> int:
             else:
                 path.write_bytes(clean)
                 print(f"{path.name}: metadata removed")
+        w, h = size(clean)
+        if max(w, h) > MAX_SIDE:
+            problems.append(f"{path.name}: {w} x {h} px, more than {MAX_SIDE} px (resize it)")
         textures[path.stem] = (MIME[path.suffix.lower()], clean)
 
     content = module(textures)

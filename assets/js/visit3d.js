@@ -66,6 +66,35 @@ function addDoor(pivot, open, name) {
   return d;
 }
 
+// Pictures cut out of the photos of the flat: TEX (assets/3d/textures/, see scripts/textures.py).
+// texture(key, flip): the texture of that image, mirrored left to right when flip is true.
+const TEXTURES = new Map();
+function texture(key, flip = false) {
+  const id = key + (flip ? ':flip' : '');
+  if (!TEXTURES.has(id)) {
+    if (!TEX[key]) console.error(`3D model: no texture "${key}" (assets/3d/textures/${key}.jpg, then scripts/textures.py)`);
+    const tex = new THREE.TextureLoader().load(TEX[key]);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    if (flip) { tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = -1; }
+    TEXTURES.set(id, tex);
+  }
+  return TEXTURES.get(id);
+}
+const texMat = (key, flip = false) => mat(0xffffff, { map: texture(key, flip), roughness: 0.7 });
+// Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n: key }.
+function faced(m, faces) {
+  return ['e', 'w', null, null, 's', 'n'].map((f) => (f && faces[f] ? texMat(faces[f]) : m));   // box face order
+}
+// Door leaf with the photo of a door on both faces (porte.jpg: handle on the left, hinges on the
+// right), mirrored on the faces where the hinges are on the left: the handle is always away from
+// them. axis = direction the leaf runs along (closed), dir = +1 when it runs from its hinge towards
+// +x or +z, -1 otherwise. Edges: material m.
+function leafFaces(axis, dir, key, m) {
+  const hingeLeft = axis === 'x' ? { s: dir > 0, n: dir < 0 } : { e: dir < 0, w: dir > 0 };
+  const face = (f) => texMat(key, hingeLeft[f]);
+  return axis === 'x' ? [m, m, m, m, face('s'), face('n')] : [face('e'), face('w'), m, m, m, m];
+}
+
 function box(g, x1, x2, y1, y2, z1, z2, m) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry((x2 - x1) * CM, (y2 - y1) * CM, (z2 - z1) * CM), m);
   mesh.position.set((x1 + x2) / 2 * CM, (y1 + y2) / 2 * CM, (z1 + z2) / 2 * CM);
@@ -77,7 +106,8 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 // ops = openings [{ s, e, sill, head, glass }] along the wall axis (a window: glass, panes = leaves
 // split by mullions, bars = [columns, rows] of small panes split by thin glazing bars); a door leaf: { leaf: material,
 // swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
-// (-1) or south/east (+1) side), optional name (see DOORS) and angle (degrees open, 90 by default);
+// (-1) or south/east (+1) side), optional name (see DOORS), angle (degrees open, 90 by default) and
+// tex (texture key of an image of the door on both faces, see leafFaces());
 // without swing, a fixed closed leaf.
 // sides = [material of the north or west face, material of the south or east face].
 function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
@@ -112,8 +142,9 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
       const [hinge, side] = o.swing, dir = hinge === 's' ? 1 : -1, w = o.e - o.s - 4;
       const p = hinge === 's' ? o.s + 3 : o.e - 3, q = c + side * (t / 2 - 2);   // hinge axis, on the swing side
       const pivot = new THREE.Group(), l1 = Math.min(0, dir * w), l2 = Math.max(0, dir * w);
-      if (axis === 'x') { pivot.position.set(p * CM, 0, q * CM); box(pivot, l1, l2, 0, o.head - 1, -2, 2, o.leaf); }
-      else { pivot.position.set(q * CM, 0, p * CM); box(pivot, -2, 2, 0, o.head - 1, l1, l2, o.leaf); }
+      const lm = o.tex ? leafFaces(axis, dir, o.tex, o.leaf) : o.leaf;
+      if (axis === 'x') { pivot.position.set(p * CM, 0, q * CM); box(pivot, l1, l2, 0, o.head - 1, -2, 2, lm); }
+      else { pivot.position.set(q * CM, 0, p * CM); box(pivot, -2, 2, 0, o.head - 1, l1, l2, lm); }
       g.add(pivot);
       addDoor(pivot, (axis === 'x' ? -side : side) * dir * (o.angle ?? 90) * Math.PI / 180, o.name);
     }
@@ -176,7 +207,7 @@ function slab(g, pts, y, thick, m, holes = []) {
   wall(g, 'z', 406.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
   // Its door: hinged at the south end, it opens towards the entrance; the visit closes it (see tour)
   wcDoor.position.set(406.5 * CM, 0, 104 * CM);
-  box(wcDoor, -2, 2, 0, 203, -73, 0, M.pine);
+  box(wcDoor, -2, 2, 0, 203, -73, 0, leafFaces('z', -1, 'porte', M.pine));
   g.add(wcDoor);
   addDoor(wcDoor, WC_DOOR_OPEN, 'wcUp');
   paint(g, 'x', 0.5, 277, 403, LIVING_H, M.orange);
@@ -188,7 +219,7 @@ function slab(g, pts, y, thick, m, holes = []) {
   box(g, 575, 640, 0, LIVING_H, 118, 157, M.duct);                            // back of the kitchen alcove (25 cm recess)
   box(g, 640, 650, 0, LIVING_H, 118, 182.5, M.duct);
   box(g, 650, 700, 0, LIVING_H, 130, 182.5, M.duct);
-  box(g, 562, 642, 0, 204, 116, 118, M.pine);                                 // entrance closet door
+  box(g, 562, 642, 0, 204, 116, 118, faced(M.pine, { n: 'porte' }));        // entrance closet door, facing the entrance
   box(g, 525, 570, 8, 95, 182.5, 188, M.white);                               // radiator
   box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
 
@@ -284,7 +315,7 @@ function slab(g, pts, y, thick, m, holes = []) {
   guard('x', ts + EXT / 2, -EXT, te, false, -EXT / 2 - 4, te);
   guard('z', te + EXT / 2, S.zN, ts + EXT, true);                              // east side: wall only, no rail
   guard('z', -EXT / 2, tz, ts + EXT, false, tz, ts + EXT / 2 + 4);
-  box(g, 737, 859, 0, 220, S.zN, S.zN + 60, M.pine);     // made-to-measure cabinet: 220 high, 60 deep
+  box(g, 737, 859, 0, 220, S.zN, S.zN + 60, faced(M.pine, { s: 'placard-terrasse' }));   // made-to-measure cabinet: 220 high, 60 deep
   box(g, 736, te + EXT, -SLAB, LIVING_H, S.zN - EXT, S.zN, M.concrete);                 // concrete wall closing the short leg behind the cabinet
 }
 
@@ -311,7 +342,7 @@ livingCeiling.visible = false;
   // (the east bedroom window has 6 small panes: 2 columns, 3 rows)
   wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true }, { ...win2, glass: true, bars: [2, 3] }], [C, M.render]);
 
-  const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: M.pine, swing: [hinge, side] });   // open doors
+  const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: M.pine, tex: 'porte', swing: [hinge, side] });   // open doors
   // Load-bearing line crossing the level from west to east: the beam of bedroom 1 and every wall in line with it
   const BN = 187, BS = 212, BC = (BN + BS) / 2, BT = BS - BN;
   // Bedroom 1 and the foot of the stairs
@@ -337,7 +368,8 @@ livingCeiling.visible = false;
   wall(g, 'z', 480, BS, 316 - H, PART, NIGHT_H, LB, [], [LB, C]);
   wall(g, 'x', 316, 480 - H, 544 - H, PART, NIGHT_H, LB, [], [C, LB]);
   wall(g, 'z', 544, BS, D, PART, NIGHT_H, TP, [{ s: 216, e: 312, head: 210 }], [LB, TP]);
-  box(g, 543, 546, 0, 210, 216, 312, M.pine);
+  box(g, 543, 546, 0, 210, 216, 264, faced(M.pine, { e: 'placard-droite' }));   // its two doors, seen from bedroom 2
+  box(g, 543, 546, 0, 210, 264, 312, faced(M.pine, { e: 'placard-gauche' }));
   paint(g, 'x', D - 0.5, 321 + H, 544 - H, NIGHT_H, M.royal);                  // cabin end wall
 
   // Bedroom 2
@@ -431,16 +463,12 @@ function toilet(g, x, z, deg) {
   cyl(c, 0, 42, 19, 40, 43, M.white);
 }
 
-// Pictures cut out of the photos of the flat: TEX (assets/3d/textures/, see scripts/textures.py)
-
 // Picture hung on a wall. facing = direction it faces ('n', 's', 'e', 'w'), c = coordinate of the
 // wall face, a..b = extent along the wall, y1..y2 = height.
 function picture(g, key, facing, c, a, b, y1, y2) {
-  if (!TEX[key]) console.error(`3D model: no texture "${key}" (assets/3d/textures/${key}.jpg, then scripts/textures.py)`);
-  const tex = new THREE.TextureLoader().load(TEX[key]);
-  tex.colorSpace = THREE.SRGBColorSpace;
+  const cutOut = (TEX[key] || '').startsWith('data:image/png');   // PNG: transparent background
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry((b - a) * CM, (y2 - y1) * CM),
-    new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7, envMapIntensity: 0.38 }));
+    new THREE.MeshStandardMaterial({ map: texture(key), roughness: 0.7, envMapIntensity: 0.38, transparent: cutOut }));
   place(mesh, facing, c, (a + b) / 2, (y1 + y2) / 2, 0.8);
   g.add(mesh);
 }
@@ -662,6 +690,8 @@ function ceilingLamp(g, x, z, y) {
   picture(g, 'panorama', 'w', 859, 255, 385, 165, 212);
   picture(g, 'map', 'e', 345.5, 112, 176, 128, 174);
   picture(g, 'plane', 's', 1, 560, 632, 130, 181);
+  picture(g, 'valloire1', 'e', 547.5, 377, 410, 160, 208);                   // bedroom 2, left of the wardrobe
+  picture(g, 'valloire2', 'e', 547.5, 322, 357, 127, 174);
   // Ceiling lamps and bedside lamps
   ceilingLamp(g, 150, 310, NIGHT_H); ceilingLamp(g, 700, 320, NIGHT_H); ceilingLamp(g, 500, 140, NIGHT_H);
   for (const [x, z] of [[8, 207], [8, 407], [852, 225], [852, 413]]) {
