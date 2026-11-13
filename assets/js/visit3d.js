@@ -181,11 +181,45 @@ function slab(g, pts, y, thick, m, holes = []) {
   return mesh;
 }
 
+// Tiled floor drawn in a canvas: 4 x 4 tiles of `size` cm with 3 mm grout joints, a slight shade
+// variation from tile to tile (seeded: the same at every load), and the same pattern as a bump
+// map (joints lower than the tiles). Mapped in plan coordinates (slab() UVs are in metres).
+function tiledFloor(size, color, groutColor) {
+  const N = 4, PX = 128, G = Math.max(2, Math.round(0.3 / size * PX));   // pixels per tile, joint width
+  const make = (draw) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = N * PX;
+    draw(canvas.getContext('2d'));
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(1 / (N * size * CM), 1 / (N * size * CM));
+    tex.anisotropy = 8;
+    return tex;
+  };
+  let seed = 7;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const base = new THREE.Color(color), shades = Array.from({ length: N * N }, () => 0.92 + random() * 0.16);
+  const tiles = (ctx, tileStyle, jointStyle) => {
+    ctx.fillStyle = jointStyle;
+    ctx.fillRect(0, 0, N * PX, N * PX);
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      ctx.fillStyle = tileStyle(i * N + j);
+      ctx.fillRect(i * PX + G / 2, j * PX + G / 2, PX - G, PX - G);
+    }
+  };
+  const map = make((ctx) => tiles(ctx, (k) => `#${base.clone().multiplyScalar(shades[k]).getHexString()}`, groutColor));
+  map.colorSpace = THREE.SRGBColorSpace;
+  const bumpMap = make((ctx) => tiles(ctx, () => '#fff', '#000'));
+  return mat(0xffffff, { map, bumpMap, bumpScale: 1.5, roughness: 0.55 });
+}
+
 // ---------- Living level ----------
 {
   const g = living, S = STAIR;
   const stairHole = [[0, S.zN], [S.x, S.zN], [S.x, S.zS], [0, S.zS]];
-  slab(g, [[-EXT, -EXT], [686, -EXT], [686, 100], [736, 100], [736, 549.5], [-EXT, 549.5]], 0, SLAB, M.tiles, [stairHole]);
+  // Anthracite tiles, about 30 x 30 cm (top of the slab; its edges plain)
+  slab(g, [[-EXT, -EXT], [686, -EXT], [686, 100], [736, 100], [736, 549.5], [-EXT, 549.5]], 0, SLAB,
+    [tiledFloor(30, 0x4a4f55, '#6b6d70'), M.tiles], [stairHole]);
 
   // Outer walls: render outside, cream inside
   const IN = M.wall, OUT = M.render;
