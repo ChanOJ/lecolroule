@@ -273,14 +273,19 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   paint(g, 'x', 0.75, 0, 270, LIVING_H, M.cladding);                         // wood cladding behind the sofa
 
   // Service ducts between the entrance and the kitchen, lowered ceiling of the entrance
-  box(g, 520, 575, 0, LIVING_H, 118, 182.5, M.duct);                          // pier (ducts) with the radiator
-  box(g, 575, 640, 0, LIVING_H, 118, 157, M.duct);                            // back of the kitchen alcove (25 cm recess)
+  // The entrance closet is set into them, near the west corner of the entrance's south wall:
+  // opening x 522..602, inside x 523..601, 36 cm deep (z 118..154), 204 high
+  box(g, 520, 523, 0, LIVING_H, 118, 154, M.duct);                            // closet: west side
+  box(g, 523, 601, 204, LIVING_H, 118, 154, M.duct);                          // above its door
+  box(g, 520, 575, 0, LIVING_H, 154, 182.5, M.duct);                          // pier (ducts) with the radiator, behind the closet
+  box(g, 575, 601, 0, LIVING_H, 154, 157, M.duct);                            // back of the closet / of the kitchen alcove (25 cm recess)
+  box(g, 601, 640, 0, LIVING_H, 118, 157, M.duct);                            // closet: east side, then the back of the alcove
   box(g, 640, 650, 0, LIVING_H, 118, 182.5, M.duct);
   box(g, 650, 700, 0, LIVING_H, 130, 182.5, M.duct);
   // Entrance closet door: hinged on the east (on the left seen from the entrance), it opens onto
   // the entrance; closed at load
-  { const pivot = new THREE.Group(); pivot.position.set(641 * CM, 0, 117 * CM);
-    box(pivot, -79, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
+  { const pivot = new THREE.Group(); pivot.position.set(601 * CM, 0, 117 * CM);
+    box(pivot, -78, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 525, 570, 8, 95, 182.5, 188, M.white);                               // radiator
   box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
