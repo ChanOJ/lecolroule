@@ -87,9 +87,46 @@ function texture(key, flip = false) {
   return TEXTURES.get(id);
 }
 const texMat = (key, flip = false) => mat(0xffffff, { map: texture(key, flip), roughness: 0.7 });
+// Repeating wood (pine, oak): one image repeated every size = [u, v] cm, its grain along `grain`
+// ('u' or 'v' of the image). Boxes drawn with it get texture coordinates in metres with the grain
+// along their longest side (woodUV()); slabs and plates (slab(), stairs) have metre coordinates too.
+// Its relief: the height map <key>-bump (the pack's displacement map) as a bump map.
+function wood(key, size, grain, opts = {}) {
+  const load = (k) => {
+    const tex = new THREE.TextureLoader().load(TEX[k], () => loaded++);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(1 / (size[0] * CM), 1 / (size[1] * CM));
+    tex.anisotropy = 8;
+    return tex;
+  };
+  const map = load(key);
+  map.colorSpace = THREE.SRGBColorSpace;
+  const m = mat(0xffffff, { map, bumpMap: load(`${key}-bump`), bumpScale: 1, roughness: 0.6, ...opts });
+  m.userData.grain = grain;
+  return m;
+}
+const PINE = wood('pine', [60, 60], 'v');    // pine (stairs, shelves, frames, bedside tables...)
+const OAK = wood('oak', [100, 50], 'u');     // oak (living room shelves)
+// Texture coordinates of a box in a wood material: on each face, the grain runs along the longer of
+// the face's two sides, in metres from the centre of the box
+function woodUV(geo, grain) {
+  const pos = geo.attributes.position, uv = geo.attributes.uv, p = geo.parameters;
+  const dims = [p.width, p.height, p.depth];
+  for (let f = 0; f < 6; f++) {
+    const n = Math.floor(f / 2), [a, b] = [0, 1, 2].filter((k) => k !== n);
+    const [along, across] = dims[a] >= dims[b] ? [a, b] : [b, a];
+    for (let i = f * 4; i < f * 4 + 4; i++) {
+      const l = pos.getComponent(i, along), c = pos.getComponent(i, across);
+      if (grain === 'v') uv.setXY(i, c, l); else uv.setXY(i, l, c);
+    }
+  }
+  uv.needsUpdate = true;
+}
+
 // Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n: key }.
 function faced(m, faces) {
-  return ['e', 'w', null, null, 's', 'n'].map((f) => (f && faces[f] ? texMat(faces[f]) : m));   // box face order
+  // a face given as [key, true] shows the image mirrored (the back of a door)
+  return ['e', 'w', null, null, 's', 'n'].map((f) => (!f || !faces[f] ? m : Array.isArray(faces[f]) ? texMat(...faces[f]) : texMat(faces[f])));   // box face order
 }
 // Door leaf with the photo of a door on both faces (porte.jpg: handle on the left, hinges on the
 // right), mirrored on the faces where the hinges are on the left: the handle is always away from
@@ -103,6 +140,8 @@ function leafFaces(axis, dir, key, m) {
 
 function box(g, x1, x2, y1, y2, z1, z2, m) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry((x2 - x1) * CM, (y2 - y1) * CM, (z2 - z1) * CM), m);
+  const w = [].concat(m).find((mm) => mm.userData.grain);
+  if (w) woodUV(mesh.geometry, w.userData.grain);
   mesh.position.set((x1 + x2) / 2 * CM, (y1 + y2) / 2 * CM, (z1 + z2) / 2 * CM);
   g.add(mesh);
   return mesh;
@@ -298,9 +337,9 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
   const rise = LIVING_Y / 15, going = (S.x - S.turn) / 5, T = 4;
   for (let k = 1; k <= 5; k++)
-    box(stairs, S.x - going * k, S.x - going * (k - 1), -k * rise - T, -k * rise, S.zMid + 3.5, S.zS, M.pine);
+    box(stairs, S.x - going * k, S.x - going * (k - 1), -k * rise - T, -k * rise, S.zMid + 3.5, S.zS, PINE);
   for (let k = 10; k <= 14; k++)
-    box(stairs, S.turn + going * (k - 10), S.turn + going * (k - 9), -k * rise - T, -k * rise, S.zN, S.zMid - 3.5, M.pine);
+    box(stairs, S.turn + going * (k - 10), S.turn + going * (k - 9), -k * rise - T, -k * rise, S.zN, S.zMid - 3.5, PINE);
   const dS = S.zS - S.zMid, dN = S.zMid - S.zN;
   const hit = (deg) => {
     const r = deg * Math.PI / 180, dx = -Math.sin(r), dz = Math.cos(r);
@@ -317,21 +356,21 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   for (let j = 0; j < 4; j++) {
     const a1 = 45 * j, a2 = 45 * (j + 1), k = 6 + j;
     const pts = [[S.turn, S.zMid], hit(a1), ...corners.filter(([a]) => a > a1 && a < a2).map(([, p]) => p), hit(a2)];
-    slab(stairs, pts, -k * rise, T, M.pine);
+    slab(stairs, pts, -k * rise, T, PINE);
   }
   // Pine risers: straight ones on both flights, radiating ones between the winders
   const riser = (k) => [-k * rise, -(k - 1) * rise - (k > 1 ? T : 0)];
-  for (let k = 1; k <= 5; k++) { const x = S.x - going * (k - 1); box(stairs, x - 2, x, ...riser(k), S.zMid + 3.5, S.zS, M.pine); }
-  box(stairs, S.turn - 2, S.turn, ...riser(6), S.zMid, S.zS, M.pine);
+  for (let k = 1; k <= 5; k++) { const x = S.x - going * (k - 1); box(stairs, x - 2, x, ...riser(k), S.zMid + 3.5, S.zS, PINE); }
+  box(stairs, S.turn - 2, S.turn, ...riser(6), S.zMid, S.zS, PINE);
   for (let j = 1; j <= 3; j++) {
     const [hx, hz] = hit(45 * j), len = Math.hypot(hx - S.turn, hz - S.zMid), [y1, y2] = riser(6 + j);
-    const m = new THREE.Mesh(new THREE.BoxGeometry(len * CM, (y2 - y1) * CM, 2 * CM), M.pine);
+    const m = new THREE.Mesh(new THREE.BoxGeometry(len * CM, (y2 - y1) * CM, 2 * CM), PINE);
     m.position.set((hx + S.turn) / 2 * CM, (y1 + y2) / 2 * CM, (hz + S.zMid) / 2 * CM);
     m.rotation.y = Math.atan2(-(hz - S.zMid), hx - S.turn);
     stairs.add(m);
   }
-  box(stairs, S.turn - 2, S.turn, ...riser(10), S.zN, S.zMid, M.pine);
-  for (let k = 11; k <= 15; k++) { const x = S.turn + going * (k - 10); box(stairs, x - 2, x, ...riser(k), S.zN, S.zMid - 3.5, M.pine); }
+  box(stairs, S.turn - 2, S.turn, ...riser(10), S.zN, S.zMid, PINE);
+  for (let k = 11; k <= 15; k++) { const x = S.turn + going * (k - 10); box(stairs, x - 2, x, ...riser(k), S.zN, S.zMid - 3.5, PINE); }
 
   // Wall and guard rail between the two flights: they follow the slope of the upper (south) flight
   const slopeY = (x) => -(S.x - x) / going * rise;
@@ -344,11 +383,11 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   const x0 = 100, y0 = slopeY(x0), band = (lo, hi) => [[x0, y0 + lo], [S.x, lo], [S.x, hi], [x0, y0 + hi]];
   prism([[x0, -LIVING_Y], [S.x, -LIVING_Y], [S.x, 0], [x0, y0]], S.zMid - 3.5, S.zMid + 3.5, M.petrol);   // same dark blue as the stairwell
   prism([[x0, -LIVING_Y], [S.x, -LIVING_Y], [S.x, -33], [x0, -121]], S.zMid + 3.5, S.zMid + 4.5, M.wall);  // bedroom 1 side, under the casing: cream
-  prism(band(92, 98), S.zMid - 3, S.zMid + 3, M.pine);
-  prism(band(8, 13), S.zMid - 2, S.zMid + 2, M.pine);
+  prism(band(92, 98), S.zMid - 3, S.zMid + 3, PINE);
+  prism(band(8, 13), S.zMid - 2, S.zMid + 2, PINE);
   for (let x = x0 + 12; x < S.x - 8; x += 12)
-    box(stairs, x - 1.5, x + 1.5, slopeY(x) + 13, slopeY(x) + 92, S.zMid - 1.5, S.zMid + 1.5, M.pine);
-  box(stairs, S.turn, x0 + 4.5, -10 * rise - T, y0 + 104, S.zMid - 4.5, S.zMid + 4.5, M.pine);   // newel, down to the first step of the north flight
+    box(stairs, x - 1.5, x + 1.5, slopeY(x) + 13, slopeY(x) + 92, S.zMid - 1.5, S.zMid + 1.5, PINE);
+  box(stairs, S.turn, x0 + 4.5, -10 * rise - T, y0 + 104, S.zMid - 4.5, S.zMid + 4.5, PINE);   // newel, down to the first step of the north flight
 
   // Plasterboard casing under the stairs, seen from bedroom 1: it follows the slope of the south
   // flight down to the west wall, under the winders
@@ -357,19 +396,19 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   // Stairwell: dark blue under the south flight, pine band at floor level, pine facing on the slab edge
   const sidePts = [[0, -163], [S.turn, -5 * rise - 12], [S.x, -12], [S.x, 0], [0, 0]];
   prism(sidePts, S.zS - 1, S.zS, M.petrol);
-  prism([...casing.map(([x, y]) => [x, y - 5]), [S.x, -SLAB], [S.x, 0], [0, 0]], S.zS, S.zS + 1, M.pine);   // pine side seen from bedroom 1, down to the casing
-  box(g, 0, 2, 0, 12, S.zN, S.zS, M.pine);
-  box(g, 0, S.x, 0, 12, S.zS - 2, S.zS, M.pine);
-  box(stairs, S.x - 1, S.x, -SLAB, 0, S.zN, S.zMid - 3.5, M.pine);
+  prism([...casing.map(([x, y]) => [x, y - 5]), [S.x, -SLAB], [S.x, 0], [0, 0]], S.zS, S.zS + 1, PINE);   // pine side seen from bedroom 1, down to the casing
+  box(g, 0, 2, 0, 12, S.zN, S.zS, PINE);
+  box(g, 0, S.x, 0, 12, S.zS - 2, S.zS, PINE);
+  box(stairs, S.x - 1, S.x, -SLAB, 0, S.zN, S.zMid - 3.5, PINE);
 
   // Guard rails around the stairwell
   const rail = (axis, c, a, b) => {
-    const bx = (s, e, y1, y2, w) => axis === 'x' ? box(g, s, e, y1, y2, c - w / 2, c + w / 2, M.pine) : box(g, c - w / 2, c + w / 2, y1, y2, s, e, M.pine);
+    const bx = (s, e, y1, y2, w) => axis === 'x' ? box(g, s, e, y1, y2, c - w / 2, c + w / 2, PINE) : box(g, c - w / 2, c + w / 2, y1, y2, s, e, PINE);
     bx(a, b, 92, 98, 6); bx(a, b, 8, 13, 4);
     const n = Math.round((b - a) / 12);
     for (let i = 1; i < n; i++) bx(a + (b - a) * i / n - 1.5, a + (b - a) * i / n + 1.5, 13, 92, 3);
   };
-  const post = (x, z) => box(g, x - 4.5, x + 4.5, 0, 104, z - 4.5, z + 4.5, M.pine);
+  const post = (x, z) => box(g, x - 4.5, x + 4.5, 0, 104, z - 4.5, z + 4.5, PINE);
   rail('x', S.zN, 0, S.x);
   rail('z', S.x, S.zN, S.zMid);
   post(4.5, S.zN); post(S.x, S.zN); post(S.x, S.zMid);
@@ -443,7 +482,7 @@ livingCeiling.visible = false;
   // its two doors, seen from bedroom 2, hinged on the outer edges, opening into the bedroom; closed at load
   for (const [z, dir, key] of [[216, 1, 'placard-droite'], [312, -1, 'placard-gauche']]) {
     const pivot = new THREE.Group(); pivot.position.set(546 * CM, 0, z * CM);
-    box(pivot, -3, 0, 0, 210, Math.min(0, dir * 48), Math.max(0, dir * 48), faced(M.pine, { e: key })); g.add(pivot);
+    box(pivot, -3, 0, 0, 210, Math.min(0, dir * 48), Math.max(0, dir * 48), faced(M.pine, { e: key, w: [key, true] })); g.add(pivot);
     addDoor(pivot, dir * Math.PI / 2, null, 0);
   }
   paint(g, 'x', D - 0.5, 321 + H, 544 - H, NIGHT_H, M.royal);                  // cabin end wall
@@ -527,14 +566,14 @@ function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
   box(g, x1, x2, 28, 50, z1, z2, M.fabric);
   const hx = head === 'w' ? [x1, x1 + 5] : [x2 - 5, x2];
-  box(g, hx[0], hx[1], 0, 105, z1, z2, M.pine);
-  box(g, hx[0], hx[1], 0, 78, z1 - side, z1, M.pine);
-  box(g, hx[0], hx[1], 0, 78, z2, z2 + side, M.pine);
+  box(g, hx[0], hx[1], 0, 105, z1, z2, PINE);
+  box(g, hx[0], hx[1], 0, 78, z1 - side, z1, PINE);
+  box(g, hx[0], hx[1], 0, 78, z2, z2 + side, PINE);
   const tx = head === 'w' ? [x1 + 5, x1 + 40] : [x2 - 40, x2 - 5];
   for (const [a, b] of [[z1 - side, z1 - 2], [z2 + 2, z2 + side]]) {
-    box(g, tx[0], tx[1], 40, 45, a, b, M.pine);
-    box(g, tx[0], tx[1], 0, 40, a, a + 3, M.pine);
-    box(g, tx[0], tx[1], 0, 40, b - 3, b, M.pine);
+    box(g, tx[0], tx[1], 40, 45, a, b, PINE);
+    box(g, tx[0], tx[1], 0, 40, a, a + 3, PINE);
+    box(g, tx[0], tx[1], 0, 40, b - 3, b, PINE);
   }
 }
 // Furniture model (MODELS: assets/3d/models/, see scripts/models.py), fitted in a box of
@@ -610,7 +649,7 @@ const ceramic = mat(0xf6f6f3, { roughness: 0.12, envMapIntensity: 0.7 });
 const chrome = mat(0xd9dcdf, { metalness: 1, roughness: 0.18, envMapIntensity: 1 });
 const toiletParts = { White: ceramic };
 // Varnished pine (dining table and chairs), and a material that hides a part of a model
-const satinPine = mat(0xd9a55b, { roughness: 0.35, envMapIntensity: 0.6 });
+const satinPine = wood('pine', [60, 60], 'v', { roughness: 0.35, envMapIntensity: 0.6 });
 const hidden = new THREE.MeshBasicMaterial({ visible: false });
 // Pine chair (Chair_1), 42 x 46 x 100 cm, centred on (x, z), facing deg
 const pineChair = (g, x, z, deg) => model(g, 'Chair_1', x, z, deg, [42, 46, 100], { Wood: satinPine });
@@ -741,8 +780,8 @@ function ceilingLamp(g, x, z, y) {
   model(g, 'Couch_Large2', 134.5, 53, 0, [195, 90, 86],
     { Couch_Beige: fabric(mouseGrey), Couch_BeigeDark: fabric(0x626568) });
   for (const y of [60, 95, 130, 165, 200]) {
-    box(g, 0, 15, y, y + 3, 1.5, 112, M.pine);
-    box(g, 255, 270, y, y + 3, 1.5, 118, M.pine);
+    box(g, 0, 15, y, y + 3, 1.5, 112, OAK);
+    box(g, 255, 270, y, y + 3, 1.5, 118, OAK);
   }
   // Curtains: bay window, double window, west window
   for (const [a, b, y] of [[298, 316, 0], [606, 624, 0], [80, 96, 70], [279, 295, 70]]) box(g, a, b, y, 228, 509, 512, M.drape);
@@ -765,7 +804,7 @@ function ceilingLamp(g, x, z, y) {
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
   box(g, 262, 404, 12, 85, 125, 165, M.buffet);
   for (const x of [264, 398]) for (const z of [127, 159]) box(g, x, x + 4, 0, 12, z, z + 4, M.black);
-  box(g, 300, 366, 112, 188, 125, 129, M.pine);
+  box(g, 300, 366, 112, 188, 125, 129, PINE);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
   // cut to their shape, metal cyclist on the west face of the closet block between the entrance and
@@ -813,10 +852,10 @@ function ceilingLamp(g, x, z, y) {
   box(g, 575, 640, 86, 90, 157, 186, M.slate);
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
-  box(g, 575, 652, 137, 140, 157, 200, M.pine);
+  box(g, 575, 652, 137, 140, 157, 200, PINE);
   box(g, 580, 632, 140, 170, 160, 200, M.white);
   box(g, 582, 620, 90, 108, 162, 180, M.black);
-  for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, M.pine);
+  for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, PINE);
   { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
     model(g, 'Trashcan_Small1', 600.5, 171, 0, [43, 26, 72], { Black: satinGrey, LightMetal: satinGrey }); }
 
@@ -893,8 +932,8 @@ function ceilingLamp(g, x, z, y) {
   const cabinCurtain = { Couch_Blue: M.curtain, LightMetal: hidden };
   model(g, 'Curtains_Single', 481, 329, -90, [18, 6, 247], cabinCurtain);         // recess curtain, 1 cm under the ceiling
   rod(g, 'z', 481, 319.5, 427, 239.5, chrome);                                  // from the partition to the south wall
-  box(g, 494, 540.5, 32, 35, 319.5, 426, M.pine);
-  for (const y of [168, 198]) box(g, 494, 540.5, y, y + 3, 319.5, 426, M.pine);
+  box(g, 494, 540.5, 32, 35, 319.5, 426, PINE);
+  for (const y of [168, 198]) box(g, 494, 540.5, y, y + 3, 319.5, 426, PINE);
   box(g, 515, 517, 160, 162, 319.5, 426, M.grey);
   // entrance curtain, stored west of the entrance; its rod halfway between the top of the entrance
   // (NIGHT_H - 25) and the ceiling, up to the east wall of the cabin
@@ -913,14 +952,14 @@ function ceilingLamp(g, x, z, y) {
   // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
   // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
   // the floor, in an 8 cm pine frame
-  box(g, 337, 387, 40, 190, 1, 3, M.pine);
+  box(g, 337, 387, 40, 190, 1, 3, PINE);
   mirror(g, 's', 3, 345, 379, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   box(g, 710, 780, 0, 82, 1, 58, M.pine);
   box(g, 709, 781, 82, 86, 1, 60, M.wcGrey);
   cyl(g, 745, 30, 20, 86, 89, M.white).scale.set(1, 1, 0.75);
-  box(g, 714, 776, 100, 195, 1, 6, M.pine);
+  box(g, 714, 776, 100, 195, 1, 6, PINE);
   mirror(g, 's', 6, 722, 768, 108, 180);
   // Towel radiator on the south wall, next to the door
   for (const x of [668, 712]) box(g, x, x + 2, 70, 166, 183, 186, M.white);

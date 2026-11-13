@@ -165,6 +165,10 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   console). The deployment workflow runs `scripts/models.py --check`.
   Models get planar texture coordinates (`boxUV()`), so a material can take a grain bump map:
   `fabric(color)` for fabrics (sofa, armchairs, poufs), `grain()` for any other material.
+- **Wood**: `PINE` and `OAK` repeat the images `pine.jpg` / `oak.jpg` (ambientCG Wood092 and
+  Wood095, CC0, colour maps resized to 512 px) with their height maps `pine-bump.jpg` /
+  `oak-bump.jpg` as bump maps (`wood(key, [u, v] cm, grain)`). A box drawn in a wood gets texture
+  coordinates in metres with the grain along its longest side (`woodUV()`).
 - **three.js add-on**: copy it from the three.js 0.160.0 package (npm) into
   `assets/vendor/three-0.160.0/addons/` with the files it imports, turning `from 'three'` into a
   relative path to `three.module.js`.
