@@ -15,7 +15,7 @@ import { RenderPass } from '../vendor/three-0.160.0/addons/postprocessing/Render
 import { GTAOPass } from '../vendor/three-0.160.0/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from '../vendor/three-0.160.0/addons/postprocessing/OutputPass.js';
 // Generated from assets/3d/textures/ by scripts/textures.py: { name: data URI }
-import TEX from './visit3d-textures.js';
+import TEX, { OUTLINES } from './visit3d-textures.js';
 
 // All dimensions below are in centimetres, in plan coordinates:
 // x = east, z = south, origin = inner north-west corner of the living room.
@@ -464,13 +464,73 @@ function toilet(g, x, z, deg) {
 }
 
 // Picture hung on a wall. facing = direction it faces ('n', 's', 'e', 'w'), c = coordinate of the
-// wall face, a..b = extent along the wall, y1..y2 = height.
-function picture(g, key, facing, c, a, b, y1, y2) {
+// wall face, a..b = extent along the wall, y1..y2 = height of the whole image.
+// Without opts: a flat image on the wall. opts:
+// - depth: thickness in cm. The picture is then a solid with the image on its front: a PNG with a
+//   transparent background is cut along the outline of its opaque parts (OUTLINES, computed by
+//   scripts/textures.py), any other image is a rectangular block (a frame, a canvas...);
+// - gap: distance from the wall in cm (default 0.1); from 0.3 cm, the picture floats and casts a
+//   soft shadow on the wall below it (metal cut-outs);
+// - edge: material of its edges (default: average colour of the opaque parts of a PNG, else white);
+// - metal: true for a metal sheet (a little shine).
+const metalShadows = new Map();
+// Picture kinds of the flat
+const METAL = { depth: 0.1, gap: 0.5, metal: true };   // metal cut-out, 1 mm thick, 5 mm from the wall
+function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
+  const w = (b - a) * CM, h = (y2 - y1) * CM, mid = (a + b) / 2, y = (y1 + y2) / 2;
   const cutOut = (TEX[key] || '').startsWith('data:image/png');   // PNG: transparent background
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry((b - a) * CM, (y2 - y1) * CM),
-    new THREE.MeshStandardMaterial({ map: texture(key), roughness: 0.7, envMapIntensity: 0.38, transparent: cutOut }));
-  place(mesh, facing, c, (a + b) / 2, (y1 + y2) / 2, 0.8);
+  if (!opts) {
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+      new THREE.MeshStandardMaterial({ map: texture(key), roughness: 0.7, envMapIntensity: 0.38, alphaTest: cutOut ? 0.5 : 0 }));
+    place(mesh, facing, c, mid, y, 0.8);
+    g.add(mesh);
+    return mesh;
+  }
+  const { depth = 1, gap = 0.1, metal = false } = opts, outline = cutOut && OUTLINES[key];
+  // Shapes in metres, centred on the image; the image is mapped on both faces (the back one is hidden)
+  const pt = (u, v) => new THREE.Vector2((u - 0.5) * w, (v - 0.5) * h);
+  const path = (flat, P) => new P(Array.from({ length: flat.length / 2 }, (_, k) => pt(flat[2 * k], flat[2 * k + 1])));
+  const shapes = outline
+    ? outline.shapes.map(([outer, ...holes]) => { const s = path(outer, THREE.Shape); s.holes = holes.map((l) => path(l, THREE.Path)); return s; })
+    : [path([0, 0, 1, 0, 1, 1, 0, 1], THREE.Shape)];
+  const UVGenerator = {
+    generateTopUV: (geo, v, ...idx) => idx.map((i) => new THREE.Vector2(v[3 * i] / w + 0.5, v[3 * i + 1] / h + 0.5)),
+    generateSideWallUV: () => [0, 1, 2, 3].map(() => new THREE.Vector2()),
+  };
+  const geo = new THREE.ExtrudeGeometry(shapes, { depth: depth * CM, bevelEnabled: false, UVGenerator });
+  const face = mat(0xffffff, { map: texture(key), roughness: metal ? 0.45 : 0.7, metalness: metal ? 0.3 : 0, alphaTest: cutOut ? 0.5 : 0 });
+  const edge = opts.edge || mat(outline ? outline.color : 0xffffff, { roughness: metal ? 0.45 : 0.8, metalness: metal ? 0.3 : 0 });
+  const mesh = new THREE.Mesh(geo, [face, edge]);
+  place(mesh, facing, c, mid, y, gap);
   g.add(mesh);
+  if (gap >= 0.3) {
+    // Soft shadow on the wall, a little lower than the picture (light from the ceiling): the image
+    // blurred and painted black, on a plane 1 mm from the wall
+    if (!metalShadows.has(key)) {
+      const img = new Image(), canvas = document.createElement('canvas'), tex = new THREE.CanvasTexture(canvas);
+      img.onload = () => {
+        const k = 256 / Math.max(img.width, img.height), pad = 16;
+        canvas.width = Math.round(img.width * k) + 2 * pad; canvas.height = Math.round(img.height * k) + 2 * pad;
+        const ctx = canvas.getContext('2d');
+        ctx.filter = 'blur(5px)';
+        ctx.drawImage(img, pad, pad, canvas.width - 2 * pad, canvas.height - 2 * pad);
+        ctx.filter = 'none';
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        tex.needsUpdate = true;
+      };
+      img.src = TEX[key];
+      metalShadows.set(key, tex);
+    }
+    // the canvas has a 16 px margin around the image (256 px on its longest side): 1/16 of that side
+    const m = Math.max(w, h) / 8;
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(w + m, h + m),
+      new THREE.MeshBasicMaterial({ map: metalShadows.get(key), transparent: true, opacity: 0.45, depthWrite: false }));
+    place(shadow, facing, c, mid, y - 1.5, 0.1);
+    g.add(shadow);
+  }
+  return mesh;
 }
 // Mirror with a real reflection, same placement rules as picture().
 function mirror(g, facing, c, a, b, y1, y2) {
@@ -540,13 +600,16 @@ function ceilingLamp(g, x, z, y) {
   box(g, 300, 366, 112, 188, 125, 129, M.pine);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror, metal mountain on the cladding, three ski panels
+  // cut to their shape, metal cyclist on the west face of the pier between the entrance and the
+  // kitchen (80 % of its width, centred 180 cm above the floor)
   picture(g, 'clock', 's', 125, 296, 370, 206, 238);
-  picture(g, 'silhouette', 's', 1.5, 95, 185, 150, 205);
-  picture(g, 'skiA', 'e', 0, 204, 232, 150, 224);
-  picture(g, 'skiB', 'e', 0, 170, 197, 138, 212);
-  picture(g, 'skiC', 'e', 0, 138, 163, 126, 200);
-  // WC: picture on the west wall, mirror door of the corner cabinet
-  picture(g, 'lift', 'e', 277, 42, 84, 118, 172);
+  picture(g, 'silhouette', 's', 1.5, 95, 185, 150, 205, METAL);
+  picture(g, 'skiA', 'e', 0, 204, 232, 150, 224, { depth: 1 });
+  picture(g, 'skiB', 'e', 0, 170, 197, 138, 212, { depth: 1 });
+  picture(g, 'skiC', 'e', 0, 138, 163, 126, 200, { depth: 1 });
+  picture(g, 'silhouette-velo', 'w', 520, 124.45, 176.05, 163.4, 196.6, METAL);
+  // WC: picture (2 cm block) on the west wall, mirror door of the corner cabinet
+  picture(g, 'lift', 'e', 277, 42, 84, 118, 172, { depth: 2 });
   { const m = mirror(g, 's', 0, 0, 26, 124, 176); m.position.set(292.5 * CM, 150 * CM, 102.5 * CM); m.rotation.y = Math.PI * 0.75; }
   // Coat hooks on the north wall of the entrance
   for (const [x, y, m] of [[440, 185, M.grey], [468, 150, M.white], [492, 178, M.black], [520, 140, M.grey], [548, 172, M.white], [575, 188, M.black], [600, 150, M.grey], [625, 176, M.white]])
@@ -686,12 +749,16 @@ function ceilingLamp(g, x, z, y) {
   for (const x of [668, 712]) box(g, x, x + 2, 70, 166, 183, 186, M.white);
   for (let y = 74; y < 166; y += 8) box(g, 668, 714, y, y + 2.5, 183.5, 185.5, M.white);
   // Wall decoration
-  picture(g, 'snowboard', 'e', 1, 235, 380, 172, 216);
-  picture(g, 'panorama', 'w', 859, 255, 385, 165, 212);
-  picture(g, 'map', 'e', 345.5, 112, 176, 128, 174);
-  picture(g, 'plane', 's', 1, 560, 632, 130, 181);
-  picture(g, 'valloire1', 'e', 547.5, 377, 410, 160, 208);                   // bedroom 2, left of the wardrobe
-  picture(g, 'valloire2', 'e', 547.5, 322, 357, 127, 174);
+  // (snowboard, panorama, paraglider: cut to their shape; map, plane, posters: blocks)
+  picture(g, 'snowboard', 'e', 1, 235, 380, 172, 216, { depth: 1 });
+  picture(g, 'panorama', 'w', 859, 255, 385, 165, 212, { depth: 1 });
+  picture(g, 'map', 'e', 345.5, 112, 176, 128, 174, { depth: 1 });
+  picture(g, 'plane', 's', 1, 560, 632, 130, 181, { depth: 2 });
+  picture(g, 'valloire1', 'e', 547.5, 377, 410, 160, 208, { depth: 1, edge: M.pine });   // bedroom 2, left of the wardrobe
+  picture(g, 'valloire2', 'e', 547.5, 322, 357, 127, 174, { depth: 1, edge: M.pine });
+  // Bedroom 1: paraglider on the south wall, centred between the window (x = 114) and the cabin
+  // partition (x = 317.5), centred 160 cm above the floor
+  picture(g, 'parapente', 'n', 427, 185.75, 245.75, 140.1, 179.9, { depth: 1 });
   // Ceiling lamps and bedside lamps
   ceilingLamp(g, 150, 310, NIGHT_H); ceilingLamp(g, 700, 320, NIGHT_H); ceilingLamp(g, 500, 140, NIGHT_H);
   for (const [x, z] of [[8, 207], [8, 407], [852, 225], [852, 413]]) {

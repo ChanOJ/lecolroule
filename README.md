@@ -129,6 +129,12 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   where needed so that the handle is always away from the hinges (the room doors; not the door at
   the foot of the stairs). A cupboard front or any closed box face shows an image with
   `faced(M.pine, { e: 'placard-droite' })` (faces `e`, `w`, `s`, `n`).
+- **Pictures**: `picture(g, key, facing, wall face, from, to, bottom, top, opts)`. Without `opts`, a
+  flat image on the wall (the clock). `{ depth: 2 }`: a block 2 cm thick with the image on its
+  front (frames, prints; `edge: M.pine` for the colour of its sides); a PNG with a transparent
+  background is cut along the outline of its opaque parts instead (skis, snowboard, panorama,
+  paraglider; its sides take their average colour). `METAL`: a metal cut-out 1 mm thick, 5 mm from
+  the wall, with a soft shadow on the wall below it (`gap` of 0.3 cm or more).
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
   degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration
   optional, `null` when an event follows; event `{ close: 'wcDown' }` closes that door during the
@@ -137,7 +143,8 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Textures**: add or replace an image in `assets/3d/textures/` (resized first, e.g. on macOS
   `sips -Z 400 name.jpg`; originals kept in `3d-sources/`), use its name in `picture(...)`, `tex`
   or `faced()`, run `python3 scripts/textures.py` (removes the metadata of the images, camera model, dates,
-  GPS position, keeping their colour profile, and regenerates `visit3d-textures.js`), reload the
+  GPS position, keeping their colour profile, and regenerates `visit3d-textures.js` with the
+  outlines of the PNG textures), reload the
   test page. A missing texture is reported in the console. The deployment workflow runs
   `scripts/textures.py --check` and fails if an image still has metadata, is larger than 1024 px
   or the module is out of date. Every texture is in the model's bundle (about 2 MB of its
