@@ -314,6 +314,7 @@ prod: indexable, analytics allowed). Options: `--expect-repo-content` (every pag
 byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
 (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and without `www`, over
 HTTP and HTTPS, must answer 301 to the prod site).
+Checks, and the requests of the checks fetching many URLs, run in parallel: a few seconds.
 
 It runs:
 

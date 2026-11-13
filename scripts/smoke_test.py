@@ -12,6 +12,8 @@ prod). Optionally:
   --redirect-domains     the alternative domains (Infomaniak web redirection)
                          must answer 301 to the prod site.
 
+Checks run in parallel, and so do the requests of the checks fetching many
+URLs; the report keeps the order in which they are declared.
 Writes a Markdown report to $GITHUB_STEP_SUMMARY when set, exits 1 on failure.
 Standard library only (Python >= 3.9).
 
@@ -30,6 +32,7 @@ import re
 import sys
 import time
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HOSTS = {"test": "test.lecolroule.fr", "prod": "www.lecolroule.fr"}
@@ -56,6 +59,10 @@ LANGUAGES = sorted(set(PAGES.values()))
 ANALYTICS_SOURCES = ["googletagmanager.com", "google-analytics.com", "analytics.google.com"]
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Two pools: checks wait for requests, never for other checks (no deadlock).
+CHECKS = ThreadPoolExecutor(max_workers=8)
+REQUESTS = ThreadPoolExecutor(max_workers=16)
 DIST = REPO_ROOT / "dist"
 LEGACY_REDIRECTS = REPO_ROOT / "infra" / "legacy_redirects.json"
 USER_AGENT = "lecolroule-smoke-test"
@@ -83,23 +90,34 @@ def fetch(url: str, headers: dict | None = None) -> Response:
         conn.close()
 
 
+def fetch_all(urls: list[str]) -> list[Response]:
+    """fetch() of several URLs in parallel, in the order given."""
+    return list(REQUESTS.map(fetch, urls))
+
+
 class Report:
     def __init__(self, title: str):
         self.title, self.rows, self.failed = title, [], 0
 
+        self.pending = []
+
     def check(self, name: str, fn) -> None:
-        try:
-            detail = fn() or ""
-            ok = True
-        except AssertionError as e:
-            detail, ok = str(e), False
-        except Exception as e:  # network errors, TLS errors...
-            detail, ok = f"{type(e).__name__}: {e}", False
-        self.failed += not ok
-        self.rows.append((ok, name, detail))
-        print(f"{'PASS' if ok else 'FAIL'}  {name}" + (f"  ({detail})" if detail else ""), flush=True)
+        """Starts the check; its result is reported by write(), in declaration order."""
+        self.pending.append((name, CHECKS.submit(fn)))
 
     def write(self) -> None:
+        for name, future in self.pending:
+            try:
+                detail = future.result() or ""
+                ok = True
+            except AssertionError as e:
+                detail, ok = str(e), False
+            except Exception as e:  # network errors, TLS errors...
+                detail, ok = f"{type(e).__name__}: {e}", False
+            self.failed += not ok
+            self.rows.append((ok, name, detail))
+            print(f"{'PASS' if ok else 'FAIL'}  {name}" + (f"  ({detail})" if detail else ""), flush=True)
+        self.pending = []
         passed = len(self.rows) - self.failed
         lines = [f"## {self.title}", "", f"**{passed}/{len(self.rows)} checks passed**", "",
                  "| | Check | Detail |", "|---|---|---|"]
@@ -145,12 +163,10 @@ def expect_build_content(base: str, wait: int):
     def run():
         deadline = time.monotonic() + wait
         while True:
-            differing = []
-            for p in pages:
-                path = "/" + p.parent.relative_to(DIST).as_posix() + "/"
-                r = fetch(base + path)
-                if r.status != 200 or r.body != p.read_bytes():
-                    differing.append(f"{path} (HTTP {r.status})")
+            paths = ["/" + p.parent.relative_to(DIST).as_posix() + "/" for p in pages]
+            differing = [f"{path} (HTTP {r.status})"
+                         for p, path, r in zip(pages, paths, fetch_all([base + path for path in paths]))
+                         if r.status != 200 or r.body != p.read_bytes()]
             if not differing:
                 return f"{len(pages)} pages identical to the build"
             if time.monotonic() >= deadline:
@@ -231,7 +247,7 @@ def main() -> int:
         urls = sorted(set(m[0] or m[1] for m in re.findall(
             r'(?<![\w-])(?:href|src|data-src)=(?:"(/(?:css|js|images|webfonts)/[^"]+)"|(/(?:css|js|images|webfonts)/[^\s"\'>]+))', body)))
         assert urls, "no stylesheet, script or image found in the page"
-        broken = [u for u in urls if fetch(base + u).status != 200]
+        broken = [u for u, r in zip(urls, fetch_all([base + u for u in urls])) if r.status != 200]
         assert not broken, "not served: " + ", ".join(broken)
         return f"{len(urls)} files served"
     report.check("Stylesheets, scripts, images and fonts", assets)
