@@ -287,7 +287,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   { const pivot = new THREE.Group(); pivot.position.set(572 * CM, 0, 117 * CM);
     box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
-  box(g, 506.6, 571.4, 8, 158, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 150 high
+  box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
   box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
 
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
