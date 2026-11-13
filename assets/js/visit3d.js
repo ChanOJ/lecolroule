@@ -14,8 +14,11 @@ import { EffectComposer } from '../vendor/three-0.160.0/addons/postprocessing/Ef
 import { RenderPass } from '../vendor/three-0.160.0/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from '../vendor/three-0.160.0/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from '../vendor/three-0.160.0/addons/postprocessing/OutputPass.js';
+import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
 // Generated from assets/3d/textures/ by scripts/textures.py: { name: data URI }
 import TEX, { OUTLINES } from './visit3d-textures.js';
+// Generated from assets/3d/models/ by scripts/models.py: { name: OBJ text }
+import MODELS from './visit3d-models.js';
 
 // All dimensions below are in centimetres, in plan coordinates:
 // x = east, z = south, origin = inner north-west corner of the living room.
@@ -70,11 +73,13 @@ function addDoor(pivot, open, name, home = 1) {
 // Pictures cut out of the photos of the flat: TEX (assets/3d/textures/, see scripts/textures.py).
 // texture(key, flip): the texture of that image, mirrored left to right when flip is true.
 const TEXTURES = new Map();
+// Bumped when an image finishes loading after the model is built: the viewer then draws a new frame
+let loaded = 0;
 function texture(key, flip = false) {
   const id = key + (flip ? ':flip' : '');
   if (!TEXTURES.has(id)) {
     if (!TEX[key]) console.error(`3D model: no texture "${key}" (assets/3d/textures/${key}.jpg, then scripts/textures.py)`);
-    const tex = new THREE.TextureLoader().load(TEX[key]);
+    const tex = new THREE.TextureLoader().load(TEX[key], () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
     if (flip) { tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = -1; }
     TEXTURES.set(id, tex);
@@ -528,13 +533,37 @@ function bed(g, x1, x2, z1, z2, head, side) {
     box(g, tx[0], tx[1], 0, 40, b - 3, b, M.pine);
   }
 }
-// Toilet; (x, z) = middle of the back of the cistern, deg = direction it faces.
+// Furniture model (MODELS: assets/3d/models/, see scripts/models.py), fitted in a box of
+// size = [width, depth, height] cm whose bottom centre is at (x, y, z), facing deg (0 = south,
+// 90 = east, as placed()). The models face +z (south) as drawn. materials = { name of a material
+// of the OBJ file: material of the visit }; a material not listed is grey (reported).
+const OBJS = new Map();
+function model(g, key, x, z, deg, size, materials, y = 0) {
+  if (!MODELS[key]) { console.error(`3D model: no model "${key}" (assets/3d/models/${key}.obj, then scripts/models.py)`); return null; }
+  if (!OBJS.has(key)) OBJS.set(key, new OBJLoader().parse(MODELS[key]));
+  const obj = OBJS.get(key).clone();
+  const pick = (m) => materials[m.name] || (console.error(`3D model: "${key}" has no material for "${m.name}"`), M.grey);
+  obj.traverse((o) => { if (o.isMesh) o.material = Array.isArray(o.material) ? o.material.map(pick) : pick(o.material); });
+  const box = new THREE.Box3().setFromObject(obj), s = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  obj.position.set(-c.x, -box.min.y, -c.z);
+  const fit = new THREE.Group();
+  fit.scale.set(size[0] * CM / s.x, size[2] * CM / s.y, size[1] * CM / s.z);
+  fit.add(obj);
+  const p = placed(g, x, z, deg);
+  p.position.y = y * CM;
+  p.add(fit);
+  return p;
+}
+// Materials of the models
+const ceramic = mat(0xf6f6f3, { roughness: 0.12, envMapIntensity: 0.7 });
+const chrome = mat(0xd9dcdf, { metalness: 1, roughness: 0.18, envMapIntensity: 1 });
+const toiletParts = { White: ceramic };
+const paperParts = { LightMetal: chrome, White: mat(0xf3f2ee, { roughness: 0.95 }), Brown: mat(0x9a7a55) };
+// Toilet, 40 x 68 x 80 cm; (x, z) = middle of its back, deg = direction it faces. Its paper holder
+// goes on the wall to its right (seen sitting), level with the front of the bowl, 60..79 cm high.
 function toilet(g, x, z, deg) {
-  const c = placed(g, x, z, deg);
-  box(c, -19, 19, 40, 82, 0, 18, M.white);
-  box(c, -18, 18, 0, 40, 18, 45, M.white);
-  cyl(c, 0, 45, 18, 0, 40, M.white);
-  cyl(c, 0, 42, 19, 40, 43, M.white);
+  const r = deg * Math.PI / 180;
+  model(g, 'Bathroom_Toilet', x + Math.sin(r) * 34, z + Math.cos(r) * 34, deg, [40, 68, 80], toiletParts);
 }
 
 // Picture hung on a wall. facing = direction it faces ('n', 's', 'e', 'w'), c = coordinate of the
@@ -593,6 +622,7 @@ function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         tex.needsUpdate = true;
+        loaded++;
       };
       img.src = TEX[key];
       metalShadows.set(key, tex);
@@ -643,11 +673,9 @@ function ceilingLamp(g, x, z, y) {
 {
   const g = living, S = STAIR;
 
-  // Sofa bed against the cladding, shelves on both sides
-  box(g, 37, 232, 0, 42, 8, 98, M.grey);
-  box(g, 37, 232, 42, 86, 8, 30, M.grey);
-  box(g, 37, 55, 42, 62, 30, 98, M.grey);
-  box(g, 214, 232, 42, 62, 30, 98, M.grey);
+  // Sofa bed against the cladding (mouse grey fabric), shelves on both sides
+  model(g, 'Couch_Large2', 134.5, 53, 0, [195, 90, 86],
+    { Couch_Beige: mat(0x737679, { roughness: 1 }), Couch_BeigeDark: mat(0x626568, { roughness: 1 }) });
   for (const y of [60, 95, 130, 165, 200]) {
     box(g, 0, 15, y, y + 3, 1.5, 112, M.pine);
     box(g, 255, 270, y, y + 3, 1.5, 118, M.pine);
@@ -666,8 +694,9 @@ function ceilingLamp(g, x, z, y) {
   // Corner TV unit between the west wall and the stairwell rail, TV set on the diagonal facing the WC block
   slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, M.pine);
   const tv = placed(g, 40, S.zN - 44, 135);
-  box(tv, -14, 14, 45, 50, -8, 8, M.black);
-  box(tv, -50, 50, 50, 112, -2, 2, M.black);
+  const glossy = mat(0x111214, { roughness: 0.1, envMapIntensity: 0.8 }), satin = mat(0x0c0d0f, { roughness: 0.35 });
+  box(tv, -14, 14, 45, 50, -8, 8, glossy);
+  box(tv, -50, 50, 50, 112, -2, 2, [glossy, glossy, glossy, glossy, satin, glossy]);   // glossy black, satin screen
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
   box(g, 262, 404, 12, 85, 125, 165, M.buffet);
   for (const x of [264, 398]) for (const z of [127, 159]) box(g, x, x + 4, 0, 12, z, z + 4, M.black);
@@ -727,6 +756,7 @@ function ceilingLamp(g, x, z, y) {
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
+  model(g, 'Bathroom_ToiletPaper', 277 + 4.8, 60, 90, [16.5, 9.6, 19], paperParts, 60);   // on the west wall
   cyl(g, 292, 103, 15, 76, 84, M.white);
   // Corner cabinet: a triangle in plan (20 cm along each wall); its door is the mirror, flat on the diagonal
   slab(g, [[277, 118], [277, 98], [297, 118]], 178, 56, M.grey);
@@ -793,11 +823,12 @@ function ceilingLamp(g, x, z, y) {
   box(g, 412, 415, 142, 150, 227, 427, M.pine);
   for (const y of [40, 68, 96]) box(g, 412, 416, y, y + 4, 233, 279, M.pine);    // ladder at the north end
   box(g, 411, 416, 0, 150, 279, 284, M.pine);                                  // upright holding the south side of the rungs
-  box(g, 478, 484, 0, 215, 320, 338, M.curtain);                               // recess curtain, drawn back
+  const cabinCurtain = { Couch_Blue: M.curtain, LightMetal: chrome };
+  model(g, 'Curtains_Single', 481, 329, -90, [18, 6, 215], cabinCurtain);         // recess curtain, drawn back
   box(g, 494, 540.5, 32, 35, 319.5, 426, M.pine);
   for (const y of [168, 198]) box(g, 494, 540.5, y, y + 3, 319.5, 426, M.pine);
   box(g, 515, 517, 160, 162, 319.5, 426, M.grey);
-  box(g, 399, 414, 0, 215, 213, 226, M.curtain);                               // entrance curtain, stored west between the wall and the bunk
+  model(g, 'Curtains_Single', 406.5, 219.5, 0, [15, 6, 215], cabinCurtain);     // entrance curtain, stored west between the wall and the bunk
   box(g, 401, 476.5, NIGHT_H - 25, NIGHT_H, 187, 212,                           // beam above the curtain: cabin colour to the south,
     [M.white, M.white, M.white, M.white, M.lightBlue, M.tealGrey]);            // corridor colour to the north
 
@@ -806,6 +837,7 @@ function ceilingLamp(g, x, z, y) {
 
   // WC
   toilet(g, 667, 42, -90);                                                     // back against the east partition
+  model(g, 'Bathroom_ToiletPaper', 605, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
 
   // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
   // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
@@ -1107,6 +1139,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     if (composer) { composer.setPixelRatio(ratio); composer.setSize(w, h); }
     camera.aspect = w / h;
     if (tour.running) tour.lens(); else camera.updateProjectionMatrix();
+    invalidate();
   };
 
   // Frame rate: the visit moves at walking pace, so 30 images per second in the preview and 60
@@ -1116,22 +1149,34 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // Doors opened or closed by a click swing in DOOR_SWING seconds
   const DOOR_SWING = 0.8;
   const swingDoors = (dt) => {
+    let moved = false;
     for (const d of DOOR_LIST) {
       if (d.openness === d.target) continue;
       const step = dt / DOOR_SWING;
       setDoor(d, d.target > d.openness ? Math.min(d.target, d.openness + step) : Math.max(d.target, d.openness - step));
+      moved = true;
     }
+    return moved;
   };
 
+  // Rendering on demand: when nothing moves (no visit, no door swinging, no action on the view, no
+  // image loading), no frame is drawn and the GPU rests, even full screen. invalidate() asks for
+  // new frames (two: the ambient occlusion settles over a frame).
+  let dirty = 2, seen = loaded;
+  const invalidate = () => { dirty = 2; };
   const frame = (time) => {
     const interval = 1000 / (full ? FPS_FULL : FPS_PREVIEW);
     if (time - lastFrame < interval - 2) return;   // 2 ms of tolerance for the jitter of the refreshes
-    swingDoors(Math.min(0.25, (time - lastFrame) / 1000) || 0);   // same speed on slow devices
+    const moved = swingDoors(Math.min(0.25, (time - lastFrame) / 1000) || 0);   // same speed on slow devices
     lastFrame = time;
-    if (tour.running) tour.update(); else controls.update();
+    if (seen !== loaded) { seen = loaded; invalidate(); }
+    if (tour.running) tour.update(); else if (controls.update()) invalidate();
+    if (!tour.running && !moved && dirty <= 0) return;
+    dirty--;
     if (composer) composer.render(); else renderer.render(scene, camera);
   };
   const updateLoop = () => {
+    invalidate();
     const on = (visible || full) && !document.hidden && stage.isConnected;
     renderer.setAnimationLoop(on ? frame : null);
   };
@@ -1222,6 +1267,9 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     hoverAt = performance.now();
     renderer.domElement.style.cursor = doorAt(event) ? 'pointer' : '';
   };
+  // Any action in the viewer (view buttons, drag, wheel, keys, door click) may change the image
+  controls.addEventListener('change', invalidate);
+  for (const ev of ['pointerdown', 'pointerup', 'wheel', 'keydown', 'click']) stage.addEventListener(ev, invalidate, true);
   renderer.domElement.addEventListener('pointerdown', onPress);
   renderer.domElement.addEventListener('pointerup', onRelease);
   renderer.domElement.addEventListener('pointermove', onHover);
