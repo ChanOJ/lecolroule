@@ -472,11 +472,15 @@ livingCeiling.visible = false;
   wall(g, 'z', 651.5, 88 + H, BN, PART, NIGHT_H, AN, [door(100, 175, 'e', 1)], [TG, AN]);
   wall(g, 'z', 705, 0, 88 - H, PART, NIGHT_H, AN, [], [C, AN]);
   paint(g, 'x', 0.5, 549 + H, 671.5 - H, NIGHT_H, GR);
-  paint(g, 'x', 0.5, 705 + H, W, NIGHT_H, M.bathTile);
+  // north wall: anthracite behind the mirror like the duct beside it, tiled from x = 777.7 (two
+  // columns of tiles from the east corner)
+  const TILED_FROM = W - 1 - 2 * 187 / 4.6;
+  paint(g, 'x', 0.5, 705 + H, TILED_FROM, NIGHT_H, AN);
+  paint(g, 'x', 0.5, TILED_FROM, W, NIGHT_H, M.bathTile);
   paint(g, 'z', W - 0.5, 0, BN, NIGHT_H, M.bathTile);
   // Their tiles (BATH_TILES): joints from the north-east corner and the top of the bath
   tiledWall(g, BATH_TILES, 'w', W - 1, 0, BN, 0, NIGHT_H, 0, 56);
-  tiledWall(g, BATH_TILES, 's', 1, 705 + H, W - 1, 0, NIGHT_H, W - 1, 56);
+  tiledWall(g, BATH_TILES, 's', 1, TILED_FROM, W - 1, 0, NIGHT_H, W - 1, 56);
 }
 
 // ---------- Furniture ----------
@@ -514,7 +518,7 @@ function tubChair(g, x, z, deg, m) {
   cyl(c, 0, 0, 40, 8, 42, m);
   const shell = new THREE.Mesh(
     new THREE.CylinderGeometry(43 * CM, 40 * CM, 34 * CM, 28, 1, true, Math.PI * 0.42, Math.PI * 1.16),
-    new THREE.MeshStandardMaterial({ color: m.color, roughness: 0.85, side: THREE.DoubleSide }));
+    Object.assign(m.clone(), { side: THREE.DoubleSide }));
   shell.position.y = 59 * CM;
   c.add(shell);
 }
@@ -538,9 +542,27 @@ function bed(g, x1, x2, z1, z2, head, side) {
 // 90 = east, as placed()). The models face +z (south) as drawn. materials = { name of a material
 // of the OBJ file: material of the visit }; a material not listed is grey (reported).
 const OBJS = new Map();
+// The OBJ files have no texture coordinates: each face gets a planar projection along its main
+// axis (1 unit of the pack, about 40 cm, = 1 repeat), enough for a grain bump map (grain()).
+function boxUV(obj) {
+  obj.traverse((o) => {
+    if (!o.isMesh) return;
+    const pos = o.geometry.attributes.position, uv = new Float32Array(pos.count * 2);
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), n = new THREE.Vector3();
+    for (let i = 0; i + 2 < pos.count; i += 3) {
+      a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
+      n.subVectors(c, b).cross(a.clone().sub(b));
+      const ax = Math.abs(n.x), ay = Math.abs(n.y), az = Math.abs(n.z);
+      const [u, v] = ax >= ay && ax >= az ? ['z', 'y'] : ay >= az ? ['x', 'z'] : ['x', 'y'];
+      for (let k = 0; k < 3; k++) { uv[(i + k) * 2] = pos.getComponent(i + k, 'xyz'.indexOf(u)); uv[(i + k) * 2 + 1] = pos.getComponent(i + k, 'xyz'.indexOf(v)); }
+    }
+    o.geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  });
+  return obj;
+}
 function model(g, key, x, z, deg, size, materials, y = 0) {
   if (!MODELS[key]) { console.error(`3D model: no model "${key}" (assets/3d/models/${key}.obj, then scripts/models.py)`); return null; }
-  if (!OBJS.has(key)) OBJS.set(key, new OBJLoader().parse(MODELS[key]));
+  if (!OBJS.has(key)) OBJS.set(key, boxUV(new OBJLoader().parse(MODELS[key])));
   const obj = OBJS.get(key).clone();
   const pick = (m) => materials[m.name] || (console.error(`3D model: "${key}" has no material for "${m.name}"`), M.grey);
   obj.traverse((o) => { if (o.isMesh) o.material = Array.isArray(o.material) ? o.material.map(pick) : pick(o.material); });
@@ -554,6 +576,35 @@ function model(g, key, x, z, deg, size, materials, y = 0) {
   p.add(fit);
   return p;
 }
+// Grain of fabrics and plastics: seeded noise of 64 x 64 dots, smoothed on a 256 px canvas (blobs
+// of about 2 mm when it repeats every 30-40 cm), as a bump map; repeat = [u, v] repeats over the
+// texture coordinates of the mesh (models: see boxUV())
+const GRAIN = (() => {
+  const small = document.createElement('canvas'), N = 64;
+  small.width = small.height = N;
+  const sctx = small.getContext('2d'), img = sctx.createImageData(N, N);
+  let seed = 11;
+  for (let i = 0; i < N * N; i++) {
+    const v = 64 + ((seed = (seed * 16807) % 2147483647) % 128);
+    img.data.set([v, v, v, 255], i * 4);
+  }
+  sctx.putImageData(img, 0, 0);
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 4 * N;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(small, 0, 0, 4 * N, 4 * N);
+  return canvas;
+})();
+function grain(repeat = [1, 1]) {
+  const tex = new THREE.CanvasTexture(GRAIN);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(...repeat);
+  return tex;
+}
+const mouseGrey = 0x737679;
+const fabric = (color, repeat) => mat(color, { roughness: 1, bumpMap: grain(repeat), bumpScale: 2 });
+
 // Materials of the models
 const ceramic = mat(0xf6f6f3, { roughness: 0.12, envMapIntensity: 0.7 });
 const chrome = mat(0xd9dcdf, { metalness: 1, roughness: 0.18, envMapIntensity: 1 });
@@ -688,7 +739,7 @@ function ceilingLamp(g, x, z, y) {
 
   // Sofa bed against the cladding (mouse grey fabric), shelves on both sides
   model(g, 'Couch_Large2', 134.5, 53, 0, [195, 90, 86],
-    { Couch_Beige: mat(0x737679, { roughness: 1 }), Couch_BeigeDark: mat(0x626568, { roughness: 1 }) });
+    { Couch_Beige: fabric(mouseGrey), Couch_BeigeDark: fabric(0x626568) });
   for (const y of [60, 95, 130, 165, 200]) {
     box(g, 0, 15, y, y + 3, 1.5, 112, M.pine);
     box(g, 255, 270, y, y + 3, 1.5, 118, M.pine);
@@ -700,10 +751,11 @@ function ceilingLamp(g, x, z, y) {
   // Barrel coffee table, two swivel armchairs, two poufs
   cyl(g, 137, 165, 29, 0, 44, M.barrel);
   cyl(g, 137, 165, 31, 44, 49, M.pine);
-  tubChair(g, 135, 262, 180, M.grey);
-  tubChair(g, 255, 215, 215, M.grey);
-  cyl(g, 45, 160, 24, 0, 38, M.grey);
-  cyl(g, 78, 128, 24, 0, 38, M.grey);
+  const seatFabric = fabric(0x74787e, [7, 1]);   // cylinders: u around (about 2.5 m), v up
+  tubChair(g, 135, 262, 180, seatFabric);
+  tubChair(g, 255, 215, 215, seatFabric);
+  cyl(g, 45, 160, 24, 0, 38, seatFabric);
+  cyl(g, 78, 128, 24, 0, 38, seatFabric);
   // Corner TV unit between the west wall and the stairwell rail, TV set on the diagonal facing the WC block
   slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, M.pine);
   const tv = placed(g, 40, S.zN - 44, 135);
@@ -765,8 +817,8 @@ function ceilingLamp(g, x, z, y) {
   box(g, 580, 632, 140, 170, 160, 200, M.white);
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, M.pine);
-  model(g, 'Trashcan_Small1', 600.5, 171, 0, [36, 26, 72],
-    { Black: mat(0x1d1e20, { roughness: 0.4 }), LightMetal: chrome });
+  { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
+    model(g, 'Trashcan_Small1', 600.5, 171, 0, [43, 26, 72], { Black: satinGrey, LightMetal: satinGrey }); }
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
@@ -855,8 +907,8 @@ function ceilingLamp(g, x, z, y) {
   bed(g, 660, 859.5, 239.5, 399.5, 'e', 27.5);
 
   // WC
-  toilet(g, 667, 42, -90);                                                     // back against the east partition
-  model(g, 'Bathroom_ToiletPaper', 605, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
+  toilet(g, 668, 42.75, -90);                                                  // back against the east partition, centred on it
+  model(g, 'Bathroom_ToiletPaper', 565, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
 
   // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
   // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
@@ -1027,7 +1079,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.zoomSpeed = 3;   // the wheel or pinch zooms 3 times faster than by default
+  controls.zoomSpeed = 4.5;   // the wheel or pinch zooms 4.5 times faster than by default
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
