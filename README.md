@@ -116,10 +116,17 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Model**: dimensions in centimetres, plan coordinates (x = east, z = south, origin = inner
   north-west corner of the living room; the night level has its own origin, `NIGHT_Z` further
   south); see the comments at the top of `visit3d.js`.
-- **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration]` (heading in degrees,
-  0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration optional). In
-  the site the preview plays it in a loop; full screen, it stops at the end or at the first action
-  on the model.
+- **Doors**: a door in a wall is an opening with a leaf, `{ s, e, head, leaf, swing: [hinge, side] }`
+  (hinge at the start `'s'` or end `'e'` of the opening, swinging to the north/west `-1` or
+  south/east `+1`), drawn open on a hinge (pivot group); `name` registers it in `DOORS`
+  (`addDoor()` for a door built by hand, like `wcUp`). Full screen, a click on a door opens or
+  closes it (the pointer shows a hand over it). Mind the swing of a door in the way of the visit:
+  the camera must stand further from the hinge than the width of the leaf while it moves.
+- **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
+  degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration
+  optional, `null` when an event follows; event `{ close: 'wcDown' }` closes that door during the
+  row). Every door is open again when the visit starts. In the site the preview plays it in a loop;
+  full screen, it stops at the end or at the first action on the model.
 - **Textures**: add or replace an image in `assets/3d/textures/`, use its name in `picture(...)`,
   run `python3 scripts/textures.py` (removes the metadata of the images, camera model, dates,
   GPS position, keeping their colour profile, and regenerates `visit3d-textures.js`), reload the
