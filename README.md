@@ -115,11 +115,14 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 
 - **Model**: dimensions in centimetres, plan coordinates (x = east, z = south, origin = inner
   north-west corner of the living room; the night level has its own origin, `NIGHT_Z` further
-  south); see the comments at the top of `visit3d.js`.
+  south); see the comments at the top of `visit3d.js`. The top of every box reaching the ceiling of
+  its level (walls, paint coats) is painted grey afterwards (`capTops()`): seen from above when a
+  level is shown alone, the tops of the walls all have the colour of the cut outer walls.
 - **Doors**: a door in a wall is an opening with a leaf, `{ s, e, head, leaf, swing: [hinge, side] }`
   (hinge at the start `'s'` or end `'e'` of the opening, swinging to the north/west `-1` or
   south/east `+1`), drawn open on a hinge (pivot group); `name` registers it in `DOORS`
-  (`addDoor()` for a door built by hand, like `wcUp`). Full screen, a click on a door opens or
+  (`addDoor()` for a door built by hand, like `wcUp`); `angle` (degrees, 90 by default) limits its
+  opening (a door stopped by a piece of furniture). Full screen, a click on a door opens or
   closes it (the pointer shows a hand over it). Mind the swing of a door in the way of the visit:
   the camera must stand further from the hinge than the width of the leaf while it moves.
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
