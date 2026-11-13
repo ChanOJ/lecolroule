@@ -76,7 +76,8 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 // Axis-aligned wall: axis 'x' runs along x at z = c (centre line), from a to b.
 // ops = openings [{ s, e, sill, head, glass }] along the wall axis; a door leaf: { leaf: material,
 // swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
-// (-1) or south/east (+1) side), optional name (see DOORS); without swing, a fixed closed leaf.
+// (-1) or south/east (+1) side), optional name (see DOORS) and angle (degrees open, 90 by default);
+// without swing, a fixed closed leaf.
 // sides = [material of the north or west face, material of the south or east face].
 function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
   const faces = !sides ? m : axis === 'x' ? [m, m, m, m, sides[1], sides[0]] : [sides[1], sides[0], m, m, m, m];
@@ -108,7 +109,7 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
       if (axis === 'x') { pivot.position.set(p * CM, 0, q * CM); box(pivot, l1, l2, 0, o.head - 1, -2, 2, o.leaf); }
       else { pivot.position.set(q * CM, 0, p * CM); box(pivot, -2, 2, 0, o.head - 1, l1, l2, o.leaf); }
       g.add(pivot);
-      addDoor(pivot, (axis === 'x' ? -side : side) * dir * Math.PI / 2, o.name);
+      addDoor(pivot, (axis === 'x' ? -side : side) * dir * (o.angle ?? 90) * Math.PI / 180, o.name);
     }
     cur = o.e;
   }
@@ -294,7 +295,7 @@ livingCeiling.visible = false;
   const { wall: C, tealGrey: TG, paleGreen: PG, taupe: TP, lightBlue: LB, anthracite: AN, wcGrey: GR } = M;
   slab(g, [[-EXT, -EXT], [W + EXT, -EXT], [W + EXT, D + EXT], [-EXT, D + EXT]], 0, 10, M.oak);
   box(g, 655, W, 0, 0.5, 0, 187, M.tiles);                                     // bathroom floor
-  box(g, 552.5, 648, 0, 0.5, 0, 84.5, M.tiles);                                // WC floor
+  box(g, 552.5, 668, 0, 0.5, 0, 84.5, M.tiles);                                // WC floor
 
   // Outer walls: render outside, cream inside
   wall(g, 'x', -EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [], [M.render, C]);
@@ -309,6 +310,7 @@ livingCeiling.visible = false;
   // Bedroom 1 and the foot of the stairs
   wall(g, 'x', 87.5, S.x, 342 + H, PART, NIGHT_H, C, [door(235, 323, 'e', 1)], [TG, C]);
   wall(g, 'z', 342, 91, BN, PART, NIGHT_H, TG, [], [C, TG]);
+  box(g, 345.5, 345.7, 0, NIGHT_H, 84, 91, TG);                                 // end of the wall above, seen from the corridor: its colour
   wall(g, 'x', BC, 259 - H, 321 - H, BT, NIGHT_H, C);                          // north side of the wardrobe
   wall(g, 'x', BC, 321 - H, 342 + H, BT, NIGHT_H, C, [], [C, LB]);             // end of wall north of the cabin:
   wall(g, 'x', BC, 342 + H, 401, BT, NIGHT_H, LB, [], [TG, LB]);               // light blue on the cabin side
@@ -319,7 +321,7 @@ livingCeiling.visible = false;
   paint(g, 'z', 0.5, 186, D, NIGHT_H, M.sage);
   // Stairwell walls below the living floor: dark blue, up to the pine band at floor level
   paint(g, 'x', 0.5, 0, S.x, NIGHT_H + SLAB, M.petrol);
-  paint(g, 'x', 0.5, S.x, 439 - H, NIGHT_H, M.petrol);                         // north wall up to the cupboard facing the stairs
+  paint(g, 'x', 0.5, S.x, 439 - H, NIGHT_H, PG);                               // corridor: north wall up to the cupboard facing the stairs, corridor green
   paint(g, 'z', 0.5, 0, 87.5 - H, NIGHT_H + SLAB, M.petrol);
   box(g, 0, 1, 141, NIGHT_H + SLAB, 87.5 - H, 186, M.petrol);
 
@@ -342,7 +344,8 @@ livingCeiling.visible = false;
   // WC door: hinged on the east (right when facing it), it opens onto the corridor and, open, hides
   // the bathroom door; the visit closes it after looking into the WC (see TOUR)
   wall(g, 'x', 88, 549, 651.5, PART, NIGHT_H, PG, [{ ...door(565, 635, 'e', 1), name: 'wcDown' }], [GR, PG]);
-  wall(g, 'x', 88, 651.5, 705 + H, PART, NIGHT_H, AN, [], [C, AN]);
+  wall(g, 'x', 88, 651.5, 671.5 + H, PART, NIGHT_H, AN, [], [GR, AN]);        // WC on one side, bathroom on the other
+  wall(g, 'x', 88, 671.5 + H, 705 + H, PART, NIGHT_H, AN, [], [C, AN]);
   wall(g, 'z', 469, 0, 88 - H, PART, NIGHT_H, C);                                  // boxed-in duct, set back 30 cm
   wall(g, 'z', 439, 0, 88 - H, PART, NIGHT_H, PG, [{ s: 0, e: 84.5, head: 235 }], [PG, C]);
   for (const [z1, z2] of [[0, 41.5], [43, 84.5]]) {                            // doors flush with the end of the south partition
@@ -350,10 +353,10 @@ livingCeiling.visible = false;
     box(g, 437.5, 440.5, 150, 235, z1, z2, M.pine);
   }
   wall(g, 'z', 549, 0, 88 - H, PART, NIGHT_H, GR, [], [C, GR]);
-  wall(g, 'z', 651.5, 0, 88 - H, PART, NIGHT_H, GR, [], [GR, C]);
+  wall(g, 'z', 671.5, 0, 88 - H, PART, NIGHT_H, GR, [], [GR, C]);                // WC / boxed-in void before the bathroom
   wall(g, 'z', 651.5, 88 + H, BN, PART, NIGHT_H, AN, [door(100, 175, 'e', 1)], [TG, AN]);
   wall(g, 'z', 705, 0, 88 - H, PART, NIGHT_H, AN, [], [C, AN]);
-  paint(g, 'x', 0.5, 549 + H, 651.5 - H, NIGHT_H, GR);
+  paint(g, 'x', 0.5, 549 + H, 671.5 - H, NIGHT_H, GR);
   paint(g, 'x', 0.5, 705 + H, W, NIGHT_H, M.bathTile);
   paint(g, 'z', W - 0.5, 0, BN, NIGHT_H, M.bathTile);
 }
@@ -580,7 +583,9 @@ function ceilingLamp(g, x, z, y) {
   // its west end lands on the pine side of the staircase
   box(g, 1, 255.5, NIGHT_H - 25, NIGHT_H, 187, 212, M.white);
   // Door at the foot of the stairs
-  wall(g, 'z', 210.5, 0, 84, PART, NIGHT_H, M.petrol, [{ s: 3, e: 81, head: 204, leaf: M.pine, swing: ['s', 1] }]);
+  // (dark blue on the stairs side, corridor green on the corridor side; its leaf corridor green too).
+  // It opens against the north wall of the corridor, where the mirror stops it at 80 degrees.
+  wall(g, 'z', 210.5, 0, 84, PART, NIGHT_H, M.petrol, [{ s: 3, e: 81, head: 204, leaf: M.paleGreen, swing: ['s', 1], angle: 80 }], [M.petrol, M.paleGreen]);
   // Curtains and radiators of the two bedrooms
   box(g, 116, 130, 85, 228, 423, 426, M.redDrape);
   box(g, 724, 738, 85, 228, 423, 425.5, M.redDrape);
@@ -608,7 +613,12 @@ function ceilingLamp(g, x, z, y) {
   bed(g, 660, 859.5, 239.5, 399.5, 'e', 27.5);
 
   // WC
-  toilet(g, 647, 42, -90);                                                     // back against the east partition
+  toilet(g, 667, 42, -90);                                                     // back against the east partition
+
+  // Corridor: mirror on the north wall, facing the bedroom 1 door: 50 x 150 cm, 40 cm above the floor,
+  // in an 8 cm pine frame
+  box(g, 254, 304, 40, 190, 1, 3, M.pine);
+  mirror(g, 's', 3, 262, 296, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   box(g, 710, 780, 0, 82, 1, 58, M.pine);
@@ -637,6 +647,24 @@ function ceilingLamp(g, x, z, y) {
   box(g, 786, 787, 56, 196, 106, 186, M.glass);
 }
 
+
+// Tops of the walls: hidden under the slab of the floor above, they show when a level is seen
+// alone from above. One colour for all of them, the grey of the cut outer walls, whatever the
+// colours of their faces: the top face of every box reaching the ceiling of its level.
+function capTops(g, height) {
+  g.updateMatrixWorld(true);
+  const p = new THREE.Vector3();
+  g.traverse((o) => {
+    if (!o.isMesh || o.geometry.type !== 'BoxGeometry' || o.userData.door) return;
+    const top = (o.getWorldPosition(p).y - g.position.y + o.geometry.parameters.height / 2) / CM;
+    if (top < height - 1) return;
+    const mats = Array.isArray(o.material) ? o.material.slice() : Array(6).fill(o.material);
+    mats[2] = M.cut;                                                          // face +y of a BoxGeometry
+    o.material = mats;
+  });
+}
+capTops(night, NIGHT_H);
+capTops(living, LIVING_H);
 
 // ---------- First-person visit ----------
 // Keyframes: [x, z, floor height, heading, pitch, duration]. x, z and the floor height are in cm, in the
