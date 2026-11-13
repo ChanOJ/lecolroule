@@ -74,7 +74,8 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 }
 
 // Axis-aligned wall: axis 'x' runs along x at z = c (centre line), from a to b.
-// ops = openings [{ s, e, sill, head, glass }] along the wall axis; a door leaf: { leaf: material,
+// ops = openings [{ s, e, sill, head, glass }] along the wall axis (a window: glass, panes = leaves
+// split by mullions, bars = [columns, rows] of small panes split by thin glazing bars); a door leaf: { leaf: material,
 // swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
 // (-1) or south/east (+1) side), optional name (see DOORS) and angle (degrees open, 90 by default);
 // without swing, a fixed closed leaf.
@@ -99,6 +100,11 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
       for (let i = 0; i <= n; i++) {
         const x = Math.min(Math.max(o.s + (o.e - o.s) * i / n - F / 2, o.s), o.e - F);
         seg(x, x + F, y1, y2, M.pine, 8);
+      }
+      if (o.bars) {                                        // glazing bars, 3 cm wide, inside the frame
+        const [cols, rows] = o.bars, B = 3, s1 = o.s + F, s2 = o.e - F, h1 = y1 + F, h2 = y2 - F;
+        for (let i = 1; i < cols; i++) { const x = s1 + (s2 - s1) * i / cols; seg(x - B / 2, x + B / 2, h1, h2, M.pine, 5); }
+        for (let j = 1; j < rows; j++) { const y = h1 + (h2 - h1) * j / rows; seg(s1, s2, y - B / 2, y + B / 2, M.pine, 5); }
       }
     }
     if (o.leaf && !o.swing) seg(o.s + 1, o.e - 1, 0, o.head - 1, o.leaf, 4);   // closed door leaf
@@ -302,7 +308,8 @@ livingCeiling.visible = false;
   wall(g, 'z', -EXT / 2, 0, D, EXT, NIGHT_H, M.cut, [], [M.render, C]);
   wall(g, 'z', W + EXT / 2, 0, D, EXT, NIGHT_H, M.cut, [], [C, M.render]);
   const win1 = { s: 26, e: 114, sill: 95, head: 215, shutter: 26 }, win2 = { s: 741, e: 820, sill: 95, head: 215, shutter: 26 };
-  wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true }, { ...win2, glass: true }], [C, M.render]);
+  // (the east bedroom window has 6 small panes: 2 columns, 3 rows)
+  wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true }, { ...win2, glass: true, bars: [2, 3] }], [C, M.render]);
 
   const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: M.pine, swing: [hinge, side] });   // open doors
   // Load-bearing line crossing the level from west to east: the beam of bedroom 1 and every wall in line with it
