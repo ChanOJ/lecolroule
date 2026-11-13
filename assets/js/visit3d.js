@@ -183,40 +183,57 @@ function slab(g, pts, y, thick, m, holes = []) {
   return mesh;
 }
 
-// Tiled floor drawn in a canvas: 4 x 4 tiles of `size` cm with 3 mm grout joints, a slight shade
+// Tiles drawn in a canvas: 4 x 4 tiles of w x h cm with 3 mm grout joints, a slight shade
 // variation from tile to tile (seeded: the same at every load), and the same pattern as a bump
-// map (joints lower than the tiles). Mapped in plan coordinates (slab() UVs are in metres).
-function tiledFloor(size, color, groutColor) {
-  const N = 4, PX = 128, G = Math.max(2, Math.round(0.3 / size * PX));   // pixels per tile, joint width
+// map (joints lower than the tiles). The texture repeats every 4 tiles with UVs in metres: slab()
+// gives plan coordinates, tiledWall() wall coordinates; joints fall on multiples of w and h.
+function tiles(w, h, color, groutColor) {
+  const N = 4, K = 128 / w, PW = 128, PH = Math.round(h * K), G = Math.max(2, Math.round(0.3 * K));
   const make = (draw) => {
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = N * PX;
+    canvas.width = N * PW; canvas.height = N * PH;
     draw(canvas.getContext('2d'));
     const tex = new THREE.CanvasTexture(canvas);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(1 / (N * size * CM), 1 / (N * size * CM));
+    tex.repeat.set(1 / (N * w * CM), 1 / (N * h * CM));
     tex.anisotropy = 8;
     return tex;
   };
   let seed = 7;
   const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const base = new THREE.Color(color), shades = Array.from({ length: N * N }, () => 0.92 + random() * 0.16);
-  const tiles = (ctx, tileStyle, jointStyle) => {
+  const grid = (ctx, tileStyle, jointStyle) => {
     ctx.fillStyle = jointStyle;
-    ctx.fillRect(0, 0, N * PX, N * PX);
+    ctx.fillRect(0, 0, N * PW, N * PH);
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       ctx.fillStyle = tileStyle(i * N + j);
-      ctx.fillRect(i * PX + G / 2, j * PX + G / 2, PX - G, PX - G);
+      ctx.fillRect(i * PW + G / 2, j * PH + G / 2, PW - G, PH - G);
     }
   };
-  const map = make((ctx) => tiles(ctx, (k) => `#${base.clone().multiplyScalar(shades[k]).getHexString()}`, groutColor));
+  const map = make((ctx) => grid(ctx, (k) => `#${base.clone().multiplyScalar(shades[k]).getHexString()}`, groutColor));
   map.colorSpace = THREE.SRGBColorSpace;
-  const bumpMap = make((ctx) => tiles(ctx, () => '#fff', '#000'));
+  const bumpMap = make((ctx) => grid(ctx, () => '#fff', '#000'));
   return mat(0xffffff, { map, bumpMap, bumpScale: 1.5, roughness: 0.55 });
+}
+// Tiled face of a wall (same placement as picture(): facing, wall face c, a..b along the wall,
+// y1..y2), 1 mm in front of it; the joints line up on u0 along the wall and v0 in height.
+function tiledWall(g, m, facing, c, a, b, y1, y2, u0, v0) {
+  const geo = new THREE.PlaneGeometry((b - a) * CM, (y2 - y1) * CM), uv = geo.attributes.uv;
+  const ltr = facing === 's' || facing === 'w';   // left to right = increasing coordinate
+  for (let i = 0; i < uv.count; i++) {
+    const along = ltr ? a + uv.getX(i) * (b - a) : b - uv.getX(i) * (b - a);
+    uv.setXY(i, (along - u0) * CM, (y1 + uv.getY(i) * (y2 - y1) - v0) * CM);
+  }
+  const mesh = new THREE.Mesh(geo, m);
+  place(mesh, facing, c, (a + b) / 2, (y1 + y2) / 2, 0.1);
+  g.add(mesh);
 }
 
 // Anthracite tiles of the living level, the bathroom and the WC downstairs
-const TILES = tiledFloor(30, 0x4a4f55, '#6b6d70');
+const TILES = tiles(30, 30, 0x4a4f55, '#6b6d70');
+// Wall tiles of the bathroom, horizontal rectangles: 4.6 tiles along the east wall (187 cm), 7 rows
+// between the bath (56 cm high) and the ceiling
+const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
 
 // ---------- Living level ----------
 {
@@ -447,6 +464,9 @@ livingCeiling.visible = false;
   paint(g, 'x', 0.5, 549 + H, 671.5 - H, NIGHT_H, GR);
   paint(g, 'x', 0.5, 705 + H, W, NIGHT_H, M.bathTile);
   paint(g, 'z', W - 0.5, 0, BN, NIGHT_H, M.bathTile);
+  // Their tiles (BATH_TILES): joints from the north-east corner and the top of the bath
+  tiledWall(g, BATH_TILES, 'w', W - 1, 0, BN, 0, NIGHT_H, 0, 56);
+  tiledWall(g, BATH_TILES, 's', 1, 705 + H, W - 1, 0, NIGHT_H, W - 1, 56);
 }
 
 // ---------- Furniture ----------
@@ -815,7 +835,8 @@ function ceilingLamp(g, x, z, y) {
     cyl(g, x, z, 3, 78, 84, M.bulb);
   }
   box(g, 786, 859.5, 0, 56, 17, 187, M.white);
-  box(g, 786, 859.5, 0, 56, 1, 17, M.bathTile);                                // tiled ledge north of the bath
+  box(g, 786, 859.5, 0, 55.5, 1, 17, M.bathTile);                              // tiled ledge north of the bath
+  slab(g, [[786, 1], [859.5, 1], [859.5, 17], [786, 17]], 56, 0.5, [BATH_TILES, M.bathTile]);
   box(g, 792, 853, 56, 56.5, 23, 181, M.mirror);
   box(g, 784.5, 786, 0, 52, 17, 187, M.pine);
   box(g, 786, 787, 56, 196, 106, 186, M.glass);
