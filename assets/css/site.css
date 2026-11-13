@@ -475,6 +475,8 @@ html.viewer-is-open {
 		background: rgba(27, 31, 34, 0.8);
 		color: #ffffff;
 		font-size: 0.75rem;
+		/* Not the italics of the caption it sits in (theme .image.main). */
+		font-style: normal;
 		letter-spacing: 0.1rem;
 		text-transform: uppercase;
 		pointer-events: none;
