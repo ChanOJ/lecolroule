@@ -76,6 +76,8 @@ Bettwaren mit Duvets oder Decken nach Wahl (Bettwäsche und Handtücher gegen Au
 - {{< icon name="smoking-ban" title="Nichtraucher" >}} Nichtraucherwohnung, auch keine E-Zigaretten (auf der Terrasse erlaubt)
 - {{< icon name="dog" title="Hund" >}} Haustiere sind willkommen (höchstens 2)
 
+{{< visit3d >}}
+
 {{< buttons >}}
 {{< button page="/ski" icon="skiing" >}}Winterstimmung{{< /button >}}
 {{< button page="/summer" icon="hiking" >}}Sommerstimmung{{< /button >}}

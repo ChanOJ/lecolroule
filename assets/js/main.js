@@ -270,7 +270,7 @@
 
 			$window.on('keyup', function(event) {
 
-				if (event.keyCode != 27 || viewerOpen() || viewerJustClosed())
+				if (event.keyCode != 27 || viewerOpen() || viewerJustClosed() || document.documentElement.classList.contains('visit-is-open'))
 					return;
 
 				if (languageMenuOpen()) {
@@ -588,6 +588,58 @@
 
 			initNewsletter(document);
 
+		// 3D visit (layouts/_shortcodes/visit3d.html): the model (assets/js/visit3d.js,
+		// with three.js: a big file) is only loaded when the visit comes near the
+		// view; it then plays in its frame and opens full screen on click. Shown
+		// only when the browser has WebGL 2.
+			var visitObserver = 'IntersectionObserver' in window ? new IntersectionObserver(function(entries) {
+					entries.forEach(function(entry) {
+						if (entry.isIntersecting) {
+							visitObserver.unobserve(entry.target);
+							startVisit(entry.target);
+						}
+					});
+				}, { rootMargin: '300px' }) : null;
+
+			function webgl2() {
+				try {
+					return !!document.createElement('canvas').getContext('webgl2');
+				}
+				catch (error) {
+					return false;
+				}
+			}
+
+			function startVisit(stage) {
+				import(stage.getAttribute('data-visit-js')).then(function(module) {
+					module.createVisit(stage, {
+						labels: JSON.parse(stage.getAttribute('data-labels')),
+						onOpen: function() {
+							document.documentElement.classList.add('viewer-is-open', 'visit-is-open');
+						},
+						onClose: function() {
+							document.documentElement.classList.remove('viewer-is-open', 'visit-is-open');
+							// The Escape that closed it must not close the article too.
+							viewerClosedAt = Date.now();
+						}
+					});
+				}).catch(function(error) {
+					console.error('3D visit', error);
+					stage.parentNode.hidden = true;
+				});
+			}
+
+			function initVisits(root) {
+				if (!visitObserver || !webgl2())
+					return;
+				root.querySelectorAll('.visit3d-stage').forEach(function(stage) {
+					stage.parentNode.hidden = false;
+					visitObserver.observe(stage);
+				});
+			}
+
+			initVisits(document);
+
 		// Maps links: Google Maps by default, Apple Maps on Apple devices (iPhone,
 		// iPad, Mac) for the links that have one (data-apple-href). iPadOS
 		// presents itself as a Mac: both match.
@@ -864,6 +916,7 @@
 							setupArticle($article);
 							initMaps($article[0]);
 							initNewsletter($article[0]);
+							initVisits($article[0]);
 							appleMapsLinks($article[0]);
 							$main._show(article.id);
 

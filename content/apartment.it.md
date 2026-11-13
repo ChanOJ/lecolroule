@@ -72,6 +72,8 @@ Biancheria da letto con piumoni o coperte a scelta (lenzuola e asciugamani a nol
 - {{< icon name="smoking-ban" title="non fumatori" >}} Appartamento per non fumatori, sigaretta elettronica compresa (tollerata in terrazza)
 - {{< icon name="dog" title="cane" >}} Gli animali domestici sono i benvenuti (massimo 2)
 
+{{< visit3d >}}
+
 {{< buttons >}}
 {{< button page="/ski" icon="skiing" >}}Atmosfera invernale{{< /button >}}
 {{< button page="/summer" icon="hiking" >}}Atmosfera estiva{{< /button >}}

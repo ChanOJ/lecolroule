@@ -72,6 +72,8 @@ Beddengoed met dekbedden of dekens naar keuze (lakens en handdoeken te huur tege
 - {{< icon name="smoking-ban" title="niet-roker" >}} Rookvrij appartement, ook geen e-sigaret (toegestaan op het terras)
 - {{< icon name="dog" title="hond" >}} Huisdieren zijn welkom (maximaal 2)
 
+{{< visit3d >}}
+
 {{< buttons >}}
 {{< button page="/ski" icon="skiing" >}}Wintersfeer{{< /button >}}
 {{< button page="/summer" icon="hiking" >}}Zomersfeer{{< /button >}}

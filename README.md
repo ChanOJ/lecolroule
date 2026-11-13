@@ -15,6 +15,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `static/`: files copied as is: `assets/` (theme CSS/JS/webfonts, `assets/css/site.css` for our
   additions), `webfonts/`, `images/favicon/`, `favicon.ico`, `bimi.svg` (fixed URLs).
 - `dist/`: build output (`hugo`), not committed.
+- `3d-sources/`: working files of the 3D model (photos of the flat, first prototype), not committed.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
 - `scripts/newsletter.py`: sends a blog post as the newsletter (see "Newsletter").
@@ -67,6 +68,7 @@ On top of it:
 | Row of buttons | `{{< buttons >}}` + `{{< button page="/booking" icon="calendar" primary=true >}}Book{{< /button >}}` + `{{< /buttons >}}` (`href="https://..."` for external links) |
 | Route map (OpenStreetMap) | `{{< map route="getting-there" height="350" >}}` (route = `assets/maps/<route>.json`, see below) |
 | Social network icons | `{{< social >}}` |
+| 3D model of the flat with its visit (apartment page) | `{{< visit3d >}}` (see "3D visit" below) |
 
 **Images**: an image of a page or a blog post that has an `_hd` version is clickable: it opens
 full screen (`main.js`, "Image viewer"), with arrows (also keyboard and swipe) to the other
@@ -90,6 +92,17 @@ of openstreetmap.de and simplified: `getting-there` (Saint-Michel → Valloire b
 map (`assets/maps/village.gpx`, our own track). `main.js` loads Leaflet (`assets/vendor/`) and
 draws a map when it comes into view (without JavaScript: a link to the route on
 openstreetmap.org).
+
+**3D visit**: `assets/js/visit3d.js` is a 3D model of the flat written as code (three.js: walls,
+furniture and pictures drawn from the plans and photos; the pictures are small photos embedded as
+data URIs, without their metadata), with a first-person visit (keyframes `TOUR`). The shortcode
+`{{< visit3d >}}` shows it like a photo (3:2 frame, caption), where the visit plays in a loop; a
+click opens it full screen with the level buttons, the guided tour and the orbit controls (drag,
+scroll, pinch), Escape or the cross close it. Hugo bundles the module with three.js
+(`assets/vendor/three-0.160.0/`: the core and the add-ons used, their `'three'` imports turned into
+relative paths) into one fingerprinted file, which `main.js` ("3D visit") imports only when the
+visit comes near the view; hidden without JavaScript or WebGL 2. To change the model, edit
+`assets/js/visit3d.js` and check it with `hugo server`.
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 
@@ -215,6 +228,7 @@ ePrivacy rules), so it has no cookie banner:
 - Maps are OpenStreetMap (`map` shortcode, Leaflet): no cookie; the tiles come from
   tile.openstreetmap.org (light use, within its usage policy, attribution shown).
 - `lcr_lang` (language menu) only stores a choice the visitor made.
+- The 3D visit is served by the site (three.js included): no third-party request.
 - The newsletter form is posted to Brevo only when the visitor subscribes; its captcha,
   Cloudflare Turnstile, sets no cookie and is loaded only when the form comes into view (blog page).
 
