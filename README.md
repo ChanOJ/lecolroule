@@ -130,10 +130,10 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   the foot of the stairs). A cupboard front or any closed box face shows an image with
   `faced(M.pine, { e: 'placard-droite' })` (faces `e`, `w`, `s`, `n`).
 - **Pictures**: `picture(g, key, facing, wall face, from, to, bottom, top, opts)`. Without `opts`, a
-  flat image on the wall (the clock). `{ depth: 2 }`: a block 2 cm thick with the image on its
+  flat image on the wall. `{ depth: 2 }`: a block 2 cm thick with the image on its
   front (frames, prints; `edge: M.pine` for the colour of its sides); a PNG with a transparent
   background is cut along the outline of its opaque parts instead (skis, snowboard, panorama,
-  paraglider; its sides take their average colour). `METAL`: a metal cut-out 1 mm thick, 5 mm from
+  paraglider, clock; its sides take their average colour). `METAL`: a metal cut-out 1 mm thick, 5 mm from
   the wall, with a soft shadow on the wall below it (`gap` of 0.3 cm or more).
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
   degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration

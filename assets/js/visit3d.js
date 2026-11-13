@@ -599,18 +599,17 @@ function ceilingLamp(g, x, z, y) {
   for (const x of [264, 398]) for (const z of [127, 159]) box(g, x, x + 4, 0, 12, z, z + 4, M.black);
   box(g, 300, 366, 112, 188, 125, 129, M.pine);
   mirror(g, 's', 129, 308, 358, 120, 180);
-  // Wall decoration: bear clock above the mirror, metal mountain on the cladding, three ski panels
+  // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
   // cut to their shape, metal cyclist on the west face of the pier between the entrance and the
   // kitchen (80 % of its width, centred 180 cm above the floor)
-  picture(g, 'clock', 's', 125, 296, 370, 206, 238);
+  picture(g, 'clock', 's', 125, 296, 370, 210.7, 233.3, { depth: 1, gap: 1 });
   picture(g, 'silhouette', 's', 1.5, 95, 185, 150, 205, METAL);
   picture(g, 'skiA', 'e', 0, 204, 232, 150, 224, { depth: 1 });
   picture(g, 'skiB', 'e', 0, 170, 197, 138, 212, { depth: 1 });
   picture(g, 'skiC', 'e', 0, 138, 163, 126, 200, { depth: 1 });
   picture(g, 'silhouette-velo', 'w', 520, 124.45, 176.05, 163.4, 196.6, METAL);
-  // WC: picture (2 cm block) on the west wall, mirror door of the corner cabinet
+  // WC: picture (2 cm block) on the west wall
   picture(g, 'lift', 'e', 277, 42, 84, 118, 172, { depth: 2 });
-  { const m = mirror(g, 's', 0, 0, 26, 124, 176); m.position.set(292.5 * CM, 150 * CM, 102.5 * CM); m.rotation.y = Math.PI * 0.75; }
   // Coat hooks on the north wall of the entrance
   for (const [x, y, m] of [[440, 185, M.grey], [468, 150, M.white], [492, 178, M.black], [520, 140, M.grey], [548, 172, M.white], [575, 188, M.black], [600, 150, M.grey], [625, 176, M.white]])
     box(g, x, x + 5, y, y + 11, 1, 5, m);
@@ -656,7 +655,9 @@ function ceilingLamp(g, x, z, y) {
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
   cyl(g, 292, 103, 15, 76, 84, M.white);
-  box(g, 277, 297, 122, 178, 98, 118, M.grey);
+  // Corner cabinet: a triangle in plan (20 cm along each wall); its door is the mirror, flat on the diagonal
+  slab(g, [[277, 118], [277, 98], [297, 118]], 178, 56, M.grey);
+  { const m = mirror(g, 's', 0, 0, 26, 124, 176); m.position.set(287.2 * CM, 150 * CM, 107.8 * CM); m.rotation.y = Math.PI * 0.75; }
   box(g, 314, 376, 120, 185, 1, 18, M.grey);
 
   // Terrace: two loungers at the west end, table and six plastic armchairs
