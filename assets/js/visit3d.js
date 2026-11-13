@@ -374,6 +374,21 @@ function chair(g, x, z, deg, m = M.pine, arms = false) {
     box(c, lx, lx + 4, 42, 62, -19, -15, m);
   }
 }
+// Horizontal slab with rounded corners (radius r): a table top from x1..x2, z1..z2, y1..y2.
+function roundedSlab(g, x1, x2, z1, z2, y1, y2, r, m) {
+  const hw = (x2 - x1) / 2 * CM, hd = (z2 - z1) / 2 * CM, rr = r * CM, s = new THREE.Shape();
+  s.moveTo(-hw + rr, -hd);
+  s.lineTo(hw - rr, -hd); s.absarc(hw - rr, -hd + rr, rr, -Math.PI / 2, 0, false);
+  s.lineTo(hw, hd - rr); s.absarc(hw - rr, hd - rr, rr, 0, Math.PI / 2, false);
+  s.lineTo(-hw + rr, hd); s.absarc(-hw + rr, hd - rr, rr, Math.PI / 2, Math.PI, false);
+  s.lineTo(-hw, -hd + rr); s.absarc(-hw + rr, -hd + rr, rr, Math.PI, Math.PI * 1.5, false);
+  const geo = new THREE.ExtrudeGeometry(s, { depth: (y2 - y1) * CM, bevelEnabled: false, curveSegments: 6 });
+  geo.rotateX(Math.PI / 2);                                                   // shape y -> z, extruded downwards
+  const mesh = new THREE.Mesh(geo, m);
+  mesh.position.set((x1 + x2) / 2 * CM, y2 * CM, (z1 + z2) / 2 * CM);
+  g.add(mesh);
+  return mesh;
+}
 // Round swivel armchair.
 function tubChair(g, x, z, deg, m) {
   const c = placed(g, x, z, deg);
@@ -556,9 +571,15 @@ function ceilingLamp(g, x, z, y) {
     const legs = new THREE.Group(); legs.position.set(0, 38 * CM, 45 * CM); legs.rotation.x = 0.35; c.add(legs);
     box(legs, -28, 28, -2, 2, 0, 45, M.lounger);
   }
-  box(g, 300, 480, 71, 75, 615, 705, M.slate);
-  for (const x of [304, 472]) for (const z of [619, 697]) box(g, x, x + 4, 0, 71, z, z + 4, M.slate);
-  for (const x of [335, 390, 445]) { chair(g, x, 598, 0, M.plastic, true); chair(g, x, 722, 180, M.plastic, true); }
+  // Table 180 x 80 with slightly rounded corners, in front of the two east leaves of the bay window,
+  // leaving the way out of the west leaf (French window, x 320..414) clear: two armchairs on each
+  // long side, one at each end, the west one no further west than the mullion (x = 414)
+  const T = { x1: 452, x2: 632, z1: 620, z2: 700 };
+  roundedSlab(g, T.x1, T.x2, T.z1, T.z2, 71, 75, 8, M.slate);
+  for (const x of [T.x1 + 8, T.x2 - 12]) for (const z of [T.z1 + 8, T.z2 - 12]) box(g, x, x + 4, 0, 71, z, z + 4, M.slate);
+  for (const x of [497, 587]) { chair(g, x, T.z1 - 17, 0, M.plastic, true); chair(g, x, T.z2 + 17, 180, M.plastic, true); }
+  chair(g, T.x1 - 17, (T.z1 + T.z2) / 2, 90, M.plastic, true);
+  chair(g, T.x2 + 17, (T.z1 + T.z2) / 2, -90, M.plastic, true);
 }
 
 // ---------- Night level furniture ----------
