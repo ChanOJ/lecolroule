@@ -77,6 +77,8 @@ Bedding with duvets or blankets at your choice (sheets and towels not provided, 
 - {{< icon name="smoking-ban" title="non smoking" >}} Non-smoking apartment, vaping included (tolerated on the terrace)
 - {{< icon name="dog" title="dog" >}} Pets allowed (2 maximum)
 
+{{< visit3d >}}
+
 {{< buttons >}}
 {{< button page="/ski" icon="skiing" >}}Winter atmosphere{{< /button >}}
 {{< button page="/summer" icon="hiking" >}}Summer atmosphere{{< /button >}}

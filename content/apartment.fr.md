@@ -72,6 +72,8 @@ Literie avec couettes ou couvertures au choix (draps et serviettes en location e
 - {{< icon name="smoking-ban" title="non fumeur" >}} Appartement non fumeur, y compris vaporette (toléré sur la terrasse)
 - {{< icon name="dog" title="chien" >}} Les animaux de compagnie sont les bienvenus (2 maximum)
 
+{{< visit3d >}}
+
 {{< buttons >}}
 {{< button page="/ski" icon="skiing" >}}Ambiance hiver{{< /button >}}
 {{< button page="/summer" icon="hiking" >}}Ambiance été{{< /button >}}

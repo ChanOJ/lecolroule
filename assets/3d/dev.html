@@ -1,0 +1,46 @@
+<!doctype html>
+<!--
+  Test page of the 3D model (assets/js/visit3d.js), without Hugo: the model full
+  screen, as in the site's full-screen view. Not published (Hugo only publishes
+  the assets the site uses). Browsers refuse modules opened as files, so serve
+  the repository with any local web server, from its root:
+    python3 -m http.server
+  then open http://localhost:8000/assets/3d/dev.html and reload after each change.
+  Debugging, in the browser console: window.lcr (scene, camera, controls, tour,
+  living, night...), e.g. lcr.tour.seek(42) to hold the visit at 42 s,
+  lcr.tour.times for the time of each keyframe.
+  See README.md, "3D visit".
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Col Roulé — 3D model (test page)</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #e9edf0; font-family: system-ui, sans-serif; }
+  /* The site's styles of the full-screen view (assets/css/site.css, "3D visit"), simplified. */
+  .visit3d-stage { position: fixed; inset: 0; }
+  .visit3d-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .visit3d-hint, .visit3d-close { display: none; }
+  .visit3d-bar { position: absolute; top: 12px; left: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .visit3d-bar button { padding: 8px 12px; border: 1px solid #9aa4ad; border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; }
+  .visit3d-bar button.on { background: #2f6f7d; color: #fff; border-color: #2f6f7d; }
+  .visit3d-help { position: absolute; left: 12px; bottom: 12px; margin: 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="visit3d-stage"></div>
+<script type="module">
+import { createVisit } from '../js/visit3d.js';
+
+window.lcr = createVisit(document.querySelector('.visit3d-stage'), {
+  standalone: true,
+  labels: {
+    both: 'Both levels', living: 'Living level', night: 'Night level',
+    start: 'Visit', stop: 'Stop the visit', close: 'Close',
+    help: 'Drag to turn, scroll or pinch to zoom.',
+  },
+});
+</script>
+</body>
+</html>

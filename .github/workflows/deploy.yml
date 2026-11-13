@@ -72,6 +72,10 @@ jobs:
           sudo dpkg -i hugo.deb
           hugo version
 
+      # Textures of the 3D model: no metadata (public repository), generated module up to date.
+      - name: Check the 3D textures
+        run: python3 scripts/textures.py --check
+
       # Warnings (e.g. deprecations) fail the build so they get fixed early.
       - name: Build
         run: hugo --panicOnWarning
