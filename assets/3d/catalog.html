@@ -1,0 +1,152 @@
+<!doctype html>
+<!--
+  Catalog of a pack of 3D models (OBJ + MTL), to choose furniture for the 3D visit. Local only:
+  the pack lives in 3d-sources/ (ignored by git), e.g. the "Ultimate House Interior" pack of
+  Quaternius (CC0) in 3d-sources/quaternius/OBJ/. Serve the repository root:
+    python3 -m http.server
+  then open http://localhost:8000/assets/3d/catalog.html
+  (?dir=../../3d-sources/<pack>/OBJ/ for another folder: the page reads the server's directory
+  listing). Each model is shown with its name and size in cm (width x depth x height, as
+  exported); a click opens it large, to turn around it. See README.md, "3D visit".
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D models catalog</title>
+<style>
+  body { margin: 0; padding: 16px; background: #e9edf0; font-family: system-ui, sans-serif; color: #222; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+  h1 { font-size: 20px; margin: 0; }
+  input { padding: 6px 10px; font-size: 14px; border: 1px solid #9aa4ad; border-radius: 6px; min-width: 200px; }
+  #status { font-size: 13px; color: #555; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .card { background: #fff; border-radius: 8px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+  .card:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, .25); }
+  .card img { display: block; width: 100%; aspect-ratio: 1; background: #f4f6f7; }
+  .card p { margin: 6px 8px; font-size: 13px; overflow-wrap: anywhere; }
+  .card .size { color: #666; font-size: 12px; margin-top: 0; }
+  #viewer { position: fixed; inset: 0; background: rgba(20, 24, 28, .85); display: none; }
+  #viewer.on { display: block; }
+  #viewer canvas { width: 100%; height: 100%; display: block; }
+  #viewer p { position: absolute; left: 16px; top: 8px; color: #fff; font-size: 16px; }
+  #viewer button { position: absolute; right: 16px; top: 16px; padding: 8px 14px; font-size: 14px; border-radius: 6px; border: 0; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>3D models catalog</h1>
+  <input id="filter" type="search" placeholder="Filter by name (couch, chair...)">
+  <span id="status"></span>
+</header>
+<div id="grid"></div>
+<div id="viewer"><p></p><button type="button">Close</button></div>
+<script type="module">
+import * as THREE from '../vendor/three-0.160.0/three.module.js';
+import { OrbitControls } from '../vendor/three-0.160.0/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from '../vendor/three-0.160.0/addons/environments/RoomEnvironment.js';
+import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
+import { MTLLoader } from '../vendor/three-0.160.0/addons/loaders/MTLLoader.js';
+
+const dir = new URLSearchParams(location.search).get('dir') || '../../3d-sources/quaternius/OBJ/';
+const status = document.getElementById('status'), grid = document.getElementById('grid');
+
+// The pack's MTL colours (Kd) are linear values (Blender), MTLLoader reads them as sRGB: undo it.
+async function load(name) {
+  const materials = await new MTLLoader().setPath(dir).loadAsync(`${name}.mtl`).catch(() => null);
+  const loader = new OBJLoader();
+  if (materials) { materials.preload(); loader.setMaterials(materials); }
+  const obj = await loader.setPath(dir).loadAsync(`${name}.obj`);
+  obj.traverse((o) => {
+    if (!o.isMesh) return;
+    for (const m of [].concat(o.material)) if (m.color) m.color.convertLinearToSRGB();
+  });
+  return obj;
+}
+
+// One renderer for every thumbnail (browsers allow only a few WebGL contexts)
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.setSize(360, 360);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf4f6f7);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
+const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+sun.position.set(3, 5, 4);
+scene.add(sun);
+const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+
+// Frames the object from the front-right, a little above
+function frame(obj, cam, aspect = 1) {
+  const box = new THREE.Box3().setFromObject(obj), size = box.getSize(new THREE.Vector3()), centre = box.getCenter(new THREE.Vector3());
+  const radius = size.length() / 2 || 1, dist = radius / Math.sin(cam.fov * Math.PI / 360) * (aspect < 1 ? 1 / aspect : 1);
+  cam.position.copy(centre).add(new THREE.Vector3(0.75, 0.55, 1).normalize().multiplyScalar(dist));
+  cam.near = dist / 100; cam.far = dist * 10;
+  cam.lookAt(centre);
+  cam.updateProjectionMatrix();
+  return { size, centre };
+}
+
+const cm = (v) => Math.round(v * 100);
+async function main() {
+  const listing = await fetch(dir).then((r) => r.text()).catch(() => '');
+  const names = [...new Set([...listing.matchAll(/href="([^"]+)\.obj"/g)].map((m) => decodeURIComponent(m[1])))].sort();
+  if (!names.length) { status.textContent = `No .obj file in ${dir} (see the comment at the top of this page).`; return; }
+  for (const [i, name] of names.entries()) {
+    status.textContent = `${i + 1} / ${names.length}`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.name = name.toLowerCase();
+    try {
+      const obj = await load(name);
+      scene.add(obj);
+      const { size } = frame(obj, camera);
+      renderer.render(scene, camera);
+      scene.remove(obj);
+      card.innerHTML = `<img alt=""><p>${name}</p><p class="size">${cm(size.x)} × ${cm(size.z)} × ${cm(size.y)} cm</p>`;
+      card.querySelector('img').src = renderer.domElement.toDataURL('image/png');
+    } catch (e) {
+      card.innerHTML = `<p>${name}</p><p class="size">could not be loaded: ${e.message}</p>`;
+    }
+    card.onclick = () => open(name);
+    grid.append(card);
+  }
+  status.textContent = `${names.length} models (size: width × depth × height)`;
+}
+
+// Large view of one model
+const viewer = document.getElementById('viewer');
+const big = new THREE.WebGLRenderer({ antialias: true });
+big.toneMapping = THREE.ACESFilmicToneMapping;
+viewer.prepend(big.domElement);
+const bigScene = new THREE.Scene();
+bigScene.background = new THREE.Color(0xf4f6f7);
+bigScene.environment = scene.environment;
+bigScene.add(sun.clone(), new THREE.GridHelper(4, 40, 0x999999, 0xcccccc));   // 10 cm squares
+const bigCamera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+const controls = new OrbitControls(bigCamera, big.domElement);
+let shown = null;
+async function open(name) {
+  if (shown) bigScene.remove(shown);
+  shown = await load(name);
+  bigScene.add(shown);
+  viewer.classList.add('on');
+  big.setSize(innerWidth, innerHeight);
+  bigCamera.aspect = innerWidth / innerHeight;
+  const { size, centre } = frame(shown, bigCamera, bigCamera.aspect);
+  controls.target.copy(centre);
+  viewer.querySelector('p').textContent = `${name}: ${cm(size.x)} × ${cm(size.z)} × ${cm(size.y)} cm (grid: 10 cm)`;
+  big.setAnimationLoop(() => { controls.update(); big.render(bigScene, bigCamera); });
+}
+const close = () => { viewer.classList.remove('on'); big.setAnimationLoop(null); };
+viewer.querySelector('button').onclick = close;
+addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+document.getElementById('filter').oninput = (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  for (const c of grid.children) c.hidden = q && !c.dataset.name.includes(q);
+};
+main();
+</script>
+</body>
+</html>
