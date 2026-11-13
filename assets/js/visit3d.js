@@ -52,6 +52,20 @@ const stairs = new THREE.Group(); stairs.position.y = LIVING_Y * CM;   // shown 
 scene.add(living, night, stairs);
 const wcDoor = new THREE.Group(), WC_DOOR_OPEN = -Math.PI / 2;   // door of the upstairs WC (0 = closed)
 
+// Hinged doors: each one turns on its hinge (pivot group), from closed (rotation 0) to open
+// (rotation `open`). Full screen, a click on a door opens or closes it; a row of TOUR can close one
+// during the visit. Named doors (wall openings with `name`, or addDoor(..., name)) are in DOORS.
+const DOORS = new Map(), DOOR_LIST = [];
+function setDoor(d, openness) { d.openness = openness; d.pivot.rotation.y = d.open * openness; }
+function addDoor(pivot, open, name) {
+  const d = { pivot, open, openness: 1, target: 1 };   // every door starts open, as drawn
+  pivot.traverse((o) => { if (o.isMesh) o.userData.door = d; });
+  setDoor(d, 1);
+  DOOR_LIST.push(d);
+  if (name) DOORS.set(name, d);
+  return d;
+}
+
 function box(g, x1, x2, y1, y2, z1, z2, m) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry((x2 - x1) * CM, (y2 - y1) * CM, (z2 - z1) * CM), m);
   mesh.position.set((x1 + x2) / 2 * CM, (y1 + y2) / 2 * CM, (z1 + z2) / 2 * CM);
@@ -60,7 +74,9 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 }
 
 // Axis-aligned wall: axis 'x' runs along x at z = c (centre line), from a to b.
-// ops = openings [{ s, e, sill, head, glass }] along the wall axis.
+// ops = openings [{ s, e, sill, head, glass }] along the wall axis; a door leaf: { leaf: material,
+// swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
+// (-1) or south/east (+1) side), optional name (see DOORS); without swing, a fixed closed leaf.
 // sides = [material of the north or west face, material of the south or east face].
 function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
   const faces = !sides ? m : axis === 'x' ? [m, m, m, m, sides[1], sides[0]] : [sides[1], sides[0], m, m, m, m];
@@ -85,11 +101,14 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
       }
     }
     if (o.leaf && !o.swing) seg(o.s + 1, o.e - 1, 0, o.head - 1, o.leaf, 4);   // closed door leaf
-    if (o.leaf && o.swing) {                               // open leaf: hinge at the start ('s') or end ('e') of the
-      const [hinge, side] = o.swing, w = o.e - o.s - 2;    // opening, swung to the north/west (-1) or south/east (+1)
-      const p = hinge === 's' ? o.s + 1 : o.e - 5, f1 = c + side * t / 2, f2 = f1 + side * w;
-      if (axis === 'x') box(g, p, p + 4, 0, o.head - 1, Math.min(f1, f2), Math.max(f1, f2), o.leaf);
-      else box(g, Math.min(f1, f2), Math.max(f1, f2), 0, o.head - 1, p, p + 4, o.leaf);
+    if (o.leaf && o.swing) {                               // hinged leaf (4 cm thick), drawn open
+      const [hinge, side] = o.swing, dir = hinge === 's' ? 1 : -1, w = o.e - o.s - 4;
+      const p = hinge === 's' ? o.s + 3 : o.e - 3, q = c + side * (t / 2 - 2);   // hinge axis, on the swing side
+      const pivot = new THREE.Group(), l1 = Math.min(0, dir * w), l2 = Math.max(0, dir * w);
+      if (axis === 'x') { pivot.position.set(p * CM, 0, q * CM); box(pivot, l1, l2, 0, o.head - 1, -2, 2, o.leaf); }
+      else { pivot.position.set(q * CM, 0, p * CM); box(pivot, -2, 2, 0, o.head - 1, l1, l2, o.leaf); }
+      g.add(pivot);
+      addDoor(pivot, (axis === 'x' ? -side : side) * dir * Math.PI / 2, o.name);
     }
     cur = o.e;
   }
@@ -151,8 +170,8 @@ function slab(g, pts, y, thick, m, holes = []) {
   // Its door: hinged at the south end, it opens towards the entrance; the visit closes it (see tour)
   wcDoor.position.set(406.5 * CM, 0, 104 * CM);
   box(wcDoor, -2, 2, 0, 203, -73, 0, M.pine);
-  wcDoor.rotation.y = WC_DOOR_OPEN;
   g.add(wcDoor);
+  addDoor(wcDoor, WC_DOOR_OPEN, 'wcUp');
   paint(g, 'x', 0.5, 277, 403, LIVING_H, M.orange);
   paint(g, 'x', 0.5, 410, 650, 217, M.teal);                                  // entrance
   paint(g, 'x', 0.75, 0, 270, LIVING_H, M.cladding);                         // wood cladding behind the sofa
@@ -320,7 +339,9 @@ livingCeiling.visible = false;
 
   // Along the north wall: cupboard facing the stairs, WC, bathroom duct, bathroom
   wall(g, 'x', 88, 439 - H, 549, PART, NIGHT_H, PG, [], [C, PG]);
-  wall(g, 'x', 88, 549, 651.5, PART, NIGHT_H, PG, [door(565, 635, 's', -1)], [GR, PG]);
+  // WC door: hinged on the east (right when facing it), it opens onto the corridor and, open, hides
+  // the bathroom door; the visit closes it after looking into the WC (see TOUR)
+  wall(g, 'x', 88, 549, 651.5, PART, NIGHT_H, PG, [{ ...door(565, 635, 'e', 1), name: 'wcDown' }], [GR, PG]);
   wall(g, 'x', 88, 651.5, 705 + H, PART, NIGHT_H, AN, [], [C, AN]);
   wall(g, 'z', 469, 0, 88 - H, PART, NIGHT_H, C);                                  // boxed-in duct, set back 30 cm
   wall(g, 'z', 439, 0, 88 - H, PART, NIGHT_H, PG, [{ s: 0, e: 84.5, head: 235 }], [PG, C]);
@@ -621,12 +642,14 @@ function ceilingLamp(g, x, z, y) {
 // Keyframes: [x, z, floor height, heading, pitch, duration]. x, z and the floor height are in cm, in the
 // living level frame (night level z = its own z + NIGHT_Z). Heading in degrees: 0 = north, 90 = east,
 // 180 = south, 270 = west; it is not wrapped, so that the direction of each turn is explicit.
-// The duration (s) is optional: by default it follows the distance and the angle to turn.
+// The duration (s) is optional (null or left out): by default it follows the distance and the angle
+// to turn. A 7th element { close: 'doorName' } closes that door (see DOORS) during the row's segment;
+// every door is open again when the visit starts.
 const NZ = NIGHT_Z, UP = LIVING_Y, STEP = LIVING_Y / 15;
 const TOUR = [
   [628, 50, UP, 270, 0],                      // entrance, back against the front door
   [628, 50, UP, 270, 0, 2],                   // a pause before setting off
-  [470, 55, UP, 270, 0],
+  [470, 55, UP, 270, 0, null, { close: 'wcUp' }],   // the WC door closes as we set off, out of the way
   [465, 150, UP, 180, 0],                     // left into the main room
   [455, 232, UP, 180, 0],
   [455, 232, UP, 540, 0, 13],                 // full turn on the spot
@@ -665,6 +688,8 @@ const TOUR = [
   [603, NZ + 140, 0, 900, 0],                 // back out
   [600, NZ + 128, 0, 1080, -8, 4],            // WC
   [600, NZ + 110, 0, 1080, -8],
+  [600, NZ + 165, 0, 1080, 0],                // step back, out of the way of its door...
+  [600, NZ + 165, 0, 1080, 0, 2, { close: 'wcDown' }],   // ...which closes (open, it hides the bathroom)
   [600, NZ + 137, 0, 1170, 0, 3.5],           // bathroom
   [700, NZ + 137, 0, 1170, 0],
   [700, NZ + 137, 0, 1120, -5, 2.5],
@@ -781,6 +806,13 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       times.push(times[i - 1] + (t ?? Math.max(d / (h0 === h1 ? WALK : CLIMB), Math.abs(y1 - y0) / TURN, 0.4)));
     }
     const total = times[times.length - 1];
+    // [row index, door] of the rows that close a door
+    const closing = TOUR.flatMap((row, j) => {
+      const name = row[6] && row[6].close;
+      if (name && !DOORS.has(name)) console.error(`3D model: TOUR row ${j} closes an unknown door "${name}"`);
+      return name && DOORS.has(name) ? [[j, DOORS.get(name)]] : [];
+    });
+    const openAll = () => { for (const d of DOOR_LIST) { setDoor(d, 1); d.target = 1; } };
     let running = false, paused = false, clock = 0, last = 0;
     const lens = () => {
       // wide lens: about 109 degrees of horizontal field of view, whatever the shape of the frame
@@ -794,10 +826,12 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       const e = u * u * (3 - 2 * u), mix = (k, w) => a[k] + (b[k] - a[k]) * w;
       const yaw = mix(3, e) * Math.PI / 180, pitch = mix(4, e) * Math.PI / 180;
       camera.position.set(mix(0, u) * CM, (mix(2, u) + EYE) * CM, mix(1, u) * CM);
-      // The upstairs WC door stands open while we lean against the front door, then closes gently
-      // as we set off, so that it is out of the way
-      const k = Math.min(1, Math.max(0, (time - 1.6) / 2));
-      wcDoor.rotation.y = WC_DOOR_OPEN * (1 - k * k * (3 - 2 * k));
+      // Doors closed by the visit: open before their row, closing during it, closed after
+      for (const [j, d] of closing) {
+        const k = Math.min(1, Math.max(0, (time - times[j - 1]) / (times[j] - times[j - 1])));
+        setDoor(d, 1 - k * k * (3 - 2 * k));
+        d.target = d.openness;
+      }
       camera.lookAt(camera.position.x + Math.sin(yaw) * Math.cos(pitch), camera.position.y + Math.sin(pitch), camera.position.z - Math.cos(yaw) * Math.cos(pitch));
     };
     return {
@@ -810,6 +844,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       seek(time) { if (!running) this.start(); clock = time; paused = true; pose(clock); },
       start() {
         running = true; paused = false; clock = 0; last = performance.now();
+        openAll();
         setView('both');
         controls.enabled = false;
         lens();
@@ -818,7 +853,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       },
       stop() {
         if (!running) return;
-        running = false; livingCeiling.visible = false; wcDoor.rotation.y = WC_DOOR_OPEN;
+        running = false; livingCeiling.visible = false; openAll();
         tourButton.textContent = labels.start || 'Visit';
         overview();
       },
@@ -850,9 +885,20 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // full screen are enough. Screens refresh at 60 or 120 Hz: the other refreshes are skipped,
   // which saves the GPU (and the battery) up to 4 times the work.
   let lastFrame = -Infinity;
+  // Doors opened or closed by a click swing in DOOR_SWING seconds
+  const DOOR_SWING = 0.8;
+  const swingDoors = (dt) => {
+    for (const d of DOOR_LIST) {
+      if (d.openness === d.target) continue;
+      const step = dt / DOOR_SWING;
+      setDoor(d, d.target > d.openness ? Math.min(d.target, d.openness + step) : Math.max(d.target, d.openness - step));
+    }
+  };
+
   const frame = (time) => {
     const interval = 1000 / (full ? FPS_FULL : FPS_PREVIEW);
     if (time - lastFrame < interval - 2) return;   // 2 ms of tolerance for the jitter of the refreshes
+    swingDoors(Math.min(0.25, (time - lastFrame) / 1000) || 0);   // same speed on slow devices
     lastFrame = time;
     if (tour.running) tour.update(); else controls.update();
     if (composer) composer.render(); else renderer.render(scene, camera);
@@ -916,7 +962,41 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   };
   stage.addEventListener('click', onClick);
   stage.addEventListener('keydown', onKey);
-  for (const ev of ['pointerdown', 'wheel']) renderer.domElement.addEventListener(ev, onAction);
+  renderer.domElement.addEventListener('wheel', onAction);   // and pointerdown: see onPress
+
+  // Doors, full screen: a click (not a drag of the view) on a door opens or closes it; the pointer
+  // shows a hand over a door. The first visible object under the pointer must be the door.
+  const raycaster = new THREE.Raycaster(), pointer = new THREE.Vector2();
+  const shown = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+  const doorAt = (event) => {
+    const r = renderer.domElement.getBoundingClientRect();
+    pointer.set((event.clientX - r.left) / r.width * 2 - 1, -(event.clientY - r.top) / r.height * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObject(scene, true).find((h) => h.object.isMesh && shown(h.object));
+    return hit ? hit.object.userData.door : null;
+  };
+  let press = null, hoverAt = 0;
+  const onPress = (event) => {
+    // The press that stops the visit (the view jumps to the overview) is not a click on a door
+    const touring = full && tour.running;
+    onAction();
+    press = touring ? null : { x: event.clientX, y: event.clientY, t: performance.now() };
+  };
+  const onRelease = (event) => {
+    if (!full || !press) return;
+    const still = Math.hypot(event.clientX - press.x, event.clientY - press.y) < 6 && performance.now() - press.t < 600;
+    press = null;
+    const d = still && doorAt(event);
+    if (d) d.target = d.target > 0.5 ? 0 : 1;
+  };
+  const onHover = (event) => {
+    if (!full || event.buttons || performance.now() - hoverAt < 100) return;   // at most 10 times a second
+    hoverAt = performance.now();
+    renderer.domElement.style.cursor = doorAt(event) ? 'pointer' : '';
+  };
+  renderer.domElement.addEventListener('pointerdown', onPress);
+  renderer.domElement.addEventListener('pointerup', onRelease);
+  renderer.domElement.addEventListener('pointermove', onHover);
   document.addEventListener('keydown', onEscape, true);
   document.addEventListener('visibilitychange', updateLoop);
 
