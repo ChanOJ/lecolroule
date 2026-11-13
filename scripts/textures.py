@@ -111,6 +111,7 @@ def size(data: bytes) -> tuple[int, int]:
     raise ValueError("no JPEG frame header")
 
 
+LINE = 100           # length of the lines of the generated module
 GRID = 256           # outline grid: cells on the longest side of the image
 TOLERANCE = 0.6      # outline simplification, in grid cells
 
@@ -257,15 +258,34 @@ def module(textures: dict[str, tuple[str, bytes]], outlines: dict[str, dict]) ->
     ]
     for name in sorted(textures):
         mime, data = textures[name]
-        lines.append(f"  '{name}': 'data:{mime};base64,{base64.b64encode(data).decode()}',")
+        # Short lines: very long lines make git hosts fail on diffs and merges
+        uri = f"data:{mime};base64,{base64.b64encode(data).decode()}"
+        lines.append(f"  '{name}': [")
+        lines += [f"    '{uri[k:k + LINE]}'," for k in range(0, len(uri), LINE)]
+        lines.append("  ].join(''),")
     lines.append("};")
     lines.append("// Outlines of the opaque parts of the PNG textures: { name: { color, shapes: [[outer, hole...]] } },")
     lines.append("// points as flat [u, v, ...] lists in texture coordinates.")
     lines.append("export const OUTLINES = {")
     for name in sorted(outlines):
         o = outlines[name]
-        shapes = ",".join("[" + ",".join("[" + ",".join(f"{c:g}" for c in l) + "]" for l in s) + "]" for s in o["shapes"])
-        lines.append(f"  '{name}': {{ color: '{o['color']}', shapes: [{shapes}] }},")
+        lines.append(f"  '{name}': {{ color: '{o['color']}', shapes: [")
+        for shape in o["shapes"]:
+            lines.append("    [")
+            for loop in shape:
+                nums = [f"{c:g}" for c in loop]
+                rows, row = [], ""
+                for n in nums:
+                    if len(row) + len(n) + 1 > LINE:
+                        rows.append(row)
+                        row = ""
+                    row += n + ","
+                rows.append(row)
+                lines.append("      [")
+                lines += [f"        {r}" for r in rows]
+                lines.append("      ],")
+            lines.append("    ],")
+        lines.append("  ] },")
     lines.append("};")
     return "\n".join(lines) + "\n"
 
