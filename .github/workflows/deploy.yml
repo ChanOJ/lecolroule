@@ -76,6 +76,10 @@ jobs:
       - name: Check the 3D textures
         run: python3 scripts/textures.py --check
 
+      # Furniture models of the 3D visit: generated module up to date.
+      - name: Check the 3D models
+        run: python3 scripts/models.py --check
+
       # Warnings (e.g. deprecations) fail the build so they get fixed early.
       - name: Build
         run: hugo --panicOnWarning
