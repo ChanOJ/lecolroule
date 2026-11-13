@@ -163,6 +163,8 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   fitted in that box (cm), bottom centre at (x, z), facing deg (0 = south, like `placed()`); each
   material name of the OBJ gets a material of the visit (an unlisted one is grey, reported in the
   console). The deployment workflow runs `scripts/models.py --check`.
+  Models get planar texture coordinates (`boxUV()`), so a material can take a grain bump map:
+  `fabric(color)` for fabrics (sofa, armchairs, poufs), `grain()` for any other material.
 - **three.js add-on**: copy it from the three.js 0.160.0 package (npm) into
   `assets/vendor/three-0.160.0/addons/` with the files it imports, turning `from 'three'` into a
   relative path to `three.module.js`.
