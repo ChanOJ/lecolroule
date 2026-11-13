@@ -57,10 +57,11 @@ const wcDoor = new THREE.Group(), WC_DOOR_OPEN = -Math.PI / 2;   // door of the 
 // during the visit. Named doors (wall openings with `name`, or addDoor(..., name)) are in DOORS.
 const DOORS = new Map(), DOOR_LIST = [];
 function setDoor(d, openness) { d.openness = openness; d.pivot.rotation.y = d.open * openness; }
-function addDoor(pivot, open, name) {
-  const d = { pivot, open, openness: 1, target: 1 };   // every door starts open, as drawn
+// home: openness at load and at the start of every visit (1 = open, 0 = closed).
+function addDoor(pivot, open, name, home = 1) {
+  const d = { pivot, open, home, openness: home, target: home };
   pivot.traverse((o) => { if (o.isMesh) o.userData.door = d; });
-  setDoor(d, 1);
+  setDoor(d, home);
   DOOR_LIST.push(d);
   if (name) DOORS.set(name, d);
   return d;
@@ -106,8 +107,9 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 // ops = openings [{ s, e, sill, head, glass }] along the wall axis (a window: glass, panes = leaves
 // split by mullions, bars = [columns, rows] of small panes split by thin glazing bars); a door leaf: { leaf: material,
 // swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
-// (-1) or south/east (+1) side), optional name (see DOORS), angle (degrees open, 90 by default) and
-// tex (texture key of an image of the door on both faces, see leafFaces());
+// (-1) or south/east (+1) side), optional name (see DOORS), angle (degrees open, 90 by default),
+// closed (true: closed at load and at the start of the visit) and tex (texture key of an image of
+// the door on both faces, see leafFaces());
 // without swing, a fixed closed leaf.
 // sides = [material of the north or west face, material of the south or east face].
 function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
@@ -146,7 +148,7 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
       if (axis === 'x') { pivot.position.set(p * CM, 0, q * CM); box(pivot, l1, l2, 0, o.head - 1, -2, 2, lm); }
       else { pivot.position.set(q * CM, 0, p * CM); box(pivot, -2, 2, 0, o.head - 1, l1, l2, lm); }
       g.add(pivot);
-      addDoor(pivot, (axis === 'x' ? -side : side) * dir * (o.angle ?? 90) * Math.PI / 180, o.name);
+      addDoor(pivot, (axis === 'x' ? -side : side) * dir * (o.angle ?? 90) * Math.PI / 180, o.name, o.closed ? 0 : 1);
     }
     cur = o.e;
   }
@@ -213,13 +215,16 @@ function tiledFloor(size, color, groutColor) {
   return mat(0xffffff, { map, bumpMap, bumpScale: 1.5, roughness: 0.55 });
 }
 
+// Anthracite tiles of the living level, the bathroom and the WC downstairs
+const TILES = tiledFloor(30, 0x4a4f55, '#6b6d70');
+
 // ---------- Living level ----------
 {
   const g = living, S = STAIR;
   const stairHole = [[0, S.zN], [S.x, S.zN], [S.x, S.zS], [0, S.zS]];
   // Anthracite tiles, about 30 x 30 cm (top of the slab; its edges plain)
   slab(g, [[-EXT, -EXT], [686, -EXT], [686, 100], [736, 100], [736, 549.5], [-EXT, 549.5]], 0, SLAB,
-    [tiledFloor(30, 0x4a4f55, '#6b6d70'), M.tiles], [stairHole]);
+    [TILES, M.tiles], [stairHole]);
 
   // Outer walls: render outside, cream inside
   const IN = M.wall, OUT = M.render;
@@ -230,7 +235,9 @@ function tiledFloor(size, color, groutColor) {
     { s: 320, e: 602, sill: 0, head: 215, glass: true, panes: 3 },
   ], [IN, OUT]);
   wall(g, 'z', 700 + EXT / 2, 130, 513.5, EXT, LIVING_H, M.cut, [], [IN, OUT]);
-  wall(g, 'z', 650 + EXT / 2, 0, 130, EXT, LIVING_H, M.cut, [{ s: 5, e: 95, head: 204, leaf: M.tealGrey }], [M.teal, OUT]);
+  // Front door: hinged on the north side, it opens inwards against the north wall; closed at load
+  wall(g, 'z', 650 + EXT / 2, 0, 130, EXT, LIVING_H, M.cut,
+    [{ s: 5, e: 95, head: 204, leaf: M.tealGrey, swing: ['s', -1], name: 'front', closed: true }], [M.teal, OUT]);
   box(g, 686, 736, 0, LIVING_H, 100, 130, M.cut);
 
   // WC block: teal outside, orange inside, door on its east side
@@ -253,7 +260,11 @@ function tiledFloor(size, color, groutColor) {
   box(g, 575, 640, 0, LIVING_H, 118, 157, M.duct);                            // back of the kitchen alcove (25 cm recess)
   box(g, 640, 650, 0, LIVING_H, 118, 182.5, M.duct);
   box(g, 650, 700, 0, LIVING_H, 130, 182.5, M.duct);
-  box(g, 562, 642, 0, 204, 116, 118, faced(M.pine, { n: 'porte' }));        // entrance closet door, facing the entrance
+  // Entrance closet door: hinged on the east (on the left seen from the entrance), it opens onto
+  // the entrance; closed at load
+  { const pivot = new THREE.Group(); pivot.position.set(641 * CM, 0, 117 * CM);
+    box(pivot, -79, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
+    addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 525, 570, 8, 95, 182.5, 188, M.white);                               // radiator
   box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
 
@@ -365,8 +376,8 @@ livingCeiling.visible = false;
   const g = night, W = 860, D = 427, S = STAIR, H = PART / 2;
   const { wall: C, tealGrey: TG, paleGreen: PG, taupe: TP, lightBlue: LB, anthracite: AN, wcGrey: GR } = M;
   slab(g, [[-EXT, -EXT], [W + EXT, -EXT], [W + EXT, D + EXT], [-EXT, D + EXT]], 0, 10, M.oak);
-  box(g, 655, W, 0, 0.5, 0, 187, M.tiles);                                     // bathroom floor
-  box(g, 552.5, 668, 0, 0.5, 0, 84.5, M.tiles);                                // WC floor
+  slab(g, [[655, 0], [W, 0], [W, 187], [655, 187]], 0.5, 0.5, [TILES, M.tiles]);              // bathroom floor
+  slab(g, [[552.5, 0], [668, 0], [668, 84.5], [552.5, 84.5]], 0.5, 0.5, [TILES, M.tiles]);    // WC floor
 
   // Outer walls: render outside, cream inside
   wall(g, 'x', -EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [], [M.render, C]);
@@ -402,8 +413,12 @@ livingCeiling.visible = false;
   wall(g, 'z', 480, BS, 316 - H, PART, NIGHT_H, LB, [], [LB, C]);
   wall(g, 'x', 316, 480 - H, 544 - H, PART, NIGHT_H, LB, [], [C, LB]);
   wall(g, 'z', 544, BS, D, PART, NIGHT_H, TP, [{ s: 216, e: 312, head: 210 }], [LB, TP]);
-  box(g, 543, 546, 0, 210, 216, 264, faced(M.pine, { e: 'placard-droite' }));   // its two doors, seen from bedroom 2
-  box(g, 543, 546, 0, 210, 264, 312, faced(M.pine, { e: 'placard-gauche' }));
+  // its two doors, seen from bedroom 2, hinged on the outer edges, opening into the bedroom; closed at load
+  for (const [z, dir, key] of [[216, 1, 'placard-droite'], [312, -1, 'placard-gauche']]) {
+    const pivot = new THREE.Group(); pivot.position.set(546 * CM, 0, z * CM);
+    box(pivot, -3, 0, 0, 210, Math.min(0, dir * 48), Math.max(0, dir * 48), faced(M.pine, { e: key })); g.add(pivot);
+    addDoor(pivot, dir * Math.PI / 2, null, 0);
+  }
   paint(g, 'x', D - 0.5, 321 + H, 544 - H, NIGHT_H, M.royal);                  // cabin end wall
 
   // Bedroom 2
@@ -650,7 +665,6 @@ function ceilingLamp(g, x, z, y) {
   // Light fittings (the living level has no ceiling in the model: they hang at ceiling height)
   track(g, 435, 354, 90, 'x', LIVING_H);
   track(g, 150, 215, 90, 'x', LIVING_H);
-  track(g, 600, 330, 70, 'z', LIVING_H, 3);
   track(g, 530, 60, 30, 'x', 217, 2);
 
   // Dining table (198 x 78): two solid end legs joined by a low stretcher, eight chairs
@@ -1000,7 +1014,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       if (name && !DOORS.has(name)) console.error(`3D model: TOUR row ${j} closes an unknown door "${name}"`);
       return name && DOORS.has(name) ? [[j, DOORS.get(name)]] : [];
     });
-    const openAll = () => { for (const d of DOOR_LIST) { setDoor(d, 1); d.target = 1; } };
+    const openAll = () => { for (const d of DOOR_LIST) { setDoor(d, d.home); d.target = d.home; } };   // as at load
     let running = false, paused = false, clock = 0, last = 0;
     const lens = () => {
       // wide lens: about 109 degrees of horizontal field of view, whatever the shape of the frame

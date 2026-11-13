@@ -138,7 +138,7 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
   degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration
   optional, `null` when an event follows; event `{ close: 'wcDown' }` closes that door during the
-  row). Every door is open again when the visit starts. In the site the preview plays it in a loop;
+  row). Every door is back as at load when the visit starts (open, or closed with `closed: true` / the `home` of `addDoor()`: front door, closets). In the site the preview plays it in a loop;
   full screen, it stops at the end or at the first action on the model.
 - **Textures**: add or replace an image in `assets/3d/textures/` (resized first, e.g. on macOS
   `sips -Z 400 name.jpg`; originals kept in `3d-sources/`), use its name in `picture(...)`, `tex`
