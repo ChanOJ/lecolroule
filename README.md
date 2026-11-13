@@ -131,8 +131,9 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   relative path to `three.module.js`.
 - **Performance**: Hugo bundles the model, its textures and three.js into one fingerprinted file
   (about 850 KB minified), imported by `main.js` only when the visit comes near the view. It is
-  rendered only while on screen and the tab is visible (no GPU use otherwise), and hidden without
-  JavaScript or WebGL 2.
+  rendered only while on screen and the tab is visible (no GPU use otherwise), at 30 images per
+  second in the preview and 60 full screen whatever the refresh rate of the screen (`FPS_PREVIEW`,
+  `FPS_FULL`), and hidden without JavaScript or WebGL 2.
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 

@@ -703,6 +703,7 @@ scene.traverse((o) => {
   o.receiveShadow = solid;
 });
 
+const FPS_PREVIEW = 30, FPS_FULL = 60;   // see frame()
 let current = null;   // one viewer at a time (a page swapped in by the in-site navigation gets a new one)
 
 export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = () => {}, standalone = false } = {}) {
@@ -845,7 +846,14 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     if (tour.running) tour.lens(); else camera.updateProjectionMatrix();
   };
 
-  const frame = () => {
+  // Frame rate: the visit moves at walking pace, so 30 images per second in the preview and 60
+  // full screen are enough. Screens refresh at 60 or 120 Hz: the other refreshes are skipped,
+  // which saves the GPU (and the battery) up to 4 times the work.
+  let lastFrame = -Infinity;
+  const frame = (time) => {
+    const interval = 1000 / (full ? FPS_FULL : FPS_PREVIEW);
+    if (time - lastFrame < interval - 2) return;   // 2 ms of tolerance for the jitter of the refreshes
+    lastFrame = time;
     if (tour.running) tour.update(); else controls.update();
     if (composer) composer.render(); else renderer.render(scene, camera);
   };
