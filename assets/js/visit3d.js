@@ -273,16 +273,21 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   paint(g, 'x', 0.75, 0, 270, LIVING_H, M.cladding);                         // wood cladding behind the sofa
 
   // Service ducts between the entrance and the kitchen, lowered ceiling of the entrance
-  box(g, 520, 575, 0, LIVING_H, 118, 182.5, M.duct);                          // pier (ducts) with the radiator
+  // Entrance closet: the block west of the kitchen alcove (x 503..575), as deep as the alcove
+  // and its back together (z 118..182.5); its back is the partition with the kitchen radiator
+  box(g, 503, 506, 0, LIVING_H, 118, 182.5, M.duct);                          // west side
+  box(g, 572, 575, 0, LIVING_H, 118, 182.5, M.duct);                          // east side
+  box(g, 506, 572, 0, LIVING_H, 179.5, 182.5, M.duct);                        // back, radiator on the kitchen side
+  box(g, 506, 572, 204, LIVING_H, 118, 179.5, M.duct);                        // above its door
   box(g, 575, 640, 0, LIVING_H, 118, 157, M.duct);                            // back of the kitchen alcove (25 cm recess)
   box(g, 640, 650, 0, LIVING_H, 118, 182.5, M.duct);
   box(g, 650, 700, 0, LIVING_H, 130, 182.5, M.duct);
   // Entrance closet door: hinged on the east (on the left seen from the entrance), it opens onto
   // the entrance; closed at load
-  { const pivot = new THREE.Group(); pivot.position.set(641 * CM, 0, 117 * CM);
-    box(pivot, -79, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
+  { const pivot = new THREE.Group(); pivot.position.set(572 * CM, 0, 117 * CM);
+    box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
-  box(g, 525, 570, 8, 95, 182.5, 188, M.white);                               // radiator
+  box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
   box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
 
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
@@ -669,14 +674,14 @@ function ceilingLamp(g, x, z, y) {
   box(g, 300, 366, 112, 188, 125, 129, M.pine);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
-  // cut to their shape, metal cyclist on the west face of the pier between the entrance and the
-  // kitchen (80 % of its width, centred 180 cm above the floor)
+  // cut to their shape, metal cyclist on the west face of the closet block between the entrance and
+  // the kitchen (80 % of its width, centred 180 cm above the floor)
   picture(g, 'clock', 's', 125, 296, 370, 210.7, 233.3, { depth: 1, gap: 1 });
   picture(g, 'silhouette', 's', 1.5, 95, 185, 150, 205, METAL);
   picture(g, 'skiA', 'e', 0, 204, 232, 150, 224, { depth: 1 });
   picture(g, 'skiB', 'e', 0, 170, 197, 138, 212, { depth: 1 });
   picture(g, 'skiC', 'e', 0, 138, 163, 126, 200, { depth: 1 });
-  picture(g, 'silhouette-velo', 'w', 520, 124.45, 176.05, 163.4, 196.6, METAL);
+  picture(g, 'silhouette-velo', 'w', 503, 124.45, 176.05, 163.4, 196.6, METAL);
   // WC: picture (2 cm block) on the west wall
   picture(g, 'lift', 'e', 277, 42, 84, 118, 172, { depth: 2 });
   // Coat hooks on the north wall of the entrance
