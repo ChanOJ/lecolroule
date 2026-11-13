@@ -583,9 +583,8 @@ function ceilingLamp(g, x, z, y) {
   // its west end lands on the pine side of the staircase
   box(g, 1, 255.5, NIGHT_H - 25, NIGHT_H, 187, 212, M.white);
   // Door at the foot of the stairs
-  // (dark blue on the stairs side, corridor green on the corridor side; its leaf corridor green too).
-  // It opens against the north wall of the corridor, where the mirror stops it at 80 degrees.
-  wall(g, 'z', 210.5, 0, 84, PART, NIGHT_H, M.petrol, [{ s: 3, e: 81, head: 204, leaf: M.paleGreen, swing: ['s', 1], angle: 80 }], [M.petrol, M.paleGreen]);
+  // (dark blue on the stairs side, corridor green on the corridor side; its leaf corridor green too)
+  wall(g, 'z', 210.5, 0, 84, PART, NIGHT_H, M.petrol, [{ s: 3, e: 81, head: 204, leaf: M.paleGreen, swing: ['s', 1] }], [M.petrol, M.paleGreen]);
   // Curtains and radiators of the two bedrooms
   box(g, 116, 130, 85, 228, 423, 426, M.redDrape);
   box(g, 724, 738, 85, 228, 423, 425.5, M.redDrape);
@@ -615,10 +614,11 @@ function ceilingLamp(g, x, z, y) {
   // WC
   toilet(g, 667, 42, -90);                                                     // back against the east partition
 
-  // Corridor: mirror on the north wall, facing the bedroom 1 door: 50 x 150 cm, 40 cm above the floor,
-  // in an 8 cm pine frame
-  box(g, 254, 304, 40, 190, 1, 3, M.pine);
-  mirror(g, 's', 3, 262, 296, 48, 182);
+  // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
+  // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
+  // the floor, in an 8 cm pine frame
+  box(g, 337, 387, 40, 190, 1, 3, M.pine);
+  mirror(g, 's', 3, 345, 379, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   box(g, 710, 780, 0, 82, 1, 58, M.pine);

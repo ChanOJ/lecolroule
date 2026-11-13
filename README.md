@@ -122,7 +122,7 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   (hinge at the start `'s'` or end `'e'` of the opening, swinging to the north/west `-1` or
   south/east `+1`), drawn open on a hinge (pivot group); `name` registers it in `DOORS`
   (`addDoor()` for a door built by hand, like `wcUp`); `angle` (degrees, 90 by default) limits its
-  opening, e.g. the door at the foot of the stairs stopped by the corridor mirror. Full screen, a click on a door opens or
+  opening (a door stopped by a piece of furniture). Full screen, a click on a door opens or
   closes it (the pointer shows a hand over it). Mind the swing of a door in the way of the visit:
   the camera must stand further from the hinge than the width of the leaf while it moves.
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
