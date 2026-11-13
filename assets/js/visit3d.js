@@ -558,6 +558,19 @@ function model(g, key, x, z, deg, size, materials, y = 0) {
 const ceramic = mat(0xf6f6f3, { roughness: 0.12, envMapIntensity: 0.7 });
 const chrome = mat(0xd9dcdf, { metalness: 1, roughness: 0.18, envMapIntensity: 1 });
 const toiletParts = { White: ceramic };
+// Varnished pine (dining table and chairs), and a material that hides a part of a model
+const satinPine = mat(0xd9a55b, { roughness: 0.35, envMapIntensity: 0.6 });
+const hidden = new THREE.MeshBasicMaterial({ visible: false });
+// Pine chair (Chair_1), 42 x 46 x 100 cm, centred on (x, z), facing deg
+const pineChair = (g, x, z, deg) => model(g, 'Chair_1', x, z, deg, [42, 46, 100], { Wood: satinPine });
+// Horizontal rod (curtain rod), radius 1.2 cm, along axis 'x' or 'z' from a to b, at c on the other axis
+function rod(g, axis, c, a, b, y, m) {
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(1.2 * CM, 1.2 * CM, (b - a) * CM, 16), m);
+  mesh.rotation[axis === 'x' ? 'z' : 'x'] = Math.PI / 2;
+  if (axis === 'x') mesh.position.set((a + b) / 2 * CM, y * CM, c * CM);
+  else mesh.position.set(c * CM, y * CM, (a + b) / 2 * CM);
+  g.add(mesh);
+}
 const paperParts = { LightMetal: chrome, White: mat(0xf3f2ee, { roughness: 0.95 }), Brown: mat(0x9a7a55) };
 // Toilet, 40 x 68 x 80 cm; (x, z) = middle of its back, deg = direction it faces. Its paper holder
 // goes on the wall to its right (seen sitting), level with the front of the bowl, 60..79 cm high.
@@ -721,15 +734,15 @@ function ceilingLamp(g, x, z, y) {
   track(g, 150, 215, 90, 'x', LIVING_H);
   track(g, 530, 60, 30, 'x', 217, 2);
 
-  // Dining table (198 x 78): two solid end legs joined by a low stretcher, eight chairs
-  box(g, 336, 534, 71, 76, 315, 393, M.pine);
+  // Dining table (198 x 78), varnished pine: two solid end legs joined by a low stretcher, eight chairs
+  box(g, 336, 534, 71, 76, 315, 393, satinPine);
   for (const x of [358, 506]) {
-    box(g, x, x + 6, 6, 71, 334, 374, M.pine);
-    box(g, x - 2, x + 8, 0, 6, 322, 386, M.pine);
+    box(g, x, x + 6, 6, 71, 334, 374, satinPine);
+    box(g, x - 2, x + 8, 0, 6, 322, 386, satinPine);
   }
-  box(g, 364, 506, 22, 30, 351, 357, M.pine);
-  for (const x of [372, 435, 498]) { chair(g, x, 298, 0); chair(g, x, 410, 180); }
-  chair(g, 318, 354, 90); chair(g, 552, 354, -90);
+  box(g, 364, 506, 22, 30, 351, 357, satinPine);
+  for (const x of [372, 435, 498]) { pineChair(g, x, 298, 0); pineChair(g, x, 410, 180); }
+  pineChair(g, 318, 354, 90); pineChair(g, 552, 354, -90);
 
   // Kitchen along the east wall, from north to south: open shelf, oven and hob, base unit
   // with the sink, washing machine, tall unit; wall units above
@@ -752,7 +765,8 @@ function ceilingLamp(g, x, z, y) {
   box(g, 580, 632, 140, 170, 160, 200, M.white);
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, M.pine);
-  box(g, 583, 618, 0, 75, 162, 200, M.grey);
+  model(g, 'Trashcan_Small1', 600.5, 171, 0, [36, 26, 72],
+    { Black: mat(0x1d1e20, { roughness: 0.4 }), LightMetal: chrome });
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
@@ -793,7 +807,7 @@ function ceilingLamp(g, x, z, y) {
   box(g, 262, 320, 71, 75, 334, 420, M.pine);
   for (const z of [342, 408]) { box(g, 286, 292, 6, 71, z, z + 4, M.pine); box(g, 270, 312, 0, 6, z - 1, z + 5, M.pine); }
   box(g, 286, 292, 25, 32, 346, 408, M.pine);
-  chair(g, 238, 377, 90);
+  pineChair(g, 238, 377, 90);
   box(g, 108, 186, 0, 36, 100, 158, M.grey);                                   // folded spare mattress, clear of the door
 
   // Under the stairs: the partition between the flights carries on west under the winders, with the
@@ -823,12 +837,17 @@ function ceilingLamp(g, x, z, y) {
   box(g, 412, 415, 142, 150, 227, 427, M.pine);
   for (const y of [40, 68, 96]) box(g, 412, 416, y, y + 4, 233, 279, M.pine);    // ladder at the north end
   box(g, 411, 416, 0, 150, 279, 284, M.pine);                                  // upright holding the south side of the rungs
-  const cabinCurtain = { Couch_Blue: M.curtain, LightMetal: chrome };
-  model(g, 'Curtains_Single', 481, 329, -90, [18, 6, 215], cabinCurtain);         // recess curtain, drawn back
+  // Cabin curtains, drawn back; their rods go from wall to wall (the models' own rods are hidden)
+  const cabinCurtain = { Couch_Blue: M.curtain, LightMetal: hidden };
+  model(g, 'Curtains_Single', 481, 329, -90, [18, 6, 247], cabinCurtain);         // recess curtain, 1 cm under the ceiling
+  rod(g, 'z', 481, 319.5, 427, 239.5, chrome);                                  // from the partition to the south wall
   box(g, 494, 540.5, 32, 35, 319.5, 426, M.pine);
   for (const y of [168, 198]) box(g, 494, 540.5, y, y + 3, 319.5, 426, M.pine);
   box(g, 515, 517, 160, 162, 319.5, 426, M.grey);
-  model(g, 'Curtains_Single', 406.5, 219.5, 0, [15, 6, 215], cabinCurtain);     // entrance curtain, stored west between the wall and the bunk
+  // entrance curtain, stored west of the entrance; its rod halfway between the top of the entrance
+  // (NIGHT_H - 25) and the ceiling, up to the east wall of the cabin
+  model(g, 'Curtains_Single', 386.5, 219.5, 0, [15, 6, 243], cabinCurtain);
+  rod(g, 'x', 219.5, 379, 476.5, NIGHT_H - 12.5, chrome);
   box(g, 401, 476.5, NIGHT_H - 25, NIGHT_H, 187, 212,                           // beam above the curtain: cabin colour to the south,
     [M.white, M.white, M.white, M.white, M.lightBlue, M.tealGrey]);            // corridor colour to the north
 
@@ -1008,6 +1027,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
   const controls = new OrbitControls(camera, renderer.domElement);
+  controls.zoomSpeed = 3;   // the wheel or pinch zooms 3 times faster than by default
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
