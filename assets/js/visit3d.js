@@ -1000,14 +1000,14 @@ function ceilingLamp(g, x, z, y) {
     model(g, 'Trashcan_Small1', 600.5, 171, 0, [43, 26, 72], { Black: satinGrey, LightMetal: satinGrey }); }
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
-  toilet(g, 345, 1, 0);
+  toilet(g, 325, 1, 0);                                                        // centred in the WC (x 277..373)
   ceilingLight(g, 325, 59, LIVING_H);
   model(g, 'Bathroom_ToiletPaper', 277 + 4.8, 60, 90, [16.5, 9.6, 19], paperParts, 60);   // on the west wall
   cyl(g, 292, 103, 15, 76, 84, M.white);
   // Corner cabinet: a triangle in plan (20 cm along each wall); its door is the mirror, flat on the diagonal
   slab(g, [[277, 118], [277, 98], [297, 118]], 178, 56, M.grey);
   { const m = mirror(g, 's', 0, 0, 26, 124, 176); m.position.set(287.2 * CM, 150 * CM, 107.8 * CM); m.rotation.y = Math.PI * 0.75; }
-  box(g, 314, 376, 120, 185, 1, 18, M.grey);
+  box(g, 294, 356, 120, 185, 1, 18, M.grey);                                   // wall cabinet above the toilet, centred on it
 
   // Terrace: two loungers at the west end, table and six plastic armchairs
   for (const x of [55, 125]) {
