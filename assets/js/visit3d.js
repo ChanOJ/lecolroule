@@ -15,6 +15,7 @@ import { RenderPass } from '../vendor/three-0.160.0/addons/postprocessing/Render
 import { GTAOPass } from '../vendor/three-0.160.0/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from '../vendor/three-0.160.0/addons/postprocessing/OutputPass.js';
 import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
+import { RoundedBoxGeometry } from '../vendor/three-0.160.0/addons/geometries/RoundedBoxGeometry.js';
 // Generated from assets/3d/textures/ by scripts/textures.py: { name: data URI }
 import TEX, { OUTLINES } from './visit3d-textures.js';
 // Generated from assets/3d/models/ by scripts/models.py: { name: OBJ text }
@@ -109,6 +110,10 @@ const PINE = wood('pine', [60, 60], 'v');    // pine (stairs, shelves, frames, b
 const OAK = wood('oak', [100, 50], 'u');     // oak (living room shelves)
 const TABLE_TOP = wood('wood034', [100, 50], 'u');                                   // top of the barrel table
 const BARREL = wood('pipe002', [30, 30], 'u', { color: 0xc89a6a, roughness: 0.5 });  // its hooped body, tinted brown
+// Grey woven fabric (ambientCG Fabric030): sofa, armchairs, poufs, spare mattress. FABRIC on metre
+// texture coordinates, FABRIC_MODEL on a model's (1 unit of the pack is about 40 cm, see boxUV())
+const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
+const FABRIC_MODEL = wood('fabric030', [62.5, 62.5], 'u', { roughness: 1 });
 const NIGHT_FLOOR = wood('wood043', [200, 200], 'u', { color: 0xc4ccd4, roughness: 0.7 });   // tinted greyer, less red
 // Texture coordinates in metres on a cylinder (cyl()): around and up on the side, plan x/z on the caps
 function metreUV(mesh, r, h) {
@@ -564,13 +569,14 @@ function roundedSlab(g, x1, x2, z1, z2, y1, y2, r, m) {
   return mesh;
 }
 // Round swivel armchair.
+// (m: a material on metre texture coordinates, e.g. FABRIC)
 function tubChair(g, x, z, deg, m) {
   const c = placed(g, x, z, deg);
   cyl(c, 0, 0, 30, 0, 8, M.black);
-  cyl(c, 0, 0, 40, 8, 42, m);
-  const shell = new THREE.Mesh(
-    new THREE.CylinderGeometry(43 * CM, 40 * CM, 34 * CM, 28, 1, true, Math.PI * 0.42, Math.PI * 1.16),
-    Object.assign(m.clone(), { side: THREE.DoubleSide }));
+  metreUV(cyl(c, 0, 0, 40, 8, 42, m), 40, 34);
+  const geo = new THREE.CylinderGeometry(43 * CM, 40 * CM, 34 * CM, 28, 1, true, Math.PI * 0.42, Math.PI * 1.16), uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 43 * Math.PI * 1.16 * CM, uv.getY(i) * 34 * CM);   // metres
+  const shell = new THREE.Mesh(geo, Object.assign(m.clone(), { side: THREE.DoubleSide }));
   shell.position.y = 59 * CM;
   c.add(shell);
 }
@@ -803,7 +809,7 @@ function ceilingLamp(g, x, z, y) {
 
   // Sofa bed against the cladding (mouse grey fabric), shelves on both sides
   model(g, 'Couch_Large2', 144.5, 53, 0, [195, 90, 86],
-    { Couch_Beige: fabric(mouseGrey), Couch_BeigeDark: fabric(0x626568) });
+    { Couch_Beige: FABRIC_MODEL, Couch_BeigeDark: FABRIC_MODEL });
   for (const y of [60, 95, 130, 165, 200]) {
     box(g, 0, 15, y, y + 3, 1.5, 112, OAK);
     box(g, 255, 270, y, y + 3, 1.5, 118, OAK);
@@ -821,11 +827,10 @@ function ceilingLamp(g, x, z, y) {
   // Barrel coffee table, two swivel armchairs, two poufs
   metreUV(cyl(g, 137, 165, 29, 0, 44, BARREL), 29, 44);
   metreUV(cyl(g, 137, 165, 31, 44, 49, TABLE_TOP), 31, 5);
-  const seatFabric = fabric(0x74787e, [7, 1]);   // cylinders: u around (about 2.5 m), v up
-  tubChair(g, 135, 262, 180, seatFabric);
-  tubChair(g, 255, 215, 215, seatFabric);
-  cyl(g, 45, 160, 24, 0, 38, seatFabric);
-  cyl(g, 78, 128, 24, 0, 38, seatFabric);
+  tubChair(g, 135, 262, 180, FABRIC);
+  tubChair(g, 255, 215, 215, FABRIC);
+  metreUV(cyl(g, 45, 160, 24, 0, 38, FABRIC), 24, 38);
+  metreUV(cyl(g, 78, 128, 24, 0, 38, FABRIC), 24, 38);
   // Corner TV unit between the west wall and the stairwell rail, TV set on the diagonal facing the WC block
   slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, M.pine);
   const tv = placed(g, 40, S.zN - 44, 135);
@@ -931,7 +936,15 @@ function ceilingLamp(g, x, z, y) {
   for (const z of [342, 408]) { box(g, 286, 292, 6, 71, z, z + 4, PINE); box(g, 270, 312, 0, 6, z - 1, z + 5, PINE); }
   box(g, 286, 292, 25, 32, 346, 408, PINE);
   pineChair(g, 238, 377, 90);
-  box(g, 108, 186, 0, 36, 100, 158, M.grey);                                   // folded spare mattress, clear of the door
+  // Folded spare mattress, clear of the door: fabric, every edge slightly rounded (3 cm)
+  { const geo = new RoundedBoxGeometry(78 * CM, 36 * CM, 58 * CM, 3, 3 * CM), pos = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv;
+    for (let i = 0; i < uv.count; i++) {                                       // metre coordinates, by main direction
+      const ax = Math.abs(n.getX(i)), ay = Math.abs(n.getY(i)), az = Math.abs(n.getZ(i));
+      uv.setXY(i, ax >= ay && ax >= az ? pos.getZ(i) : pos.getX(i), ay >= ax && ay >= az ? pos.getZ(i) : pos.getY(i));
+    }
+    const mattress = new THREE.Mesh(geo, FABRIC);
+    mattress.position.set(147 * CM, 18 * CM, 129 * CM);
+    g.add(mattress); }
 
   // Under the stairs: the partition between the flights carries on west under the winders, with the
   // small door of the storage space
