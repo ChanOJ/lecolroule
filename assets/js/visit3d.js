@@ -117,8 +117,8 @@ const BARREL = wood('pipe002', [30, 66], 'u', { roughness: 0.15, metalness: 0.5 
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
 const FABRIC_MODEL = wood('fabric030', [62.5, 62.5], 'u', { roughness: 1 });
 // Terrace deck: weathered planks (ambientCG Planks027A), running north-south (slab: u = x, v = z)
-// Night level floor: grey planks (ambientCG Planks001), turned a quarter: they run east-west
-const NIGHT_FLOOR = wood('planks001', [120, 92], 'u', { turn: true, roughness: 0.7 });
+// Night level floor: grey planks (ambientCG Planks001), running north-south
+const NIGHT_FLOOR = wood('planks001', [120, 92], 'u', { roughness: 0.7 });
 // Terrace deck, drawn in a canvas: planks 11 cm wide, north-south (slab: u = x, v = z), 1 cm black
 // joints between them and at their ends (one per plank and per 2.4 m, staggered), a slight shade
 // and streak variation (seeded), and a bump map raising the planks above the joints.
@@ -540,7 +540,7 @@ livingCeiling.visible = false;
   wall(g, 'x', BC, 321 - H, 342 + H, BT, NIGHT_H, C, [], [C, LB]);             // end of wall north of the cabin:
   wall(g, 'x', BC, 342 + H, 401, BT, NIGHT_H, LB, [], [TG, LB]);               // light blue on the cabin side
   wall(g, 'z', 259, 212, 325 - H, PART, NIGHT_H, C, [{ s: 214, e: 320, head: 215 }]);
-  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant' }));   // two sliding doors, seen from bedroom 1
+  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant', e: ['placard-coulissant', true] }));   // two sliding doors (mirrored inside)
   wall(g, 'x', 325, 259 - H, 321 - H, PART, NIGHT_H, C);                       // desk recess south of the wardrobe
   wall(g, 'z', 321, 212, D, PART, NIGHT_H, C, [], [C, LB]);                    // bedroom 1 / bunk cabin
   paint(g, 'z', 0.5, 186, D, NIGHT_H, M.sage);
@@ -565,6 +565,10 @@ livingCeiling.visible = false;
 
   // Bedroom 2
   wall(g, 'x', BC, 480 - H, 651.5, BT, NIGHT_H, TP, [door(563, 643, 's', 1)], [TG, TP]);
+  // Edges of the passage into the cabin (x 401..476.5, under the beam): corridor green to the west,
+  // the cabin's light blue to the east
+  box(g, 401, 401.2, 0, NIGHT_H - 25, BN, BS, TG);
+  box(g, 476.3, 476.5, 0, NIGHT_H - 25, BN, BS, LB);
   wall(g, 'x', BC, 651.5, W, BT, NIGHT_H, TP, [], [AN, TP]);
   paint(g, 'z', W - 0.5, BS, D, NIGHT_H, TP);
   paint(g, 'x', D - 0.5, 544 + H, W, NIGHT_H, TP, [win2]);
@@ -1010,10 +1014,12 @@ function ceilingLamp(g, x, z, y) {
   box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
   box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
   box(g, 638.5, 640, 24, 86, 213.5, 271.5, faced(M.black, { w: 'oven' }));   // up against the worktop
-  // under it, the bottom 24 cm of a cupboard front (kitchen-front.jpg is a 61 x 86 cm front)
+  // under it, the bottom 24 cm of a cupboard front: kitchen-front.jpg stretched like on the
+  // cupboards (its whole width = 61 cm, its height = 86 cm), so 58 cm of its width, centred
   { const tex = new THREE.TextureLoader().load(TEX['kitchen-front'], () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.repeat.set(1, 24 / 86);
+    tex.repeat.set(58 / 61, 24 / 86);
+    tex.offset.set((1 - 58 / 61) / 2, 0);
     const m = Array(6).fill(M.pine); m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });
     box(g, 638.5, 640, 0, 24, 213.5, 271.5, m); }
   for (const z of [271.5, 332.5]) {                                            // (tops and sides hidden: the sink bowl goes down into them)
@@ -1194,11 +1200,11 @@ function ceilingLamp(g, x, z, y) {
   toilet(g, 668, 42.75, -90);                                                  // back against the east partition, centred on it
   model(g, 'Bathroom_ToiletPaper', 565, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
 
-  // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
-  // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
-  // the floor, in an 8 cm pine frame
-  box(g, 337, 387, 40, 190, 1, 3, PINE);
-  mirror(g, 's', 3, 345, 379, 48, 182);
+  // Corridor: mirror on the north wall, 30 cm east of the middle between the open door at the foot
+  // of the stairs (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm,
+  // 40 cm above the floor, in an 8 cm pine frame
+  box(g, 367, 417, 40, 190, 1, 3, PINE);
+  mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   box(g, 710, 780, 0, 82, 1, 58, M.pine);
