@@ -341,6 +341,8 @@ function tiledWall(g, m, facing, c, a, b, y1, y2, u0, v0) {
 // Average colour of the front of the terrace cabinet (placard-terrasse.jpg): its east side
 const CABINET_SIDE = 0x9c6e4b;
 const TILES = tiles(26, 26, 0x4a4f55, '#6b6d70');
+// The same tiles, smaller, on the kitchen walls: 3.5 rows between the worktop (90) and the wall units (140)
+const KITCHEN_TILES = tiles(50 / 3.5, 50 / 3.5, 0x4a4f55, '#6b6d70');
 // Wall tiles of the bathroom, horizontal rectangles: 4.6 tiles along the east wall (187 cm), 7 rows
 // between the bath (56 cm high) and the ceiling
 const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
@@ -538,7 +540,7 @@ livingCeiling.visible = false;
   wall(g, 'x', BC, 321 - H, 342 + H, BT, NIGHT_H, C, [], [C, LB]);             // end of wall north of the cabin:
   wall(g, 'x', BC, 342 + H, 401, BT, NIGHT_H, LB, [], [TG, LB]);               // light blue on the cabin side
   wall(g, 'z', 259, 212, 325 - H, PART, NIGHT_H, C, [{ s: 214, e: 320, head: 215 }]);
-  box(g, 258, 261, 0, 215, 214, 320, M.pine);                                  // two sliding doors
+  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant' }));   // two sliding doors, seen from bedroom 1
   wall(g, 'x', 325, 259 - H, 321 - H, PART, NIGHT_H, C);                       // desk recess south of the wardrobe
   wall(g, 'z', 321, 212, D, PART, NIGHT_H, C, [], [C, LB]);                    // bedroom 1 / bunk cabin
   paint(g, 'z', 0.5, 186, D, NIGHT_H, M.sage);
@@ -661,6 +663,31 @@ function roundedCyl(g, x, z, r, h, rr, m, y = 0) {
 }
 // Pouf: 48 cm wide, 38 cm high, in FABRIC, its edges rounded
 const pouf = (g, x, z) => roundedCyl(g, x, z, 24, 38, 3, FABRIC);
+// Rounded rectangle in plan (cm), as a THREE.Shape or THREE.Path (P), for plate()
+function rrect(P, x1, x2, z1, z2, r) {
+  const p = new P(), c = (v) => v * CM;
+  p.moveTo(c(x1 + r), c(z1)); p.lineTo(c(x2 - r), c(z1)); p.absarc(c(x2 - r), c(z1 + r), c(r), -Math.PI / 2, 0, false);
+  p.lineTo(c(x2), c(z2 - r)); p.absarc(c(x2 - r), c(z2 - r), c(r), 0, Math.PI / 2, false);
+  p.lineTo(c(x1 + r), c(z2)); p.absarc(c(x1 + r), c(z2 - r), c(r), Math.PI / 2, Math.PI, false);
+  p.lineTo(c(x1), c(z1 + r)); p.absarc(c(x1 + r), c(z1 + r), c(r), Math.PI, Math.PI * 1.5, false);
+  return p;
+}
+// Horizontal plate cut from a plan shape (holes allowed), top at `top`, `thick` cm, its edges
+// rounded by `bevel` cm (the bevel widens the outline and narrows the holes by that much);
+// mats = [faces, edges]; uv(x, z) (cm) gives the texture coordinates of the faces.
+function plate(g, shape, top, thick, mats, { bevel = 0, uv = null } = {}) {
+  const opts = { depth: (thick - 2 * bevel) * CM, bevelEnabled: bevel > 0, bevelThickness: bevel * CM, bevelSize: bevel * CM, bevelSegments: 3, curveSegments: 12 };
+  if (uv) opts.UVGenerator = {
+    generateTopUV: (geo, v, a, b, c) => [a, b, c].map((i) => new THREE.Vector2(...uv(v[3 * i] / CM, v[3 * i + 1] / CM))),
+    generateSideWallUV: () => [0, 1, 2, 3].map(() => new THREE.Vector2()),
+  };
+  const mesh = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, opts), mats);
+  mesh.rotation.x = Math.PI / 2;                   // shape (x, z) in plan, extruded downwards
+  mesh.position.y = (top - bevel) * CM;
+  g.add(mesh);
+  return mesh;
+}
+
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
 function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
@@ -961,8 +988,12 @@ function ceilingLamp(g, x, z, y) {
   for (const [x, y, m] of [[440, 185, M.grey], [468, 150, M.white], [492, 178, M.black], [520, 140, M.grey], [548, 172, M.white], [575, 188, M.black], [600, 150, M.grey], [625, 176, M.white]])
     box(g, x, x + 5, y, y + 11, 1, 5, m);
   // Light fittings (the living level has no ceiling in the model: they hang at ceiling height)
-  track(g, 435, 354, 90, 'x', LIVING_H);
-  track(g, 150, 215, 90, 'x', LIVING_H);
+  // Pendants (Light_Icosahedron2, 90 cm long) over the dining table and the sitting area
+  for (const [x, z] of [[435, 354], [150, 215]]) {
+    model(g, 'Light_Icosahedron2', x, z, 0, [90, 28, 49], { Grey: M.anthracite, LightMetal: steel,   // black shades, anthracite canopy
+      White: mat(0x151516, { roughness: 0.5 }), Light: M.bulb }, LIVING_H - 49);
+    lamp(g, x, LIVING_H - 40, z, 2.4);
+  }
   track(g, 530, 60, 30, 'x', 217, 2);
 
   // Dining table (198 x 78), varnished pine: two solid end legs joined by a low stretcher, eight chairs
@@ -975,25 +1006,83 @@ function ceilingLamp(g, x, z, y) {
   for (const x of [372, 435, 498]) { pineChair(g, x, 298, 0); pineChair(g, x, 410, 180); }
   pineChair(g, 318, 354, 90); pineChair(g, 552, 354, -90);
 
-  // Kitchen along the east wall, from north to south: open shelf, oven and hob, base unit
-  // with the sink, washing machine, tall unit; wall units above
-  box(g, 640, 700, 0, 86, 182.5, 393.5, M.pine);
-  box(g, 640, 700, 0, 85, 393.5, 453.5, M.white);
-  box(g, 640, 700, 0, 215, 453.5, 513.5, M.pine);
-  box(g, 636, 700, 86, 90, 182.5, 453.5, M.slate);
-  box(g, 638.5, 640, 12, 74, 213.5, 271.5, M.black);
-  box(g, 646, 696, 90, 90.6, 215, 271, M.black);
-  box(g, 650, 692, 90, 90.6, 328, 388, M.black);
-  box(g, 638.5, 640, 12, 60, 404, 443, M.grey);
+  // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
+  // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
+  box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
+  box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
+  box(g, 638.5, 640, 12, 74, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  for (const z of [271.5, 332.5]) {                                            // (tops and sides hidden: the sink bowl goes down into them)
+    const m = faced(M.pine, { w: 'kitchen-front' }); m[2] = m[4] = m[5] = hidden;
+    box(g, 640, 700, 0, 86, z, z + 61, m);
+  }
+  box(g, 640, 700, 0, 85, 393.5, 453.5, faced(M.white, { w: 'washing-machine' }));
+  box(g, 640, 700, 0, 215, 453.5, 513.5, faced(M.pine, { w: 'fridge' }));
+  // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
+  const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
+  const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
+  { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
+    top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
+    const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });   // darker than the tiles (it catches the light), satin
+    plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
+  // Induction hob (kitchen-induction.jpg), glossy: its controls at the front (west)
+  plate(g, rrect(THREE.Shape, 646, 696, 215, 271, 1), 90.6, 0.6,
+    [mat(0xffffff, { map: texture('kitchen-induction'), roughness: 0.08, envMapIntensity: 0.8 }), M.black],
+    { uv: (x, z) => [(z - 215) / 56, (x - 646) / 50] });
+  // Sink (kitchen-sink.jpg): a plate on the worktop with the photo, the bowl 18 cm deep under it;
+  // photo coordinates of the sink: u 0.003..0.998 along z, v 0.261..0.739 from the front (west)
+  { const sinkMat = mat(0xffffff, { map: texture('kitchen-sink'), roughness: 0.5 });
+    const sinkGrey = mat(0x302f2d, { roughness: 0.5 });                          // average colour of the sink in the photo
+    const uv = (x, z) => [0.003 + (z - SINK.z1) / (SINK.z2 - SINK.z1) * 0.995, 0.261 + (x - SINK.x1) / (SINK.x2 - SINK.x1) * 0.478];
+    const rim = rrect(THREE.Shape, SINK.x1 + 0.3, SINK.x2 - 0.3, SINK.z1 + 0.3, SINK.z2 - 0.3, 2);
+    rim.holes.push(rrect(THREE.Path, BOWL.x1 - 0.3, BOWL.x2 + 0.3, BOWL.z1 - 0.3, BOWL.z2 + 0.3, 3));
+    plate(g, rim, 91, 1, [sinkMat, sinkGrey], { bevel: 0.3, uv });
+    // bowl: a box seen from inside (back faces), open at the top, the photo on its bottom
+    const inside = Object.assign(sinkGrey.clone(), { side: THREE.BackSide });
+    const bottom = Object.assign(sinkMat.clone(), { side: THREE.BackSide });
+    const b = box(g, BOWL.x1, BOWL.x2, 73, 91, BOWL.z1, BOWL.z2, [inside, inside, hidden, bottom, inside, inside]);
+    const pos = b.geometry.attributes.position, n = b.geometry.attributes.normal, buv = b.geometry.attributes.uv;
+    for (let i = 0; i < pos.count; i++) if (n.getY(i) < -0.5)
+      buv.setXY(i, ...uv(b.position.x / CM + pos.getX(i) / CM, b.position.z / CM + pos.getZ(i) / CM));
+    buv.needsUpdate = true;
+    // Chrome tap: the tap of the pack's Kitchen_Sink, the rest of that model hidden (1 unit = 1 m:
+    // tap about 30 cm high); its base on the rim at the south-east corner of the bowl, turned
+    // north-west (deg -135). Its base is 43.5 cm behind the model's centre, along its back.
+    const off = { Kitchen: hidden, KitchenTop: hidden, White: hidden, LightMetal: chrome };
+    const d = 43.5 * Math.SQRT1_2, base = [BOWL.x2 + 1, BOWL.z2 + 2.5];
+    model(g, 'Kitchen_Sink', base[0] - d, base[1] - d, -135, [102, 113, 192], off, 91 - 162); }
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
-  box(g, 665, 700, 140, 215, 182.5, 453.5, M.pine);
+  // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
+  // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
+  const wallUnit = (z1, z2, y1) => {
+    const L = 453.5 - 182.5, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.offset.set((z1 - 182.5) / L, (y1 - 140) / 75);
+    tex.repeat.set((z2 - z1) / L, (215 - y1) / 75);
+    const m = Array(6).fill(M.pine);
+    m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });                     // west face: u along z, v up
+    box(g, 665, 700, y1, 215, z1, z2, m);
+  };
+  wallUnit(182.5, 214, 140); wallUnit(214, 275, 154); wallUnit(275, 453.5, 140);
+  box(g, 699, 700, 140, 154, 214, 275, M.slate);
+  // Tiles on the back wall, also behind the gap under the shorter unit; joints from the worktop
+  tiledWall(g, KITCHEN_TILES, 'w', 699, 182.5, 453.5, 90, 140, 182.5, 90);
+  tiledWall(g, KITCHEN_TILES, 'w', 699, 214, 275, 140, 154, 182.5, 90);
   // Alcove in the north wall, west of the worktop: worktop ledge with the toaster, tiled back,
   // microwave on a pine shelf level with the underside of the wall units, two shelves above, bin below
   box(g, 575, 640, 86, 90, 157, 186, M.slate);
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
+  // Tiles in the alcove (its back, its east side) and on the north end of the worktop wall
+  tiledWall(g, KITCHEN_TILES, 's', 158, 575, 640, 90, 140, 640, 90);
+  tiledWall(g, KITCHEN_TILES, 'w', 640, 158, 182.5, 90, 140, 182.5, 90);
+  tiledWall(g, KITCHEN_TILES, 's', 183.5, 640, 699, 90, 140, 699, 90);
   box(g, 575, 652, 137, 140, 157, 200, PINE);
-  box(g, 580, 632, 140, 170, 160, 200, M.white);
+  // microwave: glossy white, edges very slightly rounded (1 cm), its photo on the front (south)
+  { const white = mat(0xf4f4f1, { roughness: 0.15, envMapIntensity: 0.7 });
+    const m = [white, white, white, white, mat(0xffffff, { map: texture('microwave'), roughness: 0.2 }), white];
+    const oven = new THREE.Mesh(new RoundedBoxGeometry(52 * CM, 30 * CM, 40 * CM, 2, 1 * CM), m);
+    oven.position.set(606 * CM, 155 * CM, 180 * CM);
+    g.add(oven); }
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, PINE);
   { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
