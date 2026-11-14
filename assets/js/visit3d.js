@@ -341,6 +341,8 @@ function tiledWall(g, m, facing, c, a, b, y1, y2, u0, v0) {
 // Average colour of the front of the terrace cabinet (placard-terrasse.jpg): its east side
 const CABINET_SIDE = 0x9c6e4b;
 const TILES = tiles(26, 26, 0x4a4f55, '#6b6d70');
+// The same tiles, smaller, on the kitchen walls: 3.5 rows between the worktop (90) and the wall units (140)
+const KITCHEN_TILES = tiles(50 / 3.5, 50 / 3.5, 0x4a4f55, '#6b6d70');
 // Wall tiles of the bathroom, horizontal rectangles: 4.6 tiles along the east wall (187 cm), 7 rows
 // between the bath (56 cm high) and the ceiling
 const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
@@ -1000,11 +1002,18 @@ function ceilingLamp(g, x, z, y) {
   };
   wallUnit(182.5, 214, 140); wallUnit(214, 275, 154); wallUnit(275, 453.5, 140);
   box(g, 699, 700, 140, 154, 214, 275, M.slate);
+  // Tiles on the back wall, also behind the gap under the shorter unit; joints from the worktop
+  tiledWall(g, KITCHEN_TILES, 'w', 699, 182.5, 453.5, 90, 140, 182.5, 90);
+  tiledWall(g, KITCHEN_TILES, 'w', 699, 214, 275, 140, 154, 182.5, 90);
   // Alcove in the north wall, west of the worktop: worktop ledge with the toaster, tiled back,
   // microwave on a pine shelf level with the underside of the wall units, two shelves above, bin below
   box(g, 575, 640, 86, 90, 157, 186, M.slate);
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
+  // Tiles in the alcove (its back, its east side) and on the north end of the worktop wall
+  tiledWall(g, KITCHEN_TILES, 's', 158, 575, 640, 90, 140, 640, 90);
+  tiledWall(g, KITCHEN_TILES, 'w', 640, 158, 182.5, 90, 140, 182.5, 90);
+  tiledWall(g, KITCHEN_TILES, 's', 183.5, 640, 699, 90, 140, 699, 90);
   box(g, 575, 652, 137, 140, 157, 200, PINE);
   // microwave: glossy white, edges very slightly rounded (1 cm), its photo on the front (south)
   { const white = mat(0xf4f4f1, { roughness: 0.15, envMapIntensity: 0.7 });
