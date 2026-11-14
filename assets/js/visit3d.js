@@ -16,6 +16,7 @@ import { GTAOPass } from '../vendor/three-0.160.0/addons/postprocessing/GTAOPass
 import { OutputPass } from '../vendor/three-0.160.0/addons/postprocessing/OutputPass.js';
 import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
 import { RoundedBoxGeometry } from '../vendor/three-0.160.0/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from '../vendor/three-0.160.0/addons/utils/BufferGeometryUtils.js';
 // Generated from assets/3d/textures/ by scripts/textures.py: { name: file name }, OUTLINES
 import TEX, { OUTLINES } from './visit3d-textures.js';
 // Generated from assets/3d/models/ by scripts/models.py: { name: OBJ text }
@@ -26,6 +27,12 @@ import MODELS from './visit3d-models.js';
 // The night level has its own origin (its inner north-west corner), which is
 // NIGHT_Z south of the living room origin (north edge of the stairwell).
 const CM = 0.01;
+// Quality: lower on touch screens (phones, tablets): no ambient occlusion, smaller shadow map and
+// mirrors, lower pixel ratio. In the page URL, ?quality=low or ?quality=high forces one, ?merge=0
+// keeps every mesh apart (see mergeStatic()), to compare.
+const URL_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
+const LOW = URL_PARAMS.get('quality') ? URL_PARAMS.get('quality') === 'low'
+  : typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 const EXT = 36;            // outer wall thickness
 const PART = 7;            // partition thickness
 const LIVING_H = 246, NIGHT_H = 248, SLAB = 25;
@@ -908,7 +915,7 @@ function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
 // Mirror with a real reflection, same placement rules as picture().
 function mirror(g, facing, c, a, b, y1, y2) {
   const mesh = new Reflector(new THREE.PlaneGeometry((b - a) * CM, (y2 - y1) * CM),
-    { clipBias: 0.003, textureWidth: 512, textureHeight: 512, color: 0xb8c0c4 });
+    { clipBias: 0.003, textureWidth: LOW ? 256 : 512, textureHeight: LOW ? 256 : 512, color: 0xb8c0c4 });
   place(mesh, facing, c, (a + b) / 2, (y1 + y2) / 2, 0.8);
   g.add(mesh);
   return mesh;
@@ -1290,6 +1297,37 @@ function capTops(g, height) {
 capTops(night, NIGHT_H);
 capTops(living, LIVING_H);
 
+// The meshes that never move are merged by material, per level: about a third of the draw calls.
+// The model above is still written piece by piece; this only regroups it once built. Doors, mirrors,
+// transparent materials and `skip` (the living level ceiling, shown during the visit only) stay
+// apart; faces in an invisible material (`hidden`) are dropped.
+function mergeStatic(group, skip = []) {
+  group.updateMatrixWorld(true);
+  const inv = group.matrixWorld.clone().invert(), byMat = new Map(), merged = [];
+  const add = (m, geo) => { if (m.visible !== false) (byMat.get(m) || byMat.set(m, []).get(m)).push(geo); };
+  group.traverse((o) => {
+    if (!o.isMesh || o.type === 'Reflector' || o.userData.door || skip.includes(o)) return;
+    const mats = [].concat(o.material);
+    if (mats.some((m) => m.transparent)) return;
+    let geo = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+    geo.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
+    for (const name of Object.keys(geo.attributes)) if (!['position', 'normal', 'uv'].includes(name)) geo.deleteAttribute(name);
+    if (!geo.attributes.normal) geo.computeVertexNormals();
+    if (!geo.attributes.uv) geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(geo.attributes.position.count * 2), 2));
+    if (!Array.isArray(o.material)) add(o.material, geo);
+    else for (const gr of geo.groups) {                                       // one piece per material of the mesh
+      const part = new THREE.BufferGeometry();
+      for (const [name, a] of Object.entries(geo.attributes))
+        part.setAttribute(name, new THREE.BufferAttribute(a.array.slice(gr.start * a.itemSize, (gr.start + gr.count) * a.itemSize), a.itemSize));
+      add(o.material[gr.materialIndex], part);
+    }
+    merged.push(o);
+  });
+  for (const o of merged) o.parent.remove(o);
+  for (const [m, geos] of byMat) group.add(new THREE.Mesh(mergeGeometries(geos, false), m));
+}
+if (URL_PARAMS.get('merge') !== '0') { mergeStatic(living, [livingCeiling]); mergeStatic(night); mergeStatic(stairs); }
+
 // ---------- First-person visit ----------
 // Keyframes: [x, z, floor height, heading, pitch, duration]. x, z and the floor height are in cm, in the
 // living level frame (night level z = its own z + NIGHT_Z). Heading in degrees: 0 = north, 90 = east,
@@ -1366,7 +1404,7 @@ const sun = new THREE.DirectionalLight(0xfff4e0, 1.7);
 sun.position.set(-3, 14, 15);
 sun.target.position.set(4.3, 1.5, 4.5);
 sun.castShadow = true;
-sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.mapSize.set(LOW ? 2048 : 4096, LOW ? 2048 : 4096);
 Object.assign(sun.shadow.camera, { left: -11, right: 11, top: 11, bottom: -11, near: 1, far: 50 });
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.02;
@@ -1409,7 +1447,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   // Ambient occlusion (darker corners and contact shadows); plain rendering if it cannot be set up
   let composer = null;
-  try {
+  if (!LOW) try {
     const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
     composer = new EffectComposer(renderer, target);
     composer.addPass(new RenderPass(scene, camera));
@@ -1529,7 +1567,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const resize = () => {
     const w = Math.max(1, stage.clientWidth), h = Math.max(1, stage.clientHeight);
-    const ratio = Math.min(devicePixelRatio, full ? 2 : 1.5);
+    const ratio = Math.min(devicePixelRatio, full ? (LOW ? 1.5 : 2) : (LOW ? 1 : 1.5));
     renderer.setPixelRatio(ratio);
     renderer.setSize(w, h, false);
     if (composer) { composer.setPixelRatio(ratio); composer.setSize(w, h); }

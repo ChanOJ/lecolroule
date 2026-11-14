@@ -192,6 +192,12 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   in `createVisit`): a still view draws nothing, even full screen; at 30 images per
   second in the preview and 60 full screen whatever the refresh rate of the screen (`FPS_PREVIEW`,
   `FPS_FULL`), and hidden without JavaScript or WebGL 2.
+  Once built, the meshes that never move are merged by material, per level (`mergeStatic()`: 615
+  meshes → 169, about a fifth of the draw calls); doors, mirrors and transparent materials stay
+  apart, so the model is still written piece by piece. On touch screens (phones, tablets) the
+  quality is lower (`LOW`): no ambient occlusion, 2048 px sun shadow, 256 px mirrors, pixel ratio
+  1 in the page and 1.5 full screen. In the URL of a page, `?quality=low` or `?quality=high`
+  forces one, `?merge=0` keeps every mesh apart (to compare).
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
 
