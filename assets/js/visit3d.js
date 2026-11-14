@@ -693,16 +693,17 @@ function plate(g, shape, top, thick, mats, { bevel = 0, uv = null } = {}) {
 }
 
 // Open unit facing west (front at x = fx, back against x = bx): 2 cm boards (bottom, top, sides),
-// two shelves (three levels) and a back, all pine. `front`, a material, shows on the front edges of
-// the boards, with texture coordinates uv(z, y) (cm): the photo of a run of units.
+// two shelves (three levels) and a back. Only the front edges of the boards are textured: `front`
+// with texture coordinates uv(z, y) (cm), the photo of a run of units, or else pine; the inside and
+// the back are plain pine colour.
 function openUnit(g, fx, bx, y1, y2, z1, z2, front = null, uv = null) {
   const T = 2, h = (y2 - y1 - 2 * T) / 3, parts = [
     [y1, y1 + T, z1, z2], [y2 - T, y2, z1, z2], [y1 + T, y2 - T, z1, z1 + T], [y1 + T, y2 - T, z2 - T, z2],
     ...[1, 2].map((k) => [y1 + T + k * h - T / 2, y1 + T + k * h + T / 2, z1 + T, z2 - T]),
   ];
   for (const [a, b, c, d] of parts) {
-    const m = Array(6).fill(PINE);
-    if (front) m[1] = front;
+    const m = Array(6).fill(M.pine);
+    m[1] = front || PINE;
     const mesh = box(g, fx, bx, a, b, c, d, m);
     if (!front) continue;
     const pos = mesh.geometry.attributes.position, t = mesh.geometry.attributes.uv;
@@ -710,7 +711,7 @@ function openUnit(g, fx, bx, y1, y2, z1, z2, front = null, uv = null) {
       t.setXY(i, ...uv(mesh.position.z / CM + pos.getZ(i) / CM, mesh.position.y / CM + pos.getY(i) / CM));
     t.needsUpdate = true;
   }
-  box(g, bx - 1, bx, y1 + T, y2 - T, z1 + T, z2 - T, PINE);                     // back
+  box(g, bx - 1, bx, y1 + T, y2 - T, z1 + T, z2 - T, M.pine);                   // back
 }
 
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
