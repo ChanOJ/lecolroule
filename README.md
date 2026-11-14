@@ -168,7 +168,12 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Wood**: `PINE` and `OAK` repeat the images `pine.jpg` / `oak.jpg` (ambientCG Wood092 and
   Wood095, CC0, colour maps resized to 512 px) with their height maps `pine-bump.jpg` /
   `oak-bump.jpg` as bump maps (`wood(key, [u, v] cm, grain)`). A box drawn in a wood gets texture
-  coordinates in metres with the grain along its longest side (`woodUV()`).
+  coordinates in metres with the grain along its longest side (`woodUV()`). Also `wood043` (night level floor), `wood034` (top of the barrel table) and `pipe002` (its hooped
+  body), all ambientCG CC0; `opts.color` tints a texture (the floor greyer, the barrel browner).
+  Cylinders get metre coordinates with `metreUV()`.
+- **Curtains and lights**: `curtain()` (the `Curtains_Single` model, drawn back, its own rod hidden)
+  and `rod()`, a chrome rod with rounded returns to the wall at the ends given (`ends`);
+  `ceilingLight()` (`Light_Ceiling5`); floor lamp `Light_Stand1`.
 - **three.js add-on**: copy it from the three.js 0.160.0 package (npm) into
   `assets/vendor/three-0.160.0/addons/` with the files it imports, turning `from 'three'` into a
   relative path to `three.module.js`.
