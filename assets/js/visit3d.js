@@ -1433,7 +1433,7 @@ const TOUR = [
 //   The visit keeps playing until the first action on the model. Escape or the close button go
 //   back to the preview.
 // Rendering only runs while the stage is on screen and the tab is visible.
-// options: labels ({ both, living, night, start, stop, close, help }), onOpen(), onClose(),
+// options: labels ({ both, living, night, start, stop, close, help, play, pause, back, forward, progress }), onOpen(), onClose(),
 // standalone (test page: full screen from the start, no close button).
 // Returns the viewer, with the scene objects for debugging (the test page sets it as window.lcr).
 
@@ -1506,13 +1506,26 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     + '<button type="button" class="visit3d-tour"></button>'
     + '</div>'
     + '<button type="button" class="visit3d-close"></button>'
-    + '<p class="visit3d-help"></p>';
+    + '<p class="visit3d-help"></p>'
+    // Player of the guided visit (full screen, while it runs): -5 s, play/pause, +5 s, position, time
+    + '<div class="visit3d-player">'
+    + '<button type="button" class="visit3d-back">\u22125 s</button>'
+    + '<button type="button" class="visit3d-play"></button>'
+    + '<button type="button" class="visit3d-fwd">+5 s</button>'
+    + '<input type="range" class="visit3d-seek" min="0" step="0.1" value="0">'
+    + '<span class="visit3d-time"></span>'
+    + '</div>';
   for (const k of ['both', 'living', 'night']) ui.querySelector(`[data-view="${k}"]`).textContent = labels[k] || k;
   const closeButton = ui.querySelector('.visit3d-close'), tourButton = ui.querySelector('.visit3d-tour');
   closeButton.classList.add('icon', 'solid', 'fa-times');   // Font Awesome cross, as the image viewer
   closeButton.setAttribute('aria-label', labels.close || 'Close');
   closeButton.title = labels.close || 'Close';
   ui.querySelector('.visit3d-help').textContent = labels.help || '';
+  const playButton = ui.querySelector('.visit3d-play'), seekBar = ui.querySelector('.visit3d-seek'), timeText = ui.querySelector('.visit3d-time');
+  const backButton = ui.querySelector('.visit3d-back'), fwdButton = ui.querySelector('.visit3d-fwd');
+  backButton.title = labels.back || 'Back 5 seconds';
+  fwdButton.title = labels.forward || 'Forward 5 seconds';
+  seekBar.setAttribute('aria-label', labels.progress || 'Position in the visit');
   stage.append(ui);
 
   let full = false, visible = false, placeholder = null;
@@ -1546,7 +1559,26 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       return name && DOORS.has(name) ? [[j, DOORS.get(name)]] : [];
     });
     const openAll = () => { for (const d of DOOR_LIST) { setDoor(d, d.home); d.target = d.home; } };   // as at load
-    let running = false, paused = false, clock = 0, last = 0;
+    let running = false, paused = false, clock = 0, last = 0, moved = true, dragging = false;
+    const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+    // The player shows where the visit is; play/pause shows the action it offers
+    const showPlayer = () => {
+      playButton.textContent = paused ? '\u25b6' : '\u275a\u275a';
+      playButton.title = paused ? (labels.play || 'Play') : (labels.pause || 'Pause');
+      playButton.setAttribute('aria-label', playButton.title);
+      if (!dragging) seekBar.value = Math.min(clock, total);
+      timeText.textContent = `${mmss(Math.min(clock, total))} / ${mmss(total)}`;
+    };
+    seekBar.max = total;
+    // Paused, the view is free (as outside the visit): it turns round a point 2 m ahead of the eye;
+    // playing again puts the camera back on the path, where the visit is
+    const look = new THREE.Vector3();
+    const freeView = () => {
+      camera.getWorldDirection(look);
+      controls.target.copy(camera.position).addScaledVector(look, 2);
+      controls.enabled = full;
+      controls.update();
+    };
     const lens = () => {
       // wide lens: about 109 degrees of horizontal field of view, whatever the shape of the frame
       camera.fov = Math.min(118, Math.max(60, 2 * Math.atan(Math.tan(40 * Math.PI / 180) / 0.6 / camera.aspect) * 180 / Math.PI));
@@ -1573,10 +1605,25 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       total,
       times,
       lens,
+      get paused() { return paused; },
       // Jump to a moment of the visit and hold it (debugging: window.lcr.tour.seek(42))
-      seek(time) { if (!running) this.start(); clock = time; paused = true; pose(clock); },
+      seek(time) { if (!running) this.start(); clock = time; paused = true; moved = true; pose(clock); freeView(); showPlayer(); },
+      // Player: go to a moment (playing or paused as before), move by dt seconds, pause, play
+      seekTo(time) { clock = Math.min(Math.max(time, 0), total); moved = true; showPlayer(); },
+      skip(dt) { this.seekTo(clock + dt); },
+      pause() { if (running && !paused) { paused = true; freeView(); showPlayer(); } },
+      play() {
+        if (!running) return;
+        if (clock >= total) clock = 0;                                          // from the start again
+        paused = false; last = performance.now(); moved = true;
+        controls.enabled = false;
+        showPlayer();
+      },
+      set dragging(on) { dragging = on; },
       start() {
-        running = true; paused = false; clock = 0; last = performance.now();
+        running = true; paused = false; clock = 0; last = performance.now(); moved = true;
+        ui.classList.add('touring');
+        showPlayer();
         openAll();
         setView('both');
         controls.enabled = false;
@@ -1587,19 +1634,26 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       stop() {
         if (!running) return;
         running = false; for (const o of TOUR_ONLY) o.visible = false; openAll();
+        ui.classList.remove('touring');
         tourButton.textContent = labels.start || 'Visit';
         overview();
       },
+      // Moves the camera; returns whether the image changed (paused: only after a seek)
       update() {
-        if (!running) return;
+        if (!running) return false;
         const now = performance.now();
         if (!paused) clock += Math.min(0.1, (now - last) / 1000);
         last = now;
+        if (paused && !moved) return false;
+        moved = false;
         pose(Math.min(clock, total));
+        if (paused) freeView();                                                 // moved while paused: free view from there
+        if (full) showPlayer();
         if (clock > total + 2) {
           if (full) this.stop();
           else { clock = 0; }   // the preview plays in a loop
         }
+        return true;
       },
     };
   })();
@@ -1643,8 +1697,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     const moved = swingDoors(Math.min(0.25, (time - lastFrame) / 1000) || 0);   // same speed on slow devices
     lastFrame = time;
     if (seen !== loaded) { seen = loaded; invalidate(); }
-    if (tour.running) tour.update(); else if (controls.update()) invalidate();
-    if (!tour.running && !moved && dirty <= 0) return;
+    if (tour.running ? tour.update() : controls.update()) invalidate();
+    if (!moved && dirty <= 0) return;
     dirty--;
     if (composer) composer.render(); else renderer.render(scene, camera);
   };
@@ -1688,6 +1742,12 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // Events
   for (const b of ui.querySelectorAll('[data-view]')) b.onclick = () => { tour.stop(); setView(b.dataset.view); };
   tourButton.onclick = () => (tour.running ? tour.stop() : tour.start());
+  playButton.onclick = () => (tour.paused ? tour.play() : tour.pause());
+  backButton.onclick = () => tour.skip(-5);
+  fwdButton.onclick = () => tour.skip(5);
+  seekBar.oninput = () => tour.seekTo(+seekBar.value);
+  seekBar.onpointerdown = () => { tour.dragging = true; };
+  seekBar.onpointerup = seekBar.onchange = () => { tour.dragging = false; };
   closeButton.onclick = close;
   // Clicks stay in the viewer: the page would close the article (body handler).
   const onClick = (event) => {
@@ -1698,17 +1758,22 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   const onKey = (event) => {
     if (!full && (event.key === 'Enter' || event.key === ' ') && event.target === stage) { event.preventDefault(); open(); }
   };
-  // Any action on the model hands the camera back (full screen only)
-  const onAction = () => { if (full) { tour.stop(); controls.enabled = true; } };
+  // Keys, full screen: Escape closes; during the guided visit, space pauses or plays, the left and
+  // right arrows move 5 s (unless a control has the focus)
   const onEscape = (event) => {
-    if (!full || event.key !== 'Escape') return;
-    event.preventDefault();
-    event.stopPropagation();
-    close();
+    if (!full) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+      return;
+    }
+    if (!tour.running || event.target.closest && event.target.closest('button, input')) return;
+    const act = { ' ': () => (tour.paused ? tour.play() : tour.pause()), ArrowLeft: () => tour.skip(-5), ArrowRight: () => tour.skip(5) }[event.key];
+    if (act) { event.preventDefault(); act(); }
   };
   stage.addEventListener('click', onClick);
   stage.addEventListener('keydown', onKey);
-  renderer.domElement.addEventListener('wheel', onAction);   // and pointerdown: see onPress
 
   // Doors, full screen: a click (not a drag of the view) on a door opens or closes it; the pointer
   // shows a hand over a door. The first visible object under the pointer must be the door.
@@ -1721,19 +1786,21 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     const hit = raycaster.intersectObject(scene, true).find((h) => h.object.isMesh && shown(h.object));
     return hit ? hit.object.userData.door : null;
   };
+  // During the guided visit, a click elsewhere than on a door pauses it (the view buttons, top left,
+  // leave it); the controls of the view only work outside the visit.
   let press = null, hoverAt = 0;
   const onPress = (event) => {
-    // The press that stops the visit (the view jumps to the overview) is not a click on a door
-    const touring = full && tour.running;
-    onAction();
-    press = touring ? null : { x: event.clientX, y: event.clientY, t: performance.now() };
+    if (full && !tour.running) controls.enabled = true;
+    press = full ? { x: event.clientX, y: event.clientY, t: performance.now() } : null;
   };
   const onRelease = (event) => {
     if (!full || !press) return;
     const still = Math.hypot(event.clientX - press.x, event.clientY - press.y) < 6 && performance.now() - press.t < 600;
     press = null;
-    const d = still && doorAt(event);
+    if (!still) return;
+    const d = doorAt(event);
     if (d) d.target = d.target > 0.5 ? 0 : 1;
+    else if (tour.running) tour.pause();
   };
   const onHover = (event) => {
     if (!full || event.buttons || performance.now() - hoverAt < 100) return;   // at most 10 times a second
