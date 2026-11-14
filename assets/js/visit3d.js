@@ -692,6 +692,19 @@ function plate(g, shape, top, thick, mats, { bevel = 0, uv = null } = {}) {
   return mesh;
 }
 
+// Open unit facing west (front at x = fx, back against x = bx), plain pine colour: 2 cm boards (top,
+// sides), two shelves (three levels) and a back, on a solid bottom `base` cm high: its top 2 cm
+// is the lowest shelf, its front below shows the image `panel` (the bottom of the unit's photo).
+function openUnit(g, fx, bx, y1, y2, z1, z2, base, panel) {
+  const T = 2, f = y1 + base, h = (y2 - T - f) / 3;
+  box(g, fx, bx, y1, f - T, z1, z2, faced(M.pine, { w: panel }));
+  for (const [a, b, c, d] of [
+    [f - T, f, z1, z2], [y2 - T, y2, z1, z2], [f, y2 - T, z1, z1 + T], [f, y2 - T, z2 - T, z2],
+    ...[1, 2].map((k) => [f + k * h - T / 2, f + k * h + T / 2, z1 + T, z2 - T]),
+  ]) box(g, fx, bx, a, b, c, d, M.pine);
+  box(g, bx - 1, bx, f, y2 - T, z1 + T, z2 - T, M.pine);                        // back
+}
+
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
 function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
@@ -1011,7 +1024,7 @@ function ceilingLamp(g, x, z, y) {
 
   // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
   // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
-  box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
+  openUnit(g, 640, 700, 0, 86, 182.5, 213.5, 13, 'kitchen-lower-left-bottom');   // open unit, two shelves, solid bottom 13 cm
   // Oven unit: the oven, up against the worktop, and under it a drawer front (kitchen-front-oven.jpg),
   // both flush with the cupboard fronts (x = 640), the unit's box set back behind them
   box(g, 641.5, 700, 0, 86, 213.5, 271.5, M.pine);
@@ -1036,8 +1049,8 @@ function ceilingLamp(g, x, z, y) {
     { uv: (x, z) => [(z - 215) / 56, (x - 646) / 50] });
   // Sink (kitchen-sink.jpg): a plate on the worktop with the photo, the bowl 18 cm deep under it;
   // photo coordinates of the sink: u 0.003..0.998 along z, v 0.261..0.739 from the front (west)
-  { const sinkMat = mat(0xffffff, { map: texture('kitchen-sink'), roughness: 0.5 });
-    const sinkGrey = mat(0x302f2d, { roughness: 0.5 });                          // average colour of the sink in the photo
+  { const sinkMat = mat(0xffffff, { map: texture('kitchen-sink'), roughness: 0.9, envMapIntensity: 0.3 });   // matt
+    const sinkGrey = mat(0x302f2d, { roughness: 0.9, envMapIntensity: 0.3 });                          // average colour of the sink in the photo
     const uv = (x, z) => [0.003 + (z - SINK.z1) / (SINK.z2 - SINK.z1) * 0.995, 0.261 + (x - SINK.x1) / (SINK.x2 - SINK.x1) * 0.478];
     const rim = rrect(THREE.Shape, SINK.x1 + 0.3, SINK.x2 - 0.3, SINK.z1 + 0.3, SINK.z2 - 0.3, 2);
     rim.holes.push(rrect(THREE.Path, BOWL.x1 - 0.3, BOWL.x2 + 0.3, BOWL.z1 - 0.3, BOWL.z2 + 0.3, 3));
@@ -1068,7 +1081,10 @@ function ceilingLamp(g, x, z, y) {
     m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });                     // west face: u along z, v up
     box(g, 665, 700, y1, 215, z1, z2, m);
   };
-  wallUnit(182.5, 214, 140); wallUnit(214, 275, 154); wallUnit(275, 453.5, 140);
+  wallUnit(214, 275, 154); wallUnit(275, 396.6, 140);
+  // the open units at both ends (photo: x 0..117 and 790..1000 of 1000 px): hollow, two shelves
+  openUnit(g, 665, 700, 140, 215, 182.5, 214, 7.5, 'kitchen-upper-left-bottom');   // solid bottom 7.5 cm
+  openUnit(g, 665, 700, 140, 215, 396.6, 453.5, 7.5, 'kitchen-upper-right-bottom');
   box(g, 699, 700, 140, 154, 214, 275, M.slate);
   // Tiles on the back wall, also behind the gap under the shorter unit; joints from the worktop
   tiledWall(g, KITCHEN_TILES, 'w', 699, 182.5, 453.5, 90, 140, 182.5, 90);
