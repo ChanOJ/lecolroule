@@ -633,17 +633,21 @@ for (const o of TOUR_ONLY) o.visible = false;
   wall(g, 'x', 88, 651.5, 671.5 + H, PART, NIGHT_H, AN, [], [GR, AN]);        // WC on one side, bathroom on the other
   wall(g, 'x', 88, 671.5 + H, 705 + H, PART, NIGHT_H, AN, [], [C, AN]);
   wall(g, 'z', 469, 0, 88 - H, PART, NIGHT_H, C);                                  // boxed-in duct, set back 30 cm
-  wall(g, 'z', 439, 0, 88 - H, PART, NIGHT_H, PG, [{ s: 0, e: 84.5, head: 235 }], [PG, C]);
-  // its four doors, flush with the end of the south partition: one photo of the whole front
-  // (stair-placard.jpg, z 0..84.5, 0..235 cm high), each door showing its part of it
+  wall(g, 'z', 439, 0, 88 - H, PART, NIGHT_H, PG, [{ s: 0, e: 84.5, head: NIGHT_H - 2 }], [PG, C]);   // cupboard up to 2 cm under the ceiling
+  // its four doors, 2 cm proud of the partition (its face at x = 435.5): one photo of the whole front
+  // (stair-placard.jpg, z 0..84.5, from 5 cm above the floor up to 2 cm under the ceiling), each door showing
+  // its part of it; under them, a plinth set back 1 cm
   { const front = texMat('stair-placard');
-    for (const [z1, z2] of [[0, 41.5], [43, 84.5]]) for (const [y1, y2] of [[0, 148], [150, 235]]) {
+    const Y0 = 5, Y1 = NIGHT_H - 2;
+    for (const [z1, z2] of [[0, 41.46], [42.36, 84.5]]) for (const [y1, y2] of [[Y0, 165.8], [167, Y1]]) {   // joints measured on the photo
       const m = Array(6).fill(M.pine); m[1] = front;
-      const door = box(g, 437.5, 440.5, y1, y2, z1, z2, m), pos = door.geometry.attributes.position, uv = door.geometry.attributes.uv;
+      const door = box(g, 433.5, 436.5, y1, y2, z1, z2, m), pos = door.geometry.attributes.position, uv = door.geometry.attributes.uv;
       for (let i = 4; i < 8; i++)                                               // west face (BoxGeometry face 1)
-        uv.setXY(i, (door.position.z / CM + pos.getZ(i) / CM) / 84.5, (door.position.y / CM + pos.getY(i) / CM) / 235);
+        uv.setXY(i, (door.position.z / CM + pos.getZ(i) / CM) / 84.5, (door.position.y / CM + pos.getY(i) / CM - Y0) / (Y1 - Y0));
       uv.needsUpdate = true;
-    } }
+    }
+    box(g, 434.5, 436.5, 0, Y0, 0, 84.5, M.pine);
+    box(g, 436.5, 437, Y0, Y1, 0, 84.5, M.black); }                            // dark behind the joints
   wall(g, 'z', 549, 0, 88 - H, PART, NIGHT_H, GR, [], [C, GR]);
   wall(g, 'z', 671.5, 0, 88 - H, PART, NIGHT_H, GR, [], [GR, C]);                // WC / boxed-in void before the bathroom
   wall(g, 'z', 651.5, 88 + H, BN, PART, NIGHT_H, AN, [door(100, 175, 'e', 1)], [TG, AN]);
@@ -1280,7 +1284,7 @@ function ceilingLamp(g, x, z, y) {
   model(g, 'Bathroom_ToiletPaper', 565, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
 
   // Corridor: mirror on the north wall, 30 cm east of the middle between the open door at the foot
-  // of the stairs (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm,
+  // of the stairs (its edge at x = 286) and the cupboard facing the stairs (x = 433.5): 50 x 150 cm,
   // 40 cm above the floor, in an 8 cm pine frame
   box(g, 367, 417, 40, 190, 1, 3, PINE);
   mirror(g, 's', 3, 375, 409, 48, 182);
