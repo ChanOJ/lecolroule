@@ -196,8 +196,9 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   meshes → 169, about a fifth of the draw calls); doors, mirrors, transparent materials and the
   ceilings shown during the visit only (`TOUR_ONLY`: living slab, entrance's lowered ceiling) stay
   apart, so the model is still written piece by piece. On touch screens (phones, tablets) the
-  quality is lower (`LOW`): no ambient occlusion, 2048 px sun shadow, 256 px mirrors, pixel ratio
-  1 in the page and 1.5 full screen. In the URL of a page, `?quality=low` or `?quality=high`
+  quality is lower (`LOW`): ambient occlusion with 8 samples instead of 16 (and lighter
+  antialiasing), 2048 px sun shadow, 256 px mirrors, pixel ratio 1 in the page and 1.5 full screen,
+  a steady 30 images per second full screen. In the URL of a page, `?quality=low` or `?quality=high`
   forces one, `?merge=0` keeps every mesh apart (to compare).
 
 **Blog post**: add `content/blog/YYYY-MM-DD-name.<lang>.md` for each language:
