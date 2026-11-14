@@ -975,25 +975,43 @@ function ceilingLamp(g, x, z, y) {
   for (const x of [372, 435, 498]) { pineChair(g, x, 298, 0); pineChair(g, x, 410, 180); }
   pineChair(g, 318, 354, 90); pineChair(g, 552, 354, -90);
 
-  // Kitchen along the east wall, from north to south: open shelf, oven and hob, base unit
-  // with the sink, washing machine, tall unit; wall units above
-  box(g, 640, 700, 0, 86, 182.5, 393.5, M.pine);
-  box(g, 640, 700, 0, 85, 393.5, 453.5, M.white);
-  box(g, 640, 700, 0, 215, 453.5, 513.5, M.pine);
+  // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
+  // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
+  box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
+  box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
+  box(g, 638.5, 640, 12, 74, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  for (const z of [271.5, 332.5]) box(g, 640, 700, 0, 86, z, z + 61, faced(M.pine, { w: 'kitchen-front' }));
+  box(g, 640, 700, 0, 85, 393.5, 453.5, faced(M.white, { w: 'washing-machine' }));
+  box(g, 640, 700, 0, 215, 453.5, 513.5, faced(M.pine, { w: 'fridge' }));
   box(g, 636, 700, 86, 90, 182.5, 453.5, M.slate);
-  box(g, 638.5, 640, 12, 74, 213.5, 271.5, M.black);
   box(g, 646, 696, 90, 90.6, 215, 271, M.black);
   box(g, 650, 692, 90, 90.6, 328, 388, M.black);
-  box(g, 638.5, 640, 12, 60, 404, 443, M.grey);
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
-  box(g, 665, 700, 140, 215, 182.5, 453.5, M.pine);
+  // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
+  // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
+  const wallUnit = (z1, z2, y1) => {
+    const L = 453.5 - 182.5, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.offset.set((z1 - 182.5) / L, (y1 - 140) / 75);
+    tex.repeat.set((z2 - z1) / L, (215 - y1) / 75);
+    const m = Array(6).fill(M.pine);
+    m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });                     // west face: u along z, v up
+    box(g, 665, 700, y1, 215, z1, z2, m);
+  };
+  wallUnit(182.5, 214, 140); wallUnit(214, 275, 154); wallUnit(275, 453.5, 140);
+  box(g, 699, 700, 140, 154, 214, 275, M.slate);
   // Alcove in the north wall, west of the worktop: worktop ledge with the toaster, tiled back,
   // microwave on a pine shelf level with the underside of the wall units, two shelves above, bin below
   box(g, 575, 640, 86, 90, 157, 186, M.slate);
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
   box(g, 575, 652, 137, 140, 157, 200, PINE);
-  box(g, 580, 632, 140, 170, 160, 200, M.white);
+  // microwave: glossy white, edges very slightly rounded (1 cm), its photo on the front (south)
+  { const white = mat(0xf4f4f1, { roughness: 0.15, envMapIntensity: 0.7 });
+    const m = [white, white, white, white, mat(0xffffff, { map: texture('microwave'), roughness: 0.2 }), white];
+    const oven = new THREE.Mesh(new RoundedBoxGeometry(52 * CM, 30 * CM, 40 * CM, 2, 1 * CM), m);
+    oven.position.set(606 * CM, 155 * CM, 180 * CM);
+    g.add(oven); }
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, PINE);
   { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
