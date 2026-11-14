@@ -45,6 +45,7 @@ export default {
   'skiB': 'skiB.png',
   'skiC': 'skiC.png',
   'snowboard': 'snowboard.png',
+  'stair-placard': 'stair-placard.jpg',
   'valloire1': 'valloire1.jpg',
   'valloire2': 'valloire2.jpg',
   'washing-machine': 'washing-machine.jpg',

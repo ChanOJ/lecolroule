@@ -634,10 +634,16 @@ for (const o of TOUR_ONLY) o.visible = false;
   wall(g, 'x', 88, 671.5 + H, 705 + H, PART, NIGHT_H, AN, [], [C, AN]);
   wall(g, 'z', 469, 0, 88 - H, PART, NIGHT_H, C);                                  // boxed-in duct, set back 30 cm
   wall(g, 'z', 439, 0, 88 - H, PART, NIGHT_H, PG, [{ s: 0, e: 84.5, head: 235 }], [PG, C]);
-  for (const [z1, z2] of [[0, 41.5], [43, 84.5]]) {                            // doors flush with the end of the south partition
-    box(g, 437.5, 440.5, 0, 148, z1, z2, M.pine);
-    box(g, 437.5, 440.5, 150, 235, z1, z2, M.pine);
-  }
+  // its four doors, flush with the end of the south partition: one photo of the whole front
+  // (stair-placard.jpg, z 0..84.5, 0..235 cm high), each door showing its part of it
+  { const front = texMat('stair-placard');
+    for (const [z1, z2] of [[0, 41.5], [43, 84.5]]) for (const [y1, y2] of [[0, 148], [150, 235]]) {
+      const m = Array(6).fill(M.pine); m[1] = front;
+      const door = box(g, 437.5, 440.5, y1, y2, z1, z2, m), pos = door.geometry.attributes.position, uv = door.geometry.attributes.uv;
+      for (let i = 4; i < 8; i++)                                               // west face (BoxGeometry face 1)
+        uv.setXY(i, (door.position.z / CM + pos.getZ(i) / CM) / 84.5, (door.position.y / CM + pos.getY(i) / CM) / 235);
+      uv.needsUpdate = true;
+    } }
   wall(g, 'z', 549, 0, 88 - H, PART, NIGHT_H, GR, [], [C, GR]);
   wall(g, 'z', 671.5, 0, 88 - H, PART, NIGHT_H, GR, [], [GR, C]);                // WC / boxed-in void before the bathroom
   wall(g, 'z', 651.5, 88 + H, BN, PART, NIGHT_H, AN, [door(100, 175, 'e', 1)], [TG, AN]);
@@ -1480,6 +1486,16 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // screen keeps the default speed (the view follows the fingers). Set before the controls react.
   const ZOOM_WHEEL = 4.5, ZOOM_PINCH = 1;
   controls.zoomSpeed = ZOOM_WHEEL;
+  // Zooming brings the camera closer to the point the view turns round by a share of the distance:
+  // near it, each step gets tiny and the zoom seems to stop. Within 60 cm of that point, the point
+  // moves 1.5 m further ahead, so that zooming goes on through the model.
+  controls.minDistance = 0.2;
+  const ahead = new THREE.Vector3();
+  controls.addEventListener('change', () => {
+    if (camera.position.distanceTo(controls.target) > 0.6) return;
+    ahead.subVectors(controls.target, camera.position).normalize();
+    controls.target.addScaledVector(ahead, 1.5);
+  });
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
