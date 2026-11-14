@@ -23,6 +23,7 @@ export default {
   'microwave': 'microwave.jpg',
   'oak': 'oak.jpg',
   'oak-bump': 'oak-bump.jpg',
+  'outside': 'outside.jpg',
   'oven': 'oven.jpg',
   'panorama': 'panorama.png',
   'parapente': 'parapente.png',

@@ -529,6 +529,40 @@ slab(living, [[0, NIGHT_Z], [860, NIGHT_Z], [860, NIGHT_Z + 427], [0, NIGHT_Z + 
   [[[0, STAIR.zN], [STAIR.x, STAIR.zN], [STAIR.x, STAIR.zS], [0, STAIR.zS]]]);
 const livingCeiling = slab(living, [[0, 0], [650, 0], [650, 130], [700, 130], [700, 513.5], [0, 513.5]], LIVING_H + 2, 2, M.white);
 TOUR_ONLY.push(livingCeiling);
+// Outdoor panorama (outside.jpg: the 180 degrees seen from the flat, east to west through south),
+// shown during the visit only, through the windows: the inside of a half cylinder 30 m round the
+// flat, the photo's middle at eye level; above it, a sky fading from the top of the photo.
+{
+  const R = 30, W = 5561, H = 1856, band = Math.PI * R * H / W, sky = 0.6;   // photo band height (m), sky above (share of it)
+  const canvas = document.createElement('canvas'), tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.repeat.x = -1;                                                            // seen from inside: east on the left
+  const img = new Image();
+  img.onload = () => {
+    canvas.width = img.width; canvas.height = Math.round(img.height * (1 + sky));
+    const ctx = canvas.getContext('2d'), top = canvas.height - img.height;
+    ctx.drawImage(img, 0, top);
+    const row = ctx.getImageData(0, top + 2, img.width, 1).data, c = [0, 0, 0];   // average colour of its top
+    for (let i = 0; i < row.length; i += 4) for (let k = 0; k < 3; k++) c[k] += row[i + k] / (row.length / 4);
+    const g = ctx.createLinearGradient(0, 0, 0, top + 4);
+    g.addColorStop(0, 'rgb(118, 160, 214)');                                    // deeper blue up high
+    g.addColorStop(1, `rgb(${c.map(Math.round).join(',')})`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, img.width, top + 4);
+    tex.needsUpdate = true;
+    loaded++;
+  };
+  img.src = texUrl('outside');
+  const h = band * (1 + sky), eye = (LIVING_Y + 160) * CM;                     // metres above the night level floor
+  const pano = new THREE.Mesh(
+    new THREE.CylinderGeometry(R, R, h, 96, 1, true, -Math.PI / 2, Math.PI),
+    new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, toneMapped: false }));
+  pano.position.set(4.3, eye - band / 2 + h / 2, 3.7);                         // photo band centred at eye level
+  pano.userData.noShadow = true;
+  scene.add(pano);
+  TOUR_ONLY.push(pano);
+}
 for (const o of TOUR_ONLY) o.visible = false;
 
 // ---------- Night level ----------
@@ -1417,7 +1451,7 @@ scene.add(sun, sun.target);
 scene.traverse((o) => {
   if (!o.isMesh || o.type === 'Reflector') return;
   const mats = Array.isArray(o.material) ? o.material : [o.material];
-  const solid = !mats.some((m) => m.transparent || m.emissiveIntensity > 1);
+  const solid = !o.userData.noShadow && !mats.some((m) => m.transparent || m.emissiveIntensity > 1);
   o.castShadow = solid;
   o.receiveShadow = solid;
 });

@@ -40,7 +40,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEXTURES = REPO_ROOT / "assets" / "3d" / "textures"
 MODULE = REPO_ROOT / "assets" / "js" / "visit3d-textures.js"
-MAX_SIDE = 1024
+MAX_SIDE = 2048     # (the outdoor panorama; the others stay far below)
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}
 
 # PNG chunks kept: image data and colour information; text, dates and EXIF go.
