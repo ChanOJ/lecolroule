@@ -768,7 +768,6 @@ function grain(repeat = [1, 1]) {
   tex.repeat.set(...repeat);
   return tex;
 }
-const mouseGrey = 0x737679;
 const fabric = (color, repeat) => mat(color, { roughness: 1, bumpMap: grain(repeat), bumpScale: 2 });
 
 // Materials of the models
@@ -1010,7 +1009,13 @@ function ceilingLamp(g, x, z, y) {
   // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
   box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
   box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
-  box(g, 638.5, 640, 12, 74, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  box(g, 638.5, 640, 24, 86, 213.5, 271.5, faced(M.black, { w: 'oven' }));   // up against the worktop
+  // under it, the bottom 24 cm of a cupboard front (kitchen-front.jpg is a 61 x 86 cm front)
+  { const tex = new THREE.TextureLoader().load(TEX['kitchen-front'], () => loaded++);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.repeat.set(1, 24 / 86);
+    const m = Array(6).fill(M.pine); m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });
+    box(g, 638.5, 640, 0, 24, 213.5, 271.5, m); }
   for (const z of [271.5, 332.5]) {                                            // (tops and sides hidden: the sink bowl goes down into them)
     const m = faced(M.pine, { w: 'kitchen-front' }); m[2] = m[4] = m[5] = hidden;
     box(g, 640, 700, 0, 86, z, z + 61, m);
@@ -1020,9 +1025,9 @@ function ceilingLamp(g, x, z, y) {
   // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
   const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
   const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
+  const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });     // darker than the tiles (it catches the light), satin
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
-    const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });   // darker than the tiles (it catches the light), satin
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
   // Induction hob (kitchen-induction.jpg), glossy: its controls at the front (west)
   plate(g, rrect(THREE.Shape, 646, 696, 215, 271, 1), 90.6, 0.6,
@@ -1069,7 +1074,7 @@ function ceilingLamp(g, x, z, y) {
   tiledWall(g, KITCHEN_TILES, 'w', 699, 214, 275, 140, 154, 182.5, 90);
   // Alcove in the north wall, west of the worktop: worktop ledge with the toaster, tiled back,
   // microwave on a pine shelf level with the underside of the wall units, two shelves above, bin below
-  box(g, 575, 640, 86, 90, 157, 186, M.slate);
+  plate(g, rrect(THREE.Shape, 575.5, 639.5, 157.5, 185.5, 0.1), 90, 4, [worktop, worktop], { bevel: 0.5 });   // the same worktop
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
   // Tiles in the alcove (its back, its east side) and on the north end of the worktop wall
@@ -1085,8 +1090,8 @@ function ceilingLamp(g, x, z, y) {
     g.add(oven); }
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, PINE);
-  { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
-    model(g, 'Trashcan_Small1', 600.5, 171, 0, [43, 26, 72], { Black: satinGrey, LightMetal: satinGrey }); }
+  { const binGrey = mat(0x34383d, { roughness: 0.4, bumpMap: grain([2, 2]), bumpScale: 1 });   // bin: the worktop's grey, satin, fine grain
+    model(g, 'Trashcan_Small1', 601.5, 171, 0, [51.6, 26, 72], { Black: binGrey, LightMetal: binGrey }); }
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 325, 1, 0);                                                        // centred in the WC (x 277..373)
