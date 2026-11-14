@@ -117,8 +117,8 @@ const BARREL = wood('pipe002', [30, 66], 'u', { roughness: 0.15, metalness: 0.5 
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
 const FABRIC_MODEL = wood('fabric030', [62.5, 62.5], 'u', { roughness: 1 });
 // Terrace deck: weathered planks (ambientCG Planks027A), running north-south (slab: u = x, v = z)
-// Night level floor: grey planks (ambientCG Planks001), turned a quarter: they run east-west
-const NIGHT_FLOOR = wood('planks001', [120, 92], 'u', { turn: true, roughness: 0.7 });
+// Night level floor: grey planks (ambientCG Planks001), running north-south
+const NIGHT_FLOOR = wood('planks001', [120, 92], 'u', { roughness: 0.7 });
 // Terrace deck, drawn in a canvas: planks 11 cm wide, north-south (slab: u = x, v = z), 1 cm black
 // joints between them and at their ends (one per plank and per 2.4 m, staggered), a slight shade
 // and streak variation (seeded), and a bump map raising the planks above the joints.
@@ -540,7 +540,7 @@ livingCeiling.visible = false;
   wall(g, 'x', BC, 321 - H, 342 + H, BT, NIGHT_H, C, [], [C, LB]);             // end of wall north of the cabin:
   wall(g, 'x', BC, 342 + H, 401, BT, NIGHT_H, LB, [], [TG, LB]);               // light blue on the cabin side
   wall(g, 'z', 259, 212, 325 - H, PART, NIGHT_H, C, [{ s: 214, e: 320, head: 215 }]);
-  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant' }));   // two sliding doors, seen from bedroom 1
+  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant', e: ['placard-coulissant', true] }));   // two sliding doors (mirrored inside)
   wall(g, 'x', 325, 259 - H, 321 - H, PART, NIGHT_H, C);                       // desk recess south of the wardrobe
   wall(g, 'z', 321, 212, D, PART, NIGHT_H, C, [], [C, LB]);                    // bedroom 1 / bunk cabin
   paint(g, 'z', 0.5, 186, D, NIGHT_H, M.sage);
@@ -565,6 +565,10 @@ livingCeiling.visible = false;
 
   // Bedroom 2
   wall(g, 'x', BC, 480 - H, 651.5, BT, NIGHT_H, TP, [door(563, 643, 's', 1)], [TG, TP]);
+  // Edges of the passage into the cabin (x 401..476.5, under the beam): corridor green to the west,
+  // the cabin's light blue to the east
+  box(g, 401, 401.2, 0, NIGHT_H - 25, BN, BS, TG);
+  box(g, 476.3, 476.5, 0, NIGHT_H - 25, BN, BS, LB);
   wall(g, 'x', BC, 651.5, W, BT, NIGHT_H, TP, [], [AN, TP]);
   paint(g, 'z', W - 0.5, BS, D, NIGHT_H, TP);
   paint(g, 'x', D - 0.5, 544 + H, W, NIGHT_H, TP, [win2]);
@@ -768,7 +772,6 @@ function grain(repeat = [1, 1]) {
   tex.repeat.set(...repeat);
   return tex;
 }
-const mouseGrey = 0x737679;
 const fabric = (color, repeat) => mat(color, { roughness: 1, bumpMap: grain(repeat), bumpScale: 2 });
 
 // Materials of the models
@@ -1009,8 +1012,11 @@ function ceilingLamp(g, x, z, y) {
   // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
   // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
   box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
-  box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
-  box(g, 638.5, 640, 12, 74, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  // Oven unit: the oven, up against the worktop, and under it a drawer front (kitchen-front-oven.jpg),
+  // both flush with the cupboard fronts (x = 640), the unit's box set back behind them
+  box(g, 641.5, 700, 0, 86, 213.5, 271.5, M.pine);
+  box(g, 640, 641.5, 24, 86, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  box(g, 640, 641.5, 0, 24, 213.5, 271.5, faced(M.pine, { w: 'kitchen-front-oven' }));
   for (const z of [271.5, 332.5]) {                                            // (tops and sides hidden: the sink bowl goes down into them)
     const m = faced(M.pine, { w: 'kitchen-front' }); m[2] = m[4] = m[5] = hidden;
     box(g, 640, 700, 0, 86, z, z + 61, m);
@@ -1020,9 +1026,9 @@ function ceilingLamp(g, x, z, y) {
   // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
   const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
   const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
+  const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });     // darker than the tiles (it catches the light), satin
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
-    const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });   // darker than the tiles (it catches the light), satin
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
   // Induction hob (kitchen-induction.jpg), glossy: its controls at the front (west)
   plate(g, rrect(THREE.Shape, 646, 696, 215, 271, 1), 90.6, 0.6,
@@ -1069,7 +1075,7 @@ function ceilingLamp(g, x, z, y) {
   tiledWall(g, KITCHEN_TILES, 'w', 699, 214, 275, 140, 154, 182.5, 90);
   // Alcove in the north wall, west of the worktop: worktop ledge with the toaster, tiled back,
   // microwave on a pine shelf level with the underside of the wall units, two shelves above, bin below
-  box(g, 575, 640, 86, 90, 157, 186, M.slate);
+  plate(g, rrect(THREE.Shape, 575.5, 639.5, 157.5, 185.5, 0.1), 90, 4, [worktop, worktop], { bevel: 0.5 });   // the same worktop
   box(g, 575, 640, 90, 140, 157, 158, M.slate);
   box(g, 640, 700, 90, 140, 182.5, 183.5, M.slate);
   // Tiles in the alcove (its back, its east side) and on the north end of the worktop wall
@@ -1085,8 +1091,8 @@ function ceilingLamp(g, x, z, y) {
     g.add(oven); }
   box(g, 582, 620, 90, 108, 162, 180, M.black);
   for (const y of [190, 222]) box(g, 575, 640, y, y + 3, 157, 183, PINE);
-  { const satinGrey = mat(mouseGrey, { roughness: 0.4, bumpMap: grain(), bumpScale: 1 });   // bin, mouse grey satin
-    model(g, 'Trashcan_Small1', 600.5, 171, 0, [43, 26, 72], { Black: satinGrey, LightMetal: satinGrey }); }
+  { const binGrey = mat(0x34383d, { roughness: 0.4, bumpMap: grain([2, 2]), bumpScale: 1 });   // bin: the worktop's grey, satin, fine grain
+    model(g, 'Trashcan_Small1', 601.5, 171, 0, [51.6, 26, 72], { Black: binGrey, LightMetal: binGrey }); }
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 325, 1, 0);                                                        // centred in the WC (x 277..373)
@@ -1189,11 +1195,11 @@ function ceilingLamp(g, x, z, y) {
   toilet(g, 668, 42.75, -90);                                                  // back against the east partition, centred on it
   model(g, 'Bathroom_ToiletPaper', 565, 1 + 4.8, 0, [16.5, 9.6, 19], paperParts, 60);     // on the north wall
 
-  // Corridor: mirror on the north wall, centred between the open door at the foot of the stairs
-  // (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm, 40 cm above
-  // the floor, in an 8 cm pine frame
-  box(g, 337, 387, 40, 190, 1, 3, PINE);
-  mirror(g, 's', 3, 345, 379, 48, 182);
+  // Corridor: mirror on the north wall, 30 cm east of the middle between the open door at the foot
+  // of the stairs (its edge at x = 286) and the cupboard facing the stairs (x = 437.5): 50 x 150 cm,
+  // 40 cm above the floor, in an 8 cm pine frame
+  box(g, 367, 417, 40, 190, 1, 3, PINE);
+  mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   box(g, 710, 780, 0, 82, 1, 58, M.pine);
