@@ -1012,16 +1012,11 @@ function ceilingLamp(g, x, z, y) {
   // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
   // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
   box(g, 640, 700, 0, 86, 182.5, 213.5, M.pine);                               // open shelf
-  box(g, 640, 700, 0, 86, 213.5, 271.5, M.pine);                               // around the oven
-  box(g, 638.5, 640, 24, 86, 213.5, 271.5, faced(M.black, { w: 'oven' }));   // up against the worktop
-  // under it, the bottom 24 cm of a cupboard front: kitchen-front.jpg stretched like on the
-  // cupboards (its whole width = 61 cm, its height = 86 cm), so 58 cm of its width, centred
-  { const tex = new THREE.TextureLoader().load(TEX['kitchen-front'], () => loaded++);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.repeat.set(58 / 61, 24 / 86);
-    tex.offset.set((1 - 58 / 61) / 2, 0);
-    const m = Array(6).fill(M.pine); m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });
-    box(g, 638.5, 640, 0, 24, 213.5, 271.5, m); }
+  // Oven unit: the oven, up against the worktop, and under it a drawer front (kitchen-front-oven.jpg),
+  // both flush with the cupboard fronts (x = 640), the unit's box set back behind them
+  box(g, 641.5, 700, 0, 86, 213.5, 271.5, M.pine);
+  box(g, 640, 641.5, 24, 86, 213.5, 271.5, faced(M.black, { w: 'oven' }));
+  box(g, 640, 641.5, 0, 24, 213.5, 271.5, faced(M.pine, { w: 'kitchen-front-oven' }));
   for (const z of [271.5, 332.5]) {                                            // (tops and sides hidden: the sink bowl goes down into them)
     const m = faced(M.pine, { w: 'kitchen-front' }); m[2] = m[4] = m[5] = hidden;
     box(g, 640, 700, 0, 86, z, z + 61, m);
