@@ -142,7 +142,9 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration
   optional, `null` when an event follows; event `{ close: 'wcDown' }` closes that door during the
   row). Every door is back as at load when the visit starts (open, or closed with `closed: true` / the `home` of `addDoor()`: front door, closets). In the site the preview plays it in a loop;
-  full screen, it stops at the end or at the first action on the model.
+  full screen, it stops at the end or with the view buttons (top left). Full screen, a player at the
+  bottom drives it: -5 s, play/pause, +5 s, a slider over the whole path, the time; a click on the
+  view (elsewhere than on a door) pauses it; keys: space, left and right arrows.
 - **Textures**: add or replace an image in `assets/3d/textures/` (resized first, e.g. on macOS
   `sips -Z 400 name.jpg`; originals kept in `3d-sources/`), use its name in `picture(...)`, `tex`
   or `faced()`, run `python3 scripts/textures.py` (removes the metadata of the images, camera model, dates,

@@ -16,7 +16,9 @@
 {{- end -}}
 {{- $labels := dict
   "both" (i18n "visitBoth") "living" (i18n "visitLiving") "night" (i18n "visitNight")
-  "start" (i18n "visitStart") "stop" (i18n "visitStop") "close" (i18n "close") "help" (i18n "visitHelp") -}}
+  "start" (i18n "visitStart") "stop" (i18n "visitStop") "close" (i18n "close") "help" (i18n "visitHelp")
+  "play" (i18n "visitPlay") "pause" (i18n "visitPause") "back" (i18n "visitBack") "forward" (i18n "visitForward")
+  "progress" (i18n "visitProgress") -}}
 <span class="image main visit3d" hidden>
 	<span class="visit3d-stage" role="button" tabindex="0" aria-label="{{ i18n "visitOpen" }}"
 		data-visit-js="{{ $js.RelPermalink }}" data-visit-textures="{{ $tex | jsonify }}" data-labels="{{ $labels | jsonify }}">

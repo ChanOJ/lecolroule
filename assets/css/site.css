@@ -543,6 +543,60 @@ html.viewer-is-open {
 			color: #ffffff !important;
 		}
 
+	/* Player of the guided visit, at the bottom (full screen, while the visit runs; the help text of
+	   the free view shows otherwise) */
+	.visit3d-player {
+		position: absolute;
+		left: 0.75rem;
+		right: 0.75rem;
+		bottom: 0.75rem;
+		display: none;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4rem 0.6rem;
+		border-radius: 6px;
+		background: rgba(255, 255, 255, 0.85);
+	}
+
+		.visit3d-ui.touring .visit3d-player {
+			display: flex;
+		}
+
+		.visit3d-ui.touring .visit3d-help {
+			display: none;
+		}
+
+		.visit3d-ui .visit3d-player button {
+			flex: none;
+			min-width: 2.6rem;
+			padding: 0.4rem 0.5rem;
+			letter-spacing: 0;
+			text-transform: none;
+		}
+
+		/* The browser's own slider: not the theme's text field look */
+		.visit3d-ui .visit3d-seek {
+			flex: 1;
+			min-width: 4rem;
+			height: auto;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			background: none;
+			box-shadow: none;
+			-webkit-appearance: auto;
+			appearance: auto;
+			accent-color: #2f6f7d;
+			cursor: pointer;
+		}
+
+		.visit3d-time {
+			flex: none;
+			color: #1b1f22;
+			font-size: 0.75rem;
+			font-variant-numeric: tabular-nums;
+		}
+
 	/* The cross centred: no letter spacing (it would push the icon left), flex centring */
 	.visit3d-ui .visit3d-close {
 		position: absolute;

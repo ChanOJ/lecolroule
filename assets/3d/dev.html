@@ -26,6 +26,12 @@
   .visit3d-bar button { padding: 8px 12px; border: 1px solid #9aa4ad; border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; }
   .visit3d-bar button.on { background: #2f6f7d; color: #fff; border-color: #2f6f7d; }
   .visit3d-help { position: absolute; left: 12px; bottom: 12px; margin: 0; font-size: 13px; }
+  .visit3d-player { position: absolute; left: 12px; right: 12px; bottom: 12px; display: none; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.85); }
+  .visit3d-ui.touring .visit3d-player { display: flex; }
+  .visit3d-ui.touring .visit3d-help { display: none; }
+  .visit3d-player button { min-width: 40px; padding: 6px 8px; border: 1px solid #9aa4ad; border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; }
+  .visit3d-seek { flex: 1; accent-color: #2f6f7d; }
+  .visit3d-time { font-size: 13px; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -38,6 +44,7 @@ window.lcr = createVisit(document.querySelector('.visit3d-stage'), {
   labels: {
     both: 'Both levels', living: 'Living level', night: 'Night level',
     start: 'Visit', stop: 'Stop the visit', close: 'Close',
+    play: 'Play', pause: 'Pause', back: 'Back 5 seconds', forward: 'Forward 5 seconds', progress: 'Position in the visit',
     help: 'Drag to turn, scroll or pinch to zoom, click a door to open or close it.',
   },
 });
