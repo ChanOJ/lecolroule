@@ -988,8 +988,12 @@ function ceilingLamp(g, x, z, y) {
   for (const [x, y, m] of [[440, 185, M.grey], [468, 150, M.white], [492, 178, M.black], [520, 140, M.grey], [548, 172, M.white], [575, 188, M.black], [600, 150, M.grey], [625, 176, M.white]])
     box(g, x, x + 5, y, y + 11, 1, 5, m);
   // Light fittings (the living level has no ceiling in the model: they hang at ceiling height)
-  track(g, 435, 354, 90, 'x', LIVING_H);
-  track(g, 150, 215, 90, 'x', LIVING_H);
+  // Pendants (Light_Icosahedron2, 90 cm long) over the dining table and the sitting area
+  for (const [x, z] of [[435, 354], [150, 215]]) {
+    model(g, 'Light_Icosahedron2', x, z, 0, [90, 28, 49], { Grey: M.black, LightMetal: steel,
+      White: mat(0xf2f2ee, { roughness: 0.5 }), Light: M.bulb }, LIVING_H - 49);
+    lamp(g, x, LIVING_H - 40, z, 2.4);
+  }
   track(g, 530, 60, 30, 'x', 217, 2);
 
   // Dining table (198 x 78), varnished pine: two solid end legs joined by a low stretcher, eight chairs
@@ -1015,10 +1019,10 @@ function ceilingLamp(g, x, z, y) {
   box(g, 640, 700, 0, 215, 453.5, 513.5, faced(M.pine, { w: 'fridge' }));
   // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
   const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
-  const BOWL = { x1: 649.3, x2: 693, z1: 331.1, z2: 376.3 };                     // its bowl, measured on the photo
+  const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
-    const worktop = mat(0x4b4f54, { roughness: 0.15, envMapIntensity: 0.7 });
+    const worktop = mat(0x4a4f55, { roughness: 0.35, envMapIntensity: 0.6 });   // the grey of the tiles, satin
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
   // Induction hob (kitchen-induction.jpg), glossy: its controls at the front (west)
   plate(g, rrect(THREE.Shape, 646, 696, 215, 271, 1), 90.6, 0.6,
@@ -1026,19 +1030,24 @@ function ceilingLamp(g, x, z, y) {
     { uv: (x, z) => [(z - 215) / 56, (x - 646) / 50] });
   // Sink (kitchen-sink.jpg): a plate on the worktop with the photo, the bowl 18 cm deep under it;
   // photo coordinates of the sink: u 0.003..0.998 along z, v 0.261..0.739 from the front (west)
-  { const sinkMat = mat(0xffffff, { map: texture('kitchen-sink'), roughness: 0.3 });
+  { const sinkMat = mat(0xffffff, { map: texture('kitchen-sink'), roughness: 0.5 });
+    const sinkGrey = mat(0x302f2d, { roughness: 0.5 });                          // average colour of the sink in the photo
     const uv = (x, z) => [0.003 + (z - SINK.z1) / (SINK.z2 - SINK.z1) * 0.995, 0.261 + (x - SINK.x1) / (SINK.x2 - SINK.x1) * 0.478];
     const rim = rrect(THREE.Shape, SINK.x1 + 0.3, SINK.x2 - 0.3, SINK.z1 + 0.3, SINK.z2 - 0.3, 2);
     rim.holes.push(rrect(THREE.Path, BOWL.x1 - 0.3, BOWL.x2 + 0.3, BOWL.z1 - 0.3, BOWL.z2 + 0.3, 3));
-    plate(g, rim, 91, 1, [sinkMat, M.black], { bevel: 0.3, uv });
+    plate(g, rim, 91, 1, [sinkMat, sinkGrey], { bevel: 0.3, uv });
     // bowl: a box seen from inside (back faces), open at the top, the photo on its bottom
-    const inside = Object.assign(M.black.clone(), { side: THREE.BackSide });
+    const inside = Object.assign(sinkGrey.clone(), { side: THREE.BackSide });
     const bottom = Object.assign(sinkMat.clone(), { side: THREE.BackSide });
     const b = box(g, BOWL.x1, BOWL.x2, 73, 91, BOWL.z1, BOWL.z2, [inside, inside, hidden, bottom, inside, inside]);
     const pos = b.geometry.attributes.position, n = b.geometry.attributes.normal, buv = b.geometry.attributes.uv;
     for (let i = 0; i < pos.count; i++) if (n.getY(i) < -0.5)
       buv.setXY(i, ...uv(b.position.x / CM + pos.getX(i) / CM, b.position.z / CM + pos.getZ(i) / CM));
-    buv.needsUpdate = true; }
+    buv.needsUpdate = true;
+    // Chrome tap: the tap of the pack's Kitchen_Sink, the rest of that model hidden (1 unit = 1 m:
+    // tap about 30 cm high); its base on the rim behind the bowl, spout over the bowl
+    const off = { Kitchen: hidden, KitchenTop: hidden, White: hidden, LightMetal: chrome };
+    model(g, 'Kitchen_Sink', 695 - 43.5, (BOWL.z1 + BOWL.z2) / 2, -90, [102, 113, 192], off, 91 - 162); }
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
   // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
   // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
