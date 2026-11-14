@@ -42,7 +42,7 @@ const M = {
   bulb: mat(0xfff2cc, { emissive: 0xffb87b, emissiveIntensity: 1.6 }),   // lit, 3200 K (see lamp())
   duct: mat(0xece6d6), cladding: mat(0xc49a62), orange: mat(0xe8703a),
   slate: mat(0x4b4f54), black: mat(0x1d1e20), white: mat(0xf4f4f1), grey: mat(0x74787e),
-  fabric: mat(0x8d98a8), buffet: mat(0x7c8a78), barrel: mat(0x6b6a4f), mirror: mat(0xbfd3dc),
+  fabric: mat(0x8d98a8), mirror: mat(0xbfd3dc),
   sage: mat(0xa9c4b0), taupe: mat(0xb5b0a0), tealGrey: mat(0x6f8587), paleGreen: mat(0xc5cbb4),
   lightBlue: mat(0x9db7d6), royal: mat(0x2c3fa8), anthracite: mat(0x3a3a3c), wcGrey: mat(0x9d9c94),
   bathTile: mat(0xb9b3a0), curtain: mat(0xcdbf9f), bunk: mat(0x7f9a9a), plastic: mat(0x555a60), petrol: mat(0x234b55), concrete: mat(0xb9bcbd), drape: mat(0x1f5a66), redDrape: mat(0xa8323a), lounger: mat(0x8fb5ad), hatch: mat(0x8fb5a8),
@@ -111,7 +111,7 @@ function wood(key, size, grain, { turn = false, ...opts } = {}) {
 const PINE = wood('pine', [60, 60], 'v');    // pine (stairs, shelves, frames, bedside tables...)
 const OAK = wood('oak', [100, 50], 'u');     // oak (living room shelves)
 const TABLE_TOP = wood('wood034', [100, 50], 'u');                                   // top of the barrel table
-const BARREL = wood('pipe002', [30, 30], 'u', { roughness: 0.15, metalness: 0.5 });    // its hooped body, glossy metal
+const BARREL = wood('pipe002', [30, 66], 'u', { roughness: 0.15, metalness: 0.5 });    // its hooped body, glossy metal (2 hoops)
 // Grey woven fabric (ambientCG Fabric030): sofa, armchairs, poufs, spare mattress. FABRIC on metre
 // texture coordinates, FABRIC_MODEL on a model's (1 unit of the pack is about 40 cm, see boxUV())
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
@@ -184,10 +184,10 @@ function woodUV(geo, grain) {
   uv.needsUpdate = true;
 }
 
-// Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n: key }.
+// Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n, t (top): key }.
 function faced(m, faces) {
   // a face given as [key, true] shows the image mirrored (the back of a door)
-  return ['e', 'w', null, null, 's', 'n'].map((f) => (!f || !faces[f] ? m : Array.isArray(faces[f]) ? texMat(...faces[f]) : texMat(faces[f])));   // box face order
+  return ['e', 'w', 't', null, 's', 'n'].map((f) => (!f || !faces[f] ? m : Array.isArray(faces[f]) ? texMat(...faces[f]) : texMat(faces[f])));   // box face order
 }
 // Door leaf with the photo of a door on both faces (porte.jpg: handle on the left, hinges on the
 // right), mirrored on the faces where the hinges are on the left: the handle is always away from
@@ -636,6 +636,18 @@ function tubChair(g, x, z, deg, m) {
   shell.position.y = 59 * CM;
   c.add(shell);
 }
+// Pouf: a cylinder 48 cm wide and 38 cm high in FABRIC, its edges rounded (3 cm), on a lathe profile
+function pouf(g, x, z, r = 24, h = 38, rr = 3) {
+  const pts = [new THREE.Vector2(0, 0)];
+  for (let i = 0; i <= 6; i++) { const a = -Math.PI / 2 + i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (rr + rr * Math.sin(a)) * CM)); }
+  for (let i = 0; i <= 6; i++) { const a = i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (h - rr + rr * Math.sin(a)) * CM)); }
+  pts.push(new THREE.Vector2(0, h * CM));
+  const geo = new THREE.LatheGeometry(pts, 40), uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2 * Math.PI * r * CM, uv.getY(i) * (2 * r + h) * CM);   // metres
+  const mesh = new THREE.Mesh(geo, FABRIC);
+  mesh.position.set(x * CM, 0, z * CM);
+  g.add(mesh);
+}
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
 function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
@@ -903,17 +915,19 @@ function ceilingLamp(g, x, z, y) {
   metreUV(cyl(g, 137, 165, 31, 44, 46.5, TABLE_TOP), 31, 2.5);
   tubChair(g, 135, 262, 180, FABRIC);
   tubChair(g, 255, 215, 215, FABRIC);
-  metreUV(cyl(g, 45, 160, 24, 0, 38, FABRIC), 24, 38);
-  metreUV(cyl(g, 78, 128, 24, 0, 38, FABRIC), 24, 38);
+  pouf(g, 45, 160); pouf(g, 78, 128);
   // Corner TV unit between the west wall and the stairwell rail, TV set on the diagonal facing the WC block
-  slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, M.pine);
+  slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, OAK);
   const tv = placed(g, 40, S.zN - 44, 135);
   const glossy = mat(0x111214, { roughness: 0.1, envMapIntensity: 0.8 }), satin = mat(0x0c0d0f, { roughness: 0.35 });
   box(tv, -14, 14, 45, 50, -8, 8, glossy);
   box(tv, -50, 50, 50, 112, -2, 2, [glossy, glossy, glossy, glossy, satin, glossy]);   // glossy black, satin screen
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
-  box(g, 262, 404, 12, 85, 125, 165, M.buffet);
-  for (const x of [264, 398]) for (const z of [127, 159]) box(g, x, x + 4, 0, 12, z, z + 4, M.black);
+  // (sideboard: 120 wide, 70 high, 35 deep, centred under the mirror; its body 6..70 cm between four
+  // glossy black posts at its corners, flush with its front and back, 6 cm longer below: its feet)
+  box(g, 277, 389, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
+  { const glossyBlack = mat(0x111214, { roughness: 0.12, envMapIntensity: 0.8 });
+    for (const x of [273, 389]) for (const z of [125, 156]) box(g, x, x + 4, 0, 70, z, z + 4, glossyBlack); }
   box(g, 300, 366, 112, 188, 125, 129, PINE);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
@@ -1242,7 +1256,10 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.zoomSpeed = 4.5;   // the wheel or pinch zooms 4.5 times faster than by default
+  // Zoom: a mouse wheel or trackpad zooms 4.5 times faster than by default; a pinch on a touch
+  // screen keeps the default speed (the view follows the fingers). Set before the controls react.
+  const ZOOM_WHEEL = 4.5, ZOOM_PINCH = 1;
+  controls.zoomSpeed = ZOOM_WHEEL;
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
@@ -1505,6 +1522,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // Any action in the viewer (view buttons, drag, wheel, keys, door click) may change the image
   controls.addEventListener('change', invalidate);
   for (const ev of ['pointerdown', 'pointerup', 'wheel', 'keydown', 'click']) stage.addEventListener(ev, invalidate, true);
+  stage.addEventListener('pointerdown', (e) => { controls.zoomSpeed = e.pointerType === 'touch' ? ZOOM_PINCH : ZOOM_WHEEL; }, true);
+  stage.addEventListener('wheel', () => { controls.zoomSpeed = ZOOM_WHEEL; }, true);
   renderer.domElement.addEventListener('pointerdown', onPress);
   renderer.domElement.addEventListener('pointerup', onRelease);
   renderer.domElement.addEventListener('pointermove', onHover);
