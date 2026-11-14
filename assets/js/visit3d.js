@@ -67,6 +67,9 @@ const wcDoor = new THREE.Group(), WC_DOOR_OPEN = -Math.PI / 2;   // door of the 
 // (rotation `open`). Full screen, a click on a door opens or closes it; a row of TOUR can close one
 // during the visit. Named doors (wall openings with `name`, or addDoor(..., name)) are in DOORS.
 const DOORS = new Map(), DOOR_LIST = [];
+// Ceilings of the living level (the slab, the entrance's lowered ceiling): shown during the
+// first-person visit only, so that the usual view from above stays open
+const TOUR_ONLY = [];
 function setDoor(d, openness) { d.openness = openness; d.pivot.rotation.y = d.open * openness; }
 // home: openness at load and at the start of every visit (1 = open, 0 = closed).
 function addDoor(pivot, open, name, home = 1) {
@@ -404,7 +407,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   box(g, 503, 506, 0, LIVING_H, 118, 182.5, M.duct);                          // west side
   box(g, 572, 575, 0, LIVING_H, 118, 182.5, M.duct);                          // east side
   box(g, 506, 572, 0, LIVING_H, 179.5, 182.5, M.duct);                        // back, radiator on the kitchen side
-  box(g, 506, 572, 204, LIVING_H, 118, 179.5, M.duct);                        // above its door
+  box(g, 506, 572, 204, LIVING_H, 118, 121, M.duct);                          // above its door: a 3 cm lintel, the closet open above (seen from above)
   box(g, 575, 640, 0, LIVING_H, 118, 157, M.duct);                            // back of the kitchen alcove (25 cm recess)
   box(g, 640, 650, 0, LIVING_H, 118, 182.5, M.duct);
   box(g, 650, 700, 0, LIVING_H, 130, 182.5, M.duct);
@@ -414,7 +417,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
     box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
-  box(g, 380, 650, 217, LIVING_H, 0, 118, M.wall);
+  TOUR_ONLY.push(box(g, 380, 650, 217, LIVING_H, 0, 118, M.wall));            // lowered ceiling of the entrance
 
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
   const rise = LIVING_Y / 15, going = (S.x - S.turn) / 5, T = 4;
@@ -525,7 +528,8 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
 slab(living, [[0, NIGHT_Z], [860, NIGHT_Z], [860, NIGHT_Z + 427], [0, NIGHT_Z + 427]], -SLAB, 0.8, M.white,
   [[[0, STAIR.zN], [STAIR.x, STAIR.zN], [STAIR.x, STAIR.zS], [0, STAIR.zS]]]);
 const livingCeiling = slab(living, [[0, 0], [650, 0], [650, 130], [700, 130], [700, 513.5], [0, 513.5]], LIVING_H + 2, 2, M.white);
-livingCeiling.visible = false;
+TOUR_ONLY.push(livingCeiling);
+for (const o of TOUR_ONLY) o.visible = false;
 
 // ---------- Night level ----------
 {
@@ -1326,7 +1330,7 @@ function mergeStatic(group, skip = []) {
   for (const o of merged) o.parent.remove(o);
   for (const [m, geos] of byMat) group.add(new THREE.Mesh(mergeGeometries(geos, false), m));
 }
-if (URL_PARAMS.get('merge') !== '0') { mergeStatic(living, [livingCeiling]); mergeStatic(night); mergeStatic(stairs); }
+if (URL_PARAMS.get('merge') !== '0') { mergeStatic(living, TOUR_ONLY); mergeStatic(night); mergeStatic(stairs); }
 
 // ---------- First-person visit ----------
 // Keyframes: [x, z, floor height, heading, pitch, duration]. x, z and the floor height are in cm, in the
@@ -1542,12 +1546,12 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
         setView('both');
         controls.enabled = false;
         lens();
-        livingCeiling.visible = true;
+        for (const o of TOUR_ONLY) o.visible = true;
         tourButton.textContent = labels.stop || 'Stop';
       },
       stop() {
         if (!running) return;
-        running = false; livingCeiling.visible = false; openAll();
+        running = false; for (const o of TOUR_ONLY) o.visible = false; openAll();
         tourButton.textContent = labels.start || 'Visit';
         overview();
       },
