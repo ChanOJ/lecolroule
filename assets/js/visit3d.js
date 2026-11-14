@@ -1035,7 +1035,7 @@ function ceilingLamp(g, x, z, y) {
 
   // Kitchen along the east wall, from north to south: open shelf, oven and hob, two cupboards (the
   // sink above), washing machine, tall unit (fridge); wall units above. Fronts face west: photos.
-  openUnit(g, 640, 700, 0, 86, 182.5, 213.5, null, null, 15);                 // open unit, two shelves, solid bottom 15 cm
+  openUnit(g, 640, 700, 0, 86, 182.5, 213.5, null, null, 13);                 // open unit, two shelves, solid bottom 13 cm
   // Oven unit: the oven, up against the worktop, and under it a drawer front (kitchen-front-oven.jpg),
   // both flush with the cupboard fronts (x = 640), the unit's box set back behind them
   box(g, 641.5, 700, 0, 86, 213.5, 271.5, M.pine);
@@ -1096,8 +1096,8 @@ function ceilingLamp(g, x, z, y) {
   // the open units at both ends (photo: x 0..117 and 790..1000 of 1000 px): hollow, two shelves,
   // the photo on the front edges of their boards
   { const top = mat(0xffffff, { map: texture('kitchen-top'), roughness: 0.7 }), uv = (z, y) => [(z - 182.5) / 271, (y - 140) / 75];
-    openUnit(g, 665, 700, 140, 215, 182.5, 214, top, uv, 5);                  // solid bottom 5 cm
-    openUnit(g, 665, 700, 140, 215, 396.6, 453.5, top, uv, 5); }
+    openUnit(g, 665, 700, 140, 215, 182.5, 214, top, uv, 7);                  // solid bottom 7 cm
+    openUnit(g, 665, 700, 140, 215, 396.6, 453.5, top, uv, 7); }
   box(g, 699, 700, 140, 154, 214, 275, M.slate);
   // Tiles on the back wall, also behind the gap under the shorter unit; joints from the worktop
   tiledWall(g, KITCHEN_TILES, 'w', 699, 182.5, 453.5, 90, 140, 182.5, 90);
