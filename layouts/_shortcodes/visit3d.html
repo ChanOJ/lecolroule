@@ -2,16 +2,24 @@
   3D model of the flat with its first-person visit: {{< visit3d >}}
   Shown like a photo of the page (same width, caption below). main.js ("3D
   visit") loads the model (assets/js/visit3d.js, built with three.js into one
-  file) when it comes into view: the visit plays in a loop, a click opens it
+  file; its textures are WebP files apart) when it comes into view: the visit plays in a loop, a click opens it
   full screen to look around freely. Hidden without JavaScript or WebGL.
 */ -}}
 {{- $js := resources.Get "js/visit3d.js" | js.Build (dict "format" "esm" "minify" true "target" "es2020" "targetPath" "js/visit3d.js") | fingerprint "md5" -}}
+{{- /* Its textures (assets/3d/textures/), as WebP files made here (fingerprinted, cached apart from
+  the model): { name: URL }, read by visit3d.js from data-visit-textures. */ -}}
+{{- $tex := dict -}}
+{{- range resources.Match "3d/textures/*" -}}
+	{{- if eq .ResourceType "image" -}}
+		{{- $tex = merge $tex (dict (path.BaseName .Name) (.Process "webp q80").RelPermalink) -}}
+	{{- end -}}
+{{- end -}}
 {{- $labels := dict
   "both" (i18n "visitBoth") "living" (i18n "visitLiving") "night" (i18n "visitNight")
   "start" (i18n "visitStart") "stop" (i18n "visitStop") "close" (i18n "close") "help" (i18n "visitHelp") -}}
 <span class="image main visit3d" hidden>
 	<span class="visit3d-stage" role="button" tabindex="0" aria-label="{{ i18n "visitOpen" }}"
-		data-visit-js="{{ $js.RelPermalink }}" data-labels="{{ $labels | jsonify }}">
+		data-visit-js="{{ $js.RelPermalink }}" data-visit-textures="{{ $tex | jsonify }}" data-labels="{{ $labels | jsonify }}">
 		<span class="visit3d-hint icon solid fa-cube">{{ i18n "visitOpen" }}</span>
 	</span>
 	{{ i18n "visitCaption" }}
