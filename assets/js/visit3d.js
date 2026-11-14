@@ -1570,6 +1570,15 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       timeText.textContent = `${mmss(Math.min(clock, total))} / ${mmss(total)}`;
     };
     seekBar.max = total;
+    // Paused, the view is free (as outside the visit): it turns round a point 2 m ahead of the eye;
+    // playing again puts the camera back on the path, where the visit is
+    const look = new THREE.Vector3();
+    const freeView = () => {
+      camera.getWorldDirection(look);
+      controls.target.copy(camera.position).addScaledVector(look, 2);
+      controls.enabled = full;
+      controls.update();
+    };
     const lens = () => {
       // wide lens: about 109 degrees of horizontal field of view, whatever the shape of the frame
       camera.fov = Math.min(118, Math.max(60, 2 * Math.atan(Math.tan(40 * Math.PI / 180) / 0.6 / camera.aspect) * 180 / Math.PI));
@@ -1598,15 +1607,17 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       lens,
       get paused() { return paused; },
       // Jump to a moment of the visit and hold it (debugging: window.lcr.tour.seek(42))
-      seek(time) { if (!running) this.start(); clock = time; paused = true; moved = true; pose(clock); showPlayer(); },
+      seek(time) { if (!running) this.start(); clock = time; paused = true; moved = true; pose(clock); freeView(); showPlayer(); },
       // Player: go to a moment (playing or paused as before), move by dt seconds, pause, play
       seekTo(time) { clock = Math.min(Math.max(time, 0), total); moved = true; showPlayer(); },
       skip(dt) { this.seekTo(clock + dt); },
-      pause() { if (running && !paused) { paused = true; showPlayer(); } },
+      pause() { if (running && !paused) { paused = true; freeView(); showPlayer(); } },
       play() {
         if (!running) return;
         if (clock >= total) clock = 0;                                          // from the start again
-        paused = false; last = performance.now(); showPlayer();
+        paused = false; last = performance.now(); moved = true;
+        controls.enabled = false;
+        showPlayer();
       },
       set dragging(on) { dragging = on; },
       start() {
@@ -1636,6 +1647,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
         if (paused && !moved) return false;
         moved = false;
         pose(Math.min(clock, total));
+        if (paused) freeView();                                                 // moved while paused: free view from there
         if (full) showPlayer();
         if (clock > total + 2) {
           if (full) this.stop();
