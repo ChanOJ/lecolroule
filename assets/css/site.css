@@ -543,19 +543,26 @@ html.viewer-is-open {
 			color: #ffffff !important;
 		}
 
+	/* The cross centred: no letter spacing (it would push the icon left), flex centring */
 	.visit3d-ui .visit3d-close {
 		position: absolute;
 		top: 0.75rem;
 		right: 0.75rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
 		padding: 0;
 		border-radius: 100%;
 		font-size: 1rem;
+		letter-spacing: 0;
+		text-indent: 0;
 	}
 
 		.visit3d-close:before {
 			margin: 0;
+			line-height: 1;
 		}
 
 	.visit3d-help {
