@@ -92,11 +92,13 @@ const texMat = (key, flip = false) => mat(0xffffff, { map: texture(key, flip), r
 // ('u' or 'v' of the image). Boxes drawn with it get texture coordinates in metres with the grain
 // along their longest side (woodUV()); slabs and plates (slab(), stairs) have metre coordinates too.
 // Its relief: the height map <key>-bump (the pack's displacement map) as a bump map.
-function wood(key, size, grain, opts = {}) {
+// opts.turn: true turns the image a quarter turn (its u along v): planks in the other direction.
+function wood(key, size, grain, { turn = false, ...opts } = {}) {
   const load = (k) => {
     const tex = new THREE.TextureLoader().load(TEX[k], () => loaded++);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(1 / (size[0] * CM), 1 / (size[1] * CM));
+    if (turn) tex.rotation = Math.PI / 2;
     tex.anisotropy = 8;
     return tex;
   };
@@ -114,6 +116,8 @@ const BARREL = wood('pipe002', [30, 30], 'u', { color: 0xc89a6a, roughness: 0.5 
 // texture coordinates, FABRIC_MODEL on a model's (1 unit of the pack is about 40 cm, see boxUV())
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
 const FABRIC_MODEL = wood('fabric030', [62.5, 62.5], 'u', { roughness: 1 });
+// Terrace deck: weathered planks (ambientCG Planks027A), running north-south (slab: u = x, v = z)
+const DECK = wood('planks027a', [140, 140], 'u', { turn: true, roughness: 0.8 });
 const NIGHT_FLOOR = wood('wood043', [200, 200], 'u', { color: 0xc4ccd4, roughness: 0.7 });   // tinted greyer, less red
 // Texture coordinates in metres on a cylinder (cyl()): around and up on the side, plan x/z on the caps
 function metreUV(mesh, r, h) {
@@ -433,7 +437,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
 
   // Terrace: L-shaped deck, low wall with wooden rail, storage cabinet at the end of the short leg
   const tz = 513.5 + EXT, te = 860, ts = tz + 205;
-  slab(g, [[-EXT, tz], [736, tz], [736, S.zN], [te + EXT, S.zN], [te + EXT, ts + EXT], [-EXT, ts + EXT]], 0, SLAB, M.deck);
+  slab(g, [[-EXT, tz], [736, tz], [736, S.zN], [te + EXT, S.zN], [te + EXT, ts + EXT], [-EXT, ts + EXT]], 0, SLAB, [DECK, M.deck]);
   // Low wall as thick as the outer walls, outside the clear 860 x 205, flush with the night level walls
   const guard = (axis, c, a, b, plain = false, ra = a, rb = b) => {
     const bx = (y1, y2, w, m) => axis === 'x' ? box(g, a, b, y1, y2, c - w / 2, c + w / 2, m) : box(g, c - w / 2, c + w / 2, y1, y2, a, b, m);
