@@ -37,7 +37,7 @@ const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({ color, roughn
 const M = {
   wall: mat(0xece6d6), cut: mat(0xcfc8bc), render: mat(0xd9bfb4), teal: mat(0x3f7f8c),
   tiles: mat(0x4a4f55), oak: mat(0x9a948a), deck: mat(0x7a5a44),
-  pine: mat(0xd9a55b), brown: mat(0x5a3d2e), lowWall: mat(0xe6e0d4), darkBrown: mat(0x3b2a20, { roughness: 0.6 }),
+  pine: mat(0xd9a55b), brown: mat(0x5a3d2e), lowWall: mat(0xe6e0d4), darkBrown: mat(0x4a3327, { roughness: 0.6 }),   // between the former 0x3b2a20 and brown
   glass: mat(0x9cc7e0, { transparent: true, opacity: 0.3, roughness: 0.05 }),
   bulb: mat(0xfff2cc, { emissive: 0xffb87b, emissiveIntensity: 1.6 }),   // lit, 3200 K (see lamp())
   duct: mat(0xece6d6), cladding: mat(0xc49a62), orange: mat(0xe8703a),
@@ -370,16 +370,16 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   // WC block: teal outside, orange inside, door on its east side
   wall(g, 'z', 273.5, 0, 118, PART, LIVING_H, M.teal, [], [M.teal, M.orange]);
   wall(g, 'x', 121.5, 255, 270, PART, LIVING_H, M.teal);                      // 15 cm stub: right support of the shelves
-  wall(g, 'x', 121.5, 270, 395, PART, LIVING_H, M.teal, [], [M.orange, M.teal]);   // south wall: 125 cm outside (the sideboard)
+  wall(g, 'x', 121.5, 270, 380, PART, LIVING_H, M.teal, [], [M.orange, M.teal]);   // south wall: with the stub, 125 cm on the living side (x 255..380, the sideboard)
   box(g, 0, 15, 0, LIVING_H, 112, 127, M.wall);                               // post: left support of the west shelves
-  wall(g, 'z', 391.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
+  wall(g, 'z', 376.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
   // Its door: hinged at the south end, it opens towards the entrance; the visit closes it (see tour)
-  wcDoor.position.set(391.5 * CM, 0, 104 * CM);
+  wcDoor.position.set(376.5 * CM, 0, 104 * CM);
   box(wcDoor, -2, 2, 0, 203, -73, 0, leafFaces('z', -1, 'porte', M.pine));
   g.add(wcDoor);
   addDoor(wcDoor, WC_DOOR_OPEN, 'wcUp');
-  paint(g, 'x', 0.5, 277, 388, LIVING_H, M.orange);
-  paint(g, 'x', 0.5, 395, 650, 217, M.teal);                                  // entrance
+  paint(g, 'x', 0.5, 277, 373, LIVING_H, M.orange);
+  paint(g, 'x', 0.5, 380, 650, 217, M.teal);                                  // entrance
   paint(g, 'x', 0.75, 0, 270, LIVING_H, M.cladding);                         // wood cladding behind the sofa
 
   // Service ducts between the entrance and the kitchen, lowered ceiling of the entrance
@@ -398,7 +398,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
     box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
-  box(g, 395, 650, 217, LIVING_H, 0, 118, M.wall);
+  box(g, 380, 650, 217, LIVING_H, 0, 118, M.wall);
 
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
   const rise = LIVING_Y / 15, going = (S.x - S.turn) / 5, T = 4;
@@ -936,20 +936,20 @@ function ceilingLamp(g, x, z, y) {
   box(tv, -14, 14, 45, 50, -8, 8, glossy);
   box(tv, -50, 50, 50, 112, -2, 2, [glossy, glossy, glossy, glossy, satin, glossy]);   // glossy black, satin screen
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
-  // (sideboard: 120 wide, 70 high, 35 deep, centred on the wall (x 270..395) under the mirror; its body 6..70 cm between four
+  // (sideboard: 120 wide, 70 high, 35 deep, centred on the wall (x 255..380) under the mirror; its body 6..70 cm between four
   // glossy black posts at its corners, flush with its front and back, 6 cm longer below: its feet)
-  box(g, 276.5, 388.5, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
+  box(g, 261.5, 373.5, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
   { const glossyBlack = mat(0x111214, { roughness: 0.12, envMapIntensity: 0.8 });
-    for (const x of [272.5, 388.5]) {
+    for (const x of [257.5, 373.5]) {
       for (const z of [125, 156]) box(g, x, x + 4, 0, 70, z, z + 4, glossyBlack);
       box(g, x, x + 4, 66, 70, 129, 156, glossyBlack);                        // top rail joining the pair
     } }
-  box(g, 300, 366, 112, 188, 125, 129, PINE);
-  mirror(g, 's', 129, 308, 358, 120, 180);
+  box(g, 284.5, 350.5, 112, 188, 125, 129, PINE);                             // centred on the wall (x 255..380), like the clock
+  mirror(g, 's', 129, 292.5, 342.5, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
   // cut to their shape, metal cyclist on the west face of the closet block between the entrance and
   // the kitchen (80 % of its width, centred 180 cm above the floor)
-  picture(g, 'clock', 's', 125, 296, 370, 210.7, 233.3, { depth: 1, gap: 1 });
+  picture(g, 'clock', 's', 125, 280.5, 354.5, 210.7, 233.3, { depth: 1, gap: 1 });
   picture(g, 'silhouette', 's', 1.5, 95, 185, 150, 205, METAL);
   picture(g, 'skiA', 'e', 0, 204, 232, 150, 224, { depth: 1 });
   picture(g, 'skiB', 'e', 0, 170, 197, 138, 212, { depth: 1 });
@@ -1001,7 +1001,7 @@ function ceilingLamp(g, x, z, y) {
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
-  ceilingLight(g, 332.5, 59, LIVING_H);
+  ceilingLight(g, 325, 59, LIVING_H);
   model(g, 'Bathroom_ToiletPaper', 277 + 4.8, 60, 90, [16.5, 9.6, 19], paperParts, 60);   // on the west wall
   cyl(g, 292, 103, 15, 76, 84, M.white);
   // Corner cabinet: a triangle in plan (20 cm along each wall); its door is the mirror, flat on the diagonal
