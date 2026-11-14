@@ -1,13 +1,16 @@
 <!doctype html>
 <!--
-  Catalog of a pack of 3D models (OBJ + MTL), to choose furniture for the 3D visit. Local only:
-  the pack lives in 3d-sources/ (ignored by git), e.g. the "Ultimate House Interior" pack of
-  Quaternius (CC0) in 3d-sources/quaternius/OBJ/. Serve the repository root:
+  Catalog of the packs of 3D models (OBJ + MTL), to choose furniture for the 3D visit. Local only:
+  the packs live in 3d-sources/quaternius/<pack>/ (ignored by git: OBJ/, maybe Textures/), e.g.
+  "Ultimate House Interior Pack" and "Stylized Tree Pack" of Quaternius (CC0). Serve the
+  repository root:
     python3 -m http.server
-  then open http://localhost:8000/assets/3d/catalog.html
-  (?dir=../../3d-sources/<pack>/OBJ/ for another folder: the page reads the server's directory
-  listing). Each model is shown with its name and size in cm (width x depth x height, as
-  exported); a click opens it large, to turn around it. See README.md, "3D visit".
+  then open http://localhost:8000/assets/3d/catalog.html and choose a pack (?pack=<name> in the
+  URL; ?dir=<folder of .obj files>/ for any other folder). The page reads the server's directory
+  listings. Each model is shown with its name and size in cm (width x depth x height, as
+  exported); a click opens it large, to turn around it. Materials without an image in their MTL
+  file take the image of Textures/ named after them (Tree_Leaves -> Tree_Leaves.png, Bark ->
+  Tree_Bark.jpg, Birch_Leaves -> Birch_Leaves_Green.png). See README.md, "3D visit".
 -->
 <html lang="en">
 <head>
@@ -18,7 +21,7 @@
   body { margin: 0; padding: 16px; background: #e9edf0; font-family: system-ui, sans-serif; color: #222; }
   header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
   h1 { font-size: 20px; margin: 0; }
-  input { padding: 6px 10px; font-size: 14px; border: 1px solid #9aa4ad; border-radius: 6px; min-width: 200px; }
+  input, select { padding: 6px 10px; font-size: 14px; border: 1px solid #9aa4ad; border-radius: 6px; min-width: 200px; background: #fff; }
   #status { font-size: 13px; color: #555; }
   #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
   .card { background: #fff; border-radius: 8px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
@@ -36,6 +39,7 @@
 <body>
 <header>
   <h1>3D models catalog</h1>
+  <select id="pack" aria-label="Pack"></select>
   <input id="filter" type="search" placeholder="Filter by name (couch, chair...)">
   <span id="status"></span>
 </header>
@@ -48,18 +52,43 @@ import { RoomEnvironment } from '../vendor/three-0.160.0/addons/environments/Roo
 import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
 import { MTLLoader } from '../vendor/three-0.160.0/addons/loaders/MTLLoader.js';
 
-const dir = new URLSearchParams(location.search).get('dir') || '../../3d-sources/quaternius/OBJ/';
-const status = document.getElementById('status'), grid = document.getElementById('grid');
+const ROOT = '../../3d-sources/quaternius/', params = new URLSearchParams(location.search);
+const status = document.getElementById('status'), grid = document.getElementById('grid'), packSelect = document.getElementById('pack');
+let dir = params.get('dir'), textures = [];   // folder of the .obj files, image files of the pack
+
+// Links of a directory listing (python -m http.server), decoded; folders end with "/"
+const listing = async (url) => {
+  const html = await fetch(url).then((r) => (r.ok ? r.text() : '')).catch(() => '');
+  return [...html.matchAll(/href="([^"?#]+)"/g)].map((m) => decodeURIComponent(m[1])).filter((h) => !h.startsWith('.') && !h.startsWith('/'));
+};
+// Image of Textures/ for a material without one: same name, or name_..., or ..._name
+const imageFor = (name) => textures.find((f) => f.replace(/\.\w+$/, '') === name)
+  || textures.find((f) => f.startsWith(`${name}_`)) || textures.find((f) => f.replace(/\.\w+$/, '').endsWith(`_${name}`));
+// The pack's images, loaded before its models are drawn (a thumbnail is drawn once)
+const TEXTURES = new Map();
+const texUrl = (file) => `${dir}../Textures/${encodeURIComponent(file)}`;
+const preload = () => Promise.all(textures.filter((f) => !TEXTURES.has(texUrl(f))).map(async (f) => {
+  const t = await new THREE.TextureLoader().loadAsync(texUrl(f)).catch(() => null);
+  if (t) { t.colorSpace = THREE.SRGBColorSpace; TEXTURES.set(texUrl(f), t); }
+}));
+const textureOf = (file) => TEXTURES.get(texUrl(file)) || null;
 
 // The pack's MTL colours (Kd) are linear values (Blender), MTLLoader reads them as sRGB: undo it.
 async function load(name) {
-  const materials = await new MTLLoader().setPath(dir).loadAsync(`${name}.mtl`).catch(() => null);
+  const materials = await new MTLLoader().setPath(dir).loadAsync(`${encodeURIComponent(name)}.mtl`).catch(() => null);
   const loader = new OBJLoader();
   if (materials) { materials.preload(); loader.setMaterials(materials); }
-  const obj = await loader.setPath(dir).loadAsync(`${name}.obj`);
+  const obj = await loader.setPath(dir).loadAsync(`${encodeURIComponent(name)}.obj`);
   obj.traverse((o) => {
     if (!o.isMesh) return;
-    for (const m of [].concat(o.material)) if (m.color) m.color.convertLinearToSRGB();
+    for (const m of [].concat(o.material)) {
+      const file = !m.map && imageFor(m.name) && textureOf(imageFor(m.name)) && imageFor(m.name);
+      if (file) {                                                                // e.g. leaves: transparent PNG, both sides
+        m.map = textureOf(file); m.color.set(0xffffff);
+        if (/\.png$/i.test(file)) { m.alphaTest = 0.5; m.side = THREE.DoubleSide; }
+        m.needsUpdate = true;
+      } else if (m.color) m.color.convertLinearToSRGB();
+    }
   });
   return obj;
 }
@@ -88,11 +117,16 @@ function frame(obj, cam, aspect = 1) {
 }
 
 const cm = (v) => Math.round(v * 100);
-async function main() {
-  const listing = await fetch(dir).then((r) => r.text()).catch(() => '');
-  const names = [...new Set([...listing.matchAll(/href="([^"]+)\.obj"/g)].map((m) => decodeURIComponent(m[1])))].sort();
+let generation = 0;   // a pack chosen while another one loads stops it
+async function show() {
+  const my = ++generation;
+  grid.textContent = '';
+  textures = (await listing(`${dir}../Textures/`)).filter((f) => !f.endsWith('/'));
+  await preload();
+  const names = [...new Set((await listing(dir)).filter((f) => /\.obj$/i.test(f)).map((f) => f.replace(/\.obj$/i, '')))].sort();
   if (!names.length) { status.textContent = `No .obj file in ${dir} (see the comment at the top of this page).`; return; }
   for (const [i, name] of names.entries()) {
+    if (my !== generation) return;
     status.textContent = `${i + 1} / ${names.length}`;
     const card = document.createElement('div');
     card.className = 'card';
@@ -112,6 +146,21 @@ async function main() {
     grid.append(card);
   }
   status.textContent = `${names.length} models (size: width × depth × height)`;
+}
+async function main() {
+  if (dir) { packSelect.hidden = true; return show(); }                       // ?dir=: one folder
+  const packs = (await listing(ROOT)).filter((h) => h.endsWith('/')).map((h) => h.slice(0, -1)).sort();
+  if (!packs.length) { status.textContent = `No pack in ${ROOT} (see the comment at the top of this page).`; return; }
+  for (const name of packs) packSelect.append(new Option(name, name));
+  packSelect.value = packs.includes(params.get('pack')) ? params.get('pack') : packs[0];
+  const choose = () => {
+    dir = `${ROOT}${encodeURIComponent(packSelect.value)}/OBJ/`;
+    history.replaceState(null, '', `?pack=${encodeURIComponent(packSelect.value)}`);
+    document.getElementById('filter').value = '';
+    show();
+  };
+  packSelect.onchange = choose;
+  choose();
 }
 
 // Large view of one model
