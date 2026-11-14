@@ -146,6 +146,8 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   bottom drives it: -5 s, play/pause, +5 s, a slider over the whole path, the time; a click on the
   view (elsewhere than on a door) pauses it; keys: space, left and right arrows. Paused, the view
   is free (it turns round a point 2 m ahead); playing again puts the camera back on the path.
+  Zoom: within 60 cm of the point the view turns round, that point moves 1.5 m further ahead, so
+  that zooming never stalls (the controls' zoom shortens the distance to it by a share).
 - **Textures**: add or replace an image in `assets/3d/textures/` (resized first, e.g. on macOS
   `sips -Z 400 name.jpg`; originals kept in `3d-sources/`), use its name in `picture(...)`, `tex`
   or `faced()`, run `python3 scripts/textures.py` (removes the metadata of the images, camera model, dates,
