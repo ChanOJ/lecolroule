@@ -560,7 +560,8 @@ html.viewer-is-open {
 		text-indent: 0;
 	}
 
-		.visit3d-close:before {
+		/* The theme gives button icons a right margin: none here (specific enough to win) */
+		.visit3d-ui button.visit3d-close.icon:before {
 			margin: 0;
 			line-height: 1;
 		}
