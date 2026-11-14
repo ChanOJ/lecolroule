@@ -168,14 +168,16 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Wood**: `PINE` and `OAK` repeat the images `pine.jpg` / `oak.jpg` (ambientCG Wood092 and
   Wood095, CC0, colour maps resized to 512 px) with their height maps `pine-bump.jpg` /
   `oak-bump.jpg` as bump maps (`wood(key, [u, v] cm, grain)`). A box drawn in a wood gets texture
-  coordinates in metres with the grain along its longest side (`woodUV()`). Also `wood043` (night level floor), `wood034` (top of the barrel table) and `pipe002` (its hooped
-  body), `fabric030` (`FABRIC`: sofa, armchairs, poufs, spare mattress), `planks027a` (terrace
-  deck, turned a quarter with `opts.turn` so the planks run north-south), all ambientCG CC0;
-  `opts.color` tints a texture (the floor greyer, the barrel browner).
+  coordinates in metres with the grain along its longest side (`woodUV()`). Also `planks001`
+  (night level floor, turned a quarter with `opts.turn`), `wood034` (top of the barrel table) and
+  `pipe002` (its hooped body), `fabric030` (`FABRIC`: sofa, armchairs, poufs, spare mattress),
+  `fabric066` (floor lamp shade, a little translucent), all ambientCG CC0; `opts.color` tints a texture. The terrace deck (`DECK`) and
+  the tiles (`tiles()`) are drawn in a canvas instead: planks 11 cm wide with 1 cm black joints.
   Cylinders get metre coordinates with `metreUV()`.
 - **Curtains and lights**: `curtain()` (the `Curtains_Single` model, drawn back, its own rod hidden)
   and `rod()`, a chrome rod with rounded returns to the wall at the ends given (`ends`);
-  `ceilingLight()` (`Light_Ceiling5`); floor lamp `Light_Stand1`.
+  `ceilingLight()` (`Light_Ceiling5`); floor lamp `Light_Stand1`. Every lamp is lit at 3200 K:
+  `lamp()` adds a point light without shadows (about fifteen in all) and the bulbs glow.
 - **three.js add-on**: copy it from the three.js 0.160.0 package (npm) into
   `assets/vendor/three-0.160.0/addons/` with the files it imports, turning `from 'three'` into a
   relative path to `three.module.js`.

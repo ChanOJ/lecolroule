@@ -37,12 +37,12 @@ const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({ color, roughn
 const M = {
   wall: mat(0xece6d6), cut: mat(0xcfc8bc), render: mat(0xd9bfb4), teal: mat(0x3f7f8c),
   tiles: mat(0x4a4f55), oak: mat(0x9a948a), deck: mat(0x7a5a44),
-  pine: mat(0xd9a55b), brown: mat(0x5a3d2e), lowWall: mat(0xe6e0d4),
+  pine: mat(0xd9a55b), brown: mat(0x5a3d2e), lowWall: mat(0xe6e0d4), darkBrown: mat(0x3b2a20, { roughness: 0.6 }),
   glass: mat(0x9cc7e0, { transparent: true, opacity: 0.3, roughness: 0.05 }),
-  bulb: mat(0xfff2cc, { emissive: 0xffd890, emissiveIntensity: 1.6 }),
+  bulb: mat(0xfff2cc, { emissive: 0xffb87b, emissiveIntensity: 1.6 }),   // lit, 3200 K (see lamp())
   duct: mat(0xece6d6), cladding: mat(0xc49a62), orange: mat(0xe8703a),
   slate: mat(0x4b4f54), black: mat(0x1d1e20), white: mat(0xf4f4f1), grey: mat(0x74787e),
-  fabric: mat(0x8d98a8), buffet: mat(0x7c8a78), barrel: mat(0x6b6a4f), mirror: mat(0xbfd3dc),
+  fabric: mat(0x8d98a8), mirror: mat(0xbfd3dc),
   sage: mat(0xa9c4b0), taupe: mat(0xb5b0a0), tealGrey: mat(0x6f8587), paleGreen: mat(0xc5cbb4),
   lightBlue: mat(0x9db7d6), royal: mat(0x2c3fa8), anthracite: mat(0x3a3a3c), wcGrey: mat(0x9d9c94),
   bathTile: mat(0xb9b3a0), curtain: mat(0xcdbf9f), bunk: mat(0x7f9a9a), plastic: mat(0x555a60), petrol: mat(0x234b55), concrete: mat(0xb9bcbd), drape: mat(0x1f5a66), redDrape: mat(0xa8323a), lounger: mat(0x8fb5ad), hatch: mat(0x8fb5a8),
@@ -111,14 +111,53 @@ function wood(key, size, grain, { turn = false, ...opts } = {}) {
 const PINE = wood('pine', [60, 60], 'v');    // pine (stairs, shelves, frames, bedside tables...)
 const OAK = wood('oak', [100, 50], 'u');     // oak (living room shelves)
 const TABLE_TOP = wood('wood034', [100, 50], 'u');                                   // top of the barrel table
-const BARREL = wood('pipe002', [30, 30], 'u', { color: 0xc89a6a, roughness: 0.5 });  // its hooped body, tinted brown
+const BARREL = wood('pipe002', [30, 66], 'u', { roughness: 0.15, metalness: 0.5 });    // its hooped body, glossy metal (2 hoops)
 // Grey woven fabric (ambientCG Fabric030): sofa, armchairs, poufs, spare mattress. FABRIC on metre
 // texture coordinates, FABRIC_MODEL on a model's (1 unit of the pack is about 40 cm, see boxUV())
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
 const FABRIC_MODEL = wood('fabric030', [62.5, 62.5], 'u', { roughness: 1 });
 // Terrace deck: weathered planks (ambientCG Planks027A), running north-south (slab: u = x, v = z)
-const DECK = wood('planks027a', [140, 140], 'u', { turn: true, roughness: 0.8 });
-const NIGHT_FLOOR = wood('wood043', [200, 200], 'u', { color: 0xc4ccd4, roughness: 0.7 });   // tinted greyer, less red
+// Night level floor: grey planks (ambientCG Planks001), turned a quarter: they run east-west
+const NIGHT_FLOOR = wood('planks001', [120, 92], 'u', { turn: true, roughness: 0.7 });
+// Terrace deck, drawn in a canvas: planks 11 cm wide, north-south (slab: u = x, v = z), 1 cm black
+// joints between them and at their ends (one per plank and per 2.4 m, staggered), a slight shade
+// and streak variation (seeded), and a bump map raising the planks above the joints.
+const DECK = (() => {
+  const K = 4, N = 10, P = 12, L = 240, w = N * P * K, h = L * K;   // 4 px per cm, 10 planks, 2.4 m long
+  const make = (draw) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    draw(canvas.getContext('2d'));
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(1 / (N * P * CM), 1 / (L * CM));
+    tex.anisotropy = 8;
+    return tex;
+  };
+  let seed = 5;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const planks = Array.from({ length: N }, () => ({ shade: 0.9 + random() * 0.2, joint: random() * L,
+    streaks: Array.from({ length: 6 }, () => [random() * 11, 0.85 + random() * 0.3]) }));
+  const base = new THREE.Color(0x837569);
+  const draw = (ctx, colour) => {
+    ctx.fillStyle = colour ? '#141414' : '#000';
+    ctx.fillRect(0, 0, w, h);
+    planks.forEach((pl, i) => {
+      const x = i * P * K;
+      ctx.fillStyle = colour ? `#${base.clone().multiplyScalar(pl.shade).getHexString()}` : '#fff';
+      ctx.fillRect(x, 0, 11 * K, h);
+      if (colour) for (const [sx, f] of pl.streaks) {                       // grain streaks along the plank
+        ctx.fillStyle = `#${base.clone().multiplyScalar(pl.shade * f).getHexString()}`;
+        ctx.fillRect(x + sx * K, 0, K / 2, h);
+      }
+      ctx.fillStyle = colour ? '#141414' : '#000';
+      ctx.fillRect(x, pl.joint * K, 11 * K, K);                            // end joint
+    });
+  };
+  const map = make((ctx) => draw(ctx, true));
+  map.colorSpace = THREE.SRGBColorSpace;
+  return mat(0xffffff, { map, bumpMap: make((ctx) => draw(ctx, false)), bumpScale: 4, roughness: 0.85 });
+})();
 // Texture coordinates in metres on a cylinder (cyl()): around and up on the side, plan x/z on the caps
 function metreUV(mesh, r, h) {
   const g = mesh.geometry, uv = g.attributes.uv, n = g.attributes.normal, p = g.attributes.position;
@@ -145,10 +184,10 @@ function woodUV(geo, grain) {
   uv.needsUpdate = true;
 }
 
-// Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n: key }.
+// Materials of a box whose face(s) show an image (a cupboard front...): faces = { e, w, s, n, t (top): key }.
 function faced(m, faces) {
   // a face given as [key, true] shows the image mirrored (the back of a door)
-  return ['e', 'w', null, null, 's', 'n'].map((f) => (!f || !faces[f] ? m : Array.isArray(faces[f]) ? texMat(...faces[f]) : texMat(faces[f])));   // box face order
+  return ['e', 'w', 't', null, 's', 'n'].map((f) => (!f || !faces[f] ? m : Array.isArray(faces[f]) ? texMat(...faces[f]) : texMat(faces[f])));   // box face order
 }
 // Door leaf with the photo of a door on both faces (porte.jpg: handle on the left, hinges on the
 // right), mirrored on the faces where the hinges are on the left: the handle is always away from
@@ -171,7 +210,8 @@ function box(g, x1, x2, y1, y2, z1, z2, m) {
 
 // Axis-aligned wall: axis 'x' runs along x at z = c (centre line), from a to b.
 // ops = openings [{ s, e, sill, head, glass }] along the wall axis (a window: glass, panes = leaves
-// split by mullions, bars = [columns, rows] of small panes split by thin glazing bars); a door leaf: { leaf: material,
+// split by mullions, bars = [columns, rows] of small panes split by thin glazing bars, out = side
+// of the outside, -1 north/west or +1 south/east, whose face of the frame is dark brown); a door leaf: { leaf: material,
 // swing: [hinge, side] } (hinge at the start 's' or end 'e' of the opening, opening to the north/west
 // (-1) or south/east (+1) side), optional name (see DOORS), angle (degrees open, 90 by default),
 // closed (true: closed at load and at the start of the visit) and tex (texture key of an image of
@@ -192,17 +232,19 @@ function wall(g, axis, c, a, b, t, h, m, ops = [], sides = null) {
     seg(o.s, o.e, o.head, h);
     if (o.glass) {                                         // glazing, pine frame and mullions (o.panes)
       const y1 = o.sill || 0, y2 = o.head - (o.shutter || 0), n = o.panes || 1, F = 6;
+      // pine frame, its outside face (o.out: -1 north/west, +1 south/east) dark brown
+      const fr = !o.out ? PINE : Array.from({ length: 6 }, (_, i) => (i === (axis === 'x' ? (o.out > 0 ? 4 : 5) : (o.out > 0 ? 0 : 1)) ? M.darkBrown : PINE));
       seg(o.s, o.e, y1, y2, M.glass, 3);
-      seg(o.s, o.e, y1, y1 + F, PINE, 8); seg(o.s, o.e, y2 - F, y2, PINE, 8);
-      if (o.shutter) seg(o.s, o.e, y2, o.head, PINE, 12);   // pine box of the roller shutter
+      seg(o.s, o.e, y1, y1 + F, fr, 8); seg(o.s, o.e, y2 - F, y2, fr, 8);
+      if (o.shutter) seg(o.s, o.e, y2, o.head, fr, 12);   // pine box of the roller shutter
       for (let i = 0; i <= n; i++) {
         const x = Math.min(Math.max(o.s + (o.e - o.s) * i / n - F / 2, o.s), o.e - F);
-        seg(x, x + F, y1, y2, PINE, 8);
+        seg(x, x + F, y1, y2, fr, 8);
       }
       if (o.bars) {                                        // glazing bars, 3 cm wide, inside the frame
         const [cols, rows] = o.bars, B = 3, s1 = o.s + F, s2 = o.e - F, h1 = y1 + F, h2 = y2 - F;
-        for (let i = 1; i < cols; i++) { const x = s1 + (s2 - s1) * i / cols; seg(x - B / 2, x + B / 2, h1, h2, PINE, 5); }
-        for (let j = 1; j < rows; j++) { const y = h1 + (h2 - h1) * j / rows; seg(s1, s2, y - B / 2, y + B / 2, PINE, 5); }
+        for (let i = 1; i < cols; i++) { const x = s1 + (s2 - s1) * i / cols; seg(x - B / 2, x + B / 2, h1, h2, fr, 5); }
+        for (let j = 1; j < rows; j++) { const y = h1 + (h2 - h1) * j / rows; seg(s1, s2, y - B / 2, y + B / 2, fr, 5); }
       }
     }
     if (o.leaf && !o.swing) seg(o.s + 1, o.e - 1, 0, o.head - 1, o.leaf, 4);   // closed door leaf
@@ -296,7 +338,9 @@ function tiledWall(g, m, facing, c, a, b, y1, y2, u0, v0) {
 }
 
 // Anthracite tiles of the living level, the bathroom and the WC downstairs
-const TILES = tiles(30, 30, 0x4a4f55, '#6b6d70');
+// Average colour of the front of the terrace cabinet (placard-terrasse.jpg): its east side
+const CABINET_SIDE = 0x9c6e4b;
+const TILES = tiles(26, 26, 0x4a4f55, '#6b6d70');
 // Wall tiles of the bathroom, horizontal rectangles: 4.6 tiles along the east wall (187 cm), 7 rows
 // between the bath (56 cm high) and the ceiling
 const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
@@ -305,17 +349,17 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
 {
   const g = living, S = STAIR;
   const stairHole = [[0, S.zN], [S.x, S.zN], [S.x, S.zS], [0, S.zS]];
-  // Anthracite tiles, about 30 x 30 cm (top of the slab; its edges plain)
+  // Anthracite tiles, 26 x 26 cm (top of the slab; its edges plain)
   slab(g, [[-EXT, -EXT], [686, -EXT], [686, 100], [736, 100], [736, 549.5], [-EXT, 549.5]], 0, SLAB,
     [TILES, M.tiles], [stairHole]);
 
   // Outer walls: render outside, cream inside
   const IN = M.wall, OUT = M.render;
   wall(g, 'x', -EXT / 2, -EXT, 686, EXT, LIVING_H, M.cut, [], [OUT, IN]);
-  wall(g, 'z', -EXT / 2, 0, 513.5, EXT, LIVING_H, M.cut, [{ s: 332, e: 407, sill: 110, head: 205, glass: true, shutter: 24 }], [OUT, IN]);
+  wall(g, 'z', -EXT / 2, 0, 513.5, EXT, LIVING_H, M.cut, [{ s: 332, e: 407, sill: 110, head: 205, glass: true, shutter: 24, out: -1 }], [OUT, IN]);
   wall(g, 'x', 513.5 + EXT / 2, -EXT, 736, EXT, LIVING_H, M.cut, [
-    { s: 100, e: 275, sill: 87, head: 215, glass: true, panes: 2 },
-    { s: 320, e: 602, sill: 0, head: 215, glass: true, panes: 3 },
+    { s: 100, e: 275, sill: 87, head: 215, glass: true, panes: 2, out: 1 },
+    { s: 320, e: 602, sill: 0, head: 215, glass: true, panes: 3, out: 1 },
   ], [IN, OUT]);
   wall(g, 'z', 700 + EXT / 2, 130, 513.5, EXT, LIVING_H, M.cut, [], [IN, OUT]);
   // Front door: hinged on the north side, it opens inwards against the north wall; closed at load
@@ -448,7 +492,15 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   guard('x', ts + EXT / 2, -EXT, te, false, -EXT / 2 - 4, te);
   guard('z', te + EXT / 2, S.zN, ts + EXT, true);                              // east side: wall only, no rail
   guard('z', -EXT / 2, tz, ts + EXT, false, tz, ts + EXT / 2 + 4);
-  box(g, 737, 859, 0, 220, S.zN, S.zN + 60, faced(M.pine, { s: 'placard-terrasse' }));   // made-to-measure cabinet: 220 high, 60 deep
+  // made-to-measure cabinet: 220 high, 60 deep; its east side in the average colour of its front;
+  // an anthracite top 1 cm thick, 4 cm over the south and east sides
+  { const m = faced(M.pine, { s: 'placard-terrasse' }); m[0] = mat(CABINET_SIDE);
+    box(g, 737, 859, 0, 220, S.zN, S.zN + 60, m); }
+  box(g, 737, 863, 220, 221, S.zN, S.zN + 64, M.anthracite);
+  // Outside the bay window, the edge of the floor slab: brown like the rail; under the double
+  // window, a brown sill board 1 cm thick, 1 cm over the wall
+  box(g, 320, 602, 0, 0.6, 535.5, 549.5, M.brown);
+  box(g, 100, 275, 87, 88, 535.5, 550.5, M.brown);
   box(g, 736, te + EXT, -SLAB, LIVING_H, S.zN - EXT, S.zN, M.concrete);                 // concrete wall closing the short leg behind the cabinet
 }
 
@@ -473,7 +525,7 @@ livingCeiling.visible = false;
   wall(g, 'z', W + EXT / 2, 0, D, EXT, NIGHT_H, M.cut, [], [C, M.render]);
   const win1 = { s: 26, e: 114, sill: 95, head: 215, shutter: 26 }, win2 = { s: 741, e: 820, sill: 95, head: 215, shutter: 26 };
   // (the east bedroom window has 6 small panes: 2 columns, 3 rows)
-  wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true }, { ...win2, glass: true, bars: [2, 3] }], [C, M.render]);
+  wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true, out: 1 }, { ...win2, glass: true, bars: [2, 3], out: 1 }], [C, M.render]);
 
   const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: M.pine, tex: 'porte', swing: [hinge, side] });   // open doors
   // Load-bearing line crossing the level from west to east: the beam of bedroom 1 and every wall in line with it
@@ -584,6 +636,18 @@ function tubChair(g, x, z, deg, m) {
   shell.position.y = 59 * CM;
   c.add(shell);
 }
+// Pouf: a cylinder 48 cm wide and 38 cm high in FABRIC, its edges rounded (3 cm), on a lathe profile
+function pouf(g, x, z, r = 24, h = 38, rr = 3) {
+  const pts = [new THREE.Vector2(0, 0)];
+  for (let i = 0; i <= 6; i++) { const a = -Math.PI / 2 + i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (rr + rr * Math.sin(a)) * CM)); }
+  for (let i = 0; i <= 6; i++) { const a = i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (h - rr + rr * Math.sin(a)) * CM)); }
+  pts.push(new THREE.Vector2(0, h * CM));
+  const geo = new THREE.LatheGeometry(pts, 40), uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2 * Math.PI * r * CM, uv.getY(i) * (2 * r + h) * CM);   // metres
+  const mesh = new THREE.Mesh(geo, FABRIC);
+  mesh.position.set(x * CM, 0, z * CM);
+  g.add(mesh);
+}
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
 function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
@@ -693,9 +757,13 @@ const curtain = (g, axis, c, a1, a2, y1, y2, deg, m) =>
   model(g, 'Curtains_Single', axis === 'x' ? (a1 + a2) / 2 : c, axis === 'x' ? c : (a1 + a2) / 2, deg, [a2 - a1, 6, y2 - y1], { Couch_Blue: m, LightMetal: hidden }, y1);
 // Lights: ceiling light (Light_Ceiling5, white opaque glass in a stainless steel ring), 35 cm wide
 // and 9 cm high, under a ceiling at height top; floor lamp (Light_Stand1)
+const rodGrey = mat(0x3a3a3c, { roughness: 0.4, metalness: 0.4 });   // window curtain rods: anthracite satin
 const steel = mat(0xc8cbce, { metalness: 1, roughness: 0.35, envMapIntensity: 1 });
-const ceilingLight = (g, x, z, top) => model(g, 'Light_Ceiling5', x, z, 0, [35, 36, 9],
-  { Grey: steel, Light: mat(0xf7f7f4, { roughness: 0.25, emissive: 0xfff4dd, emissiveIntensity: 0.15 }) }, top - 9);
+const litGlass = mat(0xf7f7f4, { roughness: 0.25, emissive: 0xffb87b, emissiveIntensity: 0.9 });   // lit (see lamp())
+function ceilingLight(g, x, z, top) {
+  model(g, 'Light_Ceiling5', x, z, 0, [35, 36, 9], { Grey: steel, Light: litGlass }, top - 9);
+  lamp(g, x, top - 14, z, 2);
+}
 const paperParts = { LightMetal: chrome, White: mat(0xf3f2ee, { roughness: 0.95 }), Brown: mat(0x9a7a55) };
 // Toilet, 40 x 68 x 80 cm; (x, z) = middle of its back, deg = direction it faces. Its paper holder
 // goes on the wall to its right (seen sitting), level with the front of the bowl, 60..79 cm high.
@@ -788,6 +856,14 @@ function place(mesh, facing, c, mid, y, off) {
   else mesh.position.set(mid * CM, y * CM, (c + d[1] * off) * CM);
   mesh.rotation.y = d[2];
 }
+// Every lamp is lit, 3200 K: a point light of `cd` candelas (scaled to the scene's lighting) at the
+// lamp, no shadows; its bulb (M.bulb) glows in the same colour.
+const LAMP = 0xffb87b;
+function lamp(g, x, y, z, cd) {
+  const l = new THREE.PointLight(LAMP, cd, 0, 2);
+  l.position.set(x * CM, y * CM, z * CM);
+  g.add(l);
+}
 // Ceiling track with spots (axis 'x' or 'z'), and round ceiling lamp.
 function track(g, x, z, len, axis, y, n = 4) {
   const h = len / 2;
@@ -798,6 +874,7 @@ function track(g, x, z, len, axis, y, n = 4) {
     cyl(g, px, pz, 5, y - 16, y - 3, M.black);
     cyl(g, px, pz, 3.5, y - 18, y - 16, M.bulb);
   }
+  lamp(g, x, y - 22, z, 0.6 * n);
 }
 function ceilingLamp(g, x, z, y) {
   cyl(g, x, z, 22, y - 2, y, M.black);
@@ -805,6 +882,7 @@ function ceilingLamp(g, x, z, y) {
   const b = new THREE.Mesh(new THREE.SphereGeometry(5 * CM, 16, 12), M.bulb);
   b.position.set(x * CM, (y - 14) * CM, z * CM);
   g.add(b);
+  lamp(g, x, y - 20, z, 2.5);
 }
 
 // ---------- Living level furniture ----------
@@ -822,28 +900,34 @@ function ceilingLamp(g, x, z, y) {
   // (south: one rod over the double window and the bay window; west: one rod over the window;
   // rounded returns to the wall at both ends)
   for (const [a, b, y] of [[298, 316, 0], [606, 624, 0], [80, 96, 70], [279, 295, 70]]) curtain(g, 'x', 505.5, a, b, y, 228, 180, M.drape);
-  rod(g, 'x', 505.5, 76, 628, 222, chrome, [513.5, 513.5]);
+  rod(g, 'x', 505.5, 76, 628, 222, rodGrey, [513.5, 513.5]);
   curtain(g, 'z', 8, 410, 424, 95, 218, 90, M.drape);
-  rod(g, 'z', 8, 328, 428, 214, chrome, [0, 0]);
+  rod(g, 'z', 8, 328, 428, 214, rodGrey, [0, 0]);
   // Floor lamp against the north wall, between the west shelves and the sofa: beige fabric shade, steel
-  model(g, 'Light_Stand1', 32, 19.5, 0, [36, 36, 150], { White: fabric(0xd9ccb0), LightMetal: steel });
+  // (its shade: Fabric066, a little translucent: the lit bulb shows through)
+  const shade = Object.assign(wood('fabric066', [62.5, 62.5], 'u', { roughness: 1, transparent: true, opacity: 0.88,
+    emissive: LAMP, emissiveIntensity: 0.25 }), { side: THREE.DoubleSide });
+  model(g, 'Light_Stand1', 32, 19.5, 0, [36, 36, 150], { White: shade, LightMetal: steel });
+  lamp(g, 32, 128, 22, 1.5);
   box(g, 210, 275, 12, 80, 506, 512, M.white);                                // radiator under the double window
   // Barrel coffee table, two swivel armchairs, two poufs
   metreUV(cyl(g, 137, 165, 29, 0, 44, BARREL), 29, 44);
-  metreUV(cyl(g, 137, 165, 31, 44, 49, TABLE_TOP), 31, 5);
+  metreUV(cyl(g, 137, 165, 31, 44, 46.5, TABLE_TOP), 31, 2.5);
   tubChair(g, 135, 262, 180, FABRIC);
   tubChair(g, 255, 215, 215, FABRIC);
-  metreUV(cyl(g, 45, 160, 24, 0, 38, FABRIC), 24, 38);
-  metreUV(cyl(g, 78, 128, 24, 0, 38, FABRIC), 24, 38);
+  pouf(g, 45, 160); pouf(g, 78, 128);
   // Corner TV unit between the west wall and the stairwell rail, TV set on the diagonal facing the WC block
-  slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, M.pine);
+  slab(g, [[0, S.zN - 4], [0, S.zN - 104], [100, S.zN - 4]], 45, 45, OAK);
   const tv = placed(g, 40, S.zN - 44, 135);
   const glossy = mat(0x111214, { roughness: 0.1, envMapIntensity: 0.8 }), satin = mat(0x0c0d0f, { roughness: 0.35 });
   box(tv, -14, 14, 45, 50, -8, 8, glossy);
   box(tv, -50, 50, 50, 112, -2, 2, [glossy, glossy, glossy, glossy, satin, glossy]);   // glossy black, satin screen
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
-  box(g, 262, 404, 12, 85, 125, 165, M.buffet);
-  for (const x of [264, 398]) for (const z of [127, 159]) box(g, x, x + 4, 0, 12, z, z + 4, M.black);
+  // (sideboard: 120 wide, 70 high, 35 deep, centred under the mirror; its body 6..70 cm between four
+  // glossy black posts at its corners, flush with its front and back, 6 cm longer below: its feet)
+  box(g, 277, 389, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
+  { const glossyBlack = mat(0x111214, { roughness: 0.12, envMapIntensity: 0.8 });
+    for (const x of [273, 389]) for (const z of [125, 156]) box(g, x, x + 4, 0, 70, z, z + 4, glossyBlack); }
   box(g, 300, 366, 112, 188, 125, 129, PINE);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
@@ -964,9 +1048,9 @@ function ceilingLamp(g, x, z, y) {
   wall(g, 'z', 210.5, 0, 84, PART, NIGHT_H, M.petrol, [{ s: 3, e: 81, head: 204, leaf: M.paleGreen, swing: ['s', 1] }], [M.petrol, M.paleGreen]);
   // Curtains and radiators of the two bedrooms
   curtain(g, 'x', 419, 116, 130, 85, 228, 180, M.redDrape);
-  rod(g, 'x', 419, 22, 134, 223.5, chrome, [427, 427]);
+  rod(g, 'x', 419, 22, 134, 223.5, rodGrey, [427, 427]);
   curtain(g, 'x', 419, 724, 738, 85, 228, 180, M.redDrape);
-  rod(g, 'x', 419, 720, 824, 223.5, chrome, [427, 427]);
+  rod(g, 'x', 419, 720, 824, 223.5, rodGrey, [427, 427]);
   box(g, 30, 110, 12, 72, 420, 426, M.white);
   box(g, 745, 816, 12, 72, 419, 425.5, M.white);
 
@@ -1033,6 +1117,7 @@ function ceilingLamp(g, x, z, y) {
   for (const [x, z] of [[8, 207], [8, 407], [852, 225], [852, 413]]) {
     cyl(g, x, z, 4, 84, 92, M.black);
     cyl(g, x, z, 3, 78, 84, M.bulb);
+    lamp(g, x + (x < 400 ? 8 : -8), 82, z, 0.6);
   }
   box(g, 786, 859.5, 0, 56, 17, 187, M.white);
   box(g, 786, 859.5, 0, 55.5, 1, 17, M.bathTile);                              // tiled ledge north of the bath
@@ -1171,7 +1256,10 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.zoomSpeed = 4.5;   // the wheel or pinch zooms 4.5 times faster than by default
+  // Zoom: a mouse wheel or trackpad zooms 4.5 times faster than by default; a pinch on a touch
+  // screen keeps the default speed (the view follows the fingers). Set before the controls react.
+  const ZOOM_WHEEL = 4.5, ZOOM_PINCH = 1;
+  controls.zoomSpeed = ZOOM_WHEEL;
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
@@ -1434,6 +1522,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // Any action in the viewer (view buttons, drag, wheel, keys, door click) may change the image
   controls.addEventListener('change', invalidate);
   for (const ev of ['pointerdown', 'pointerup', 'wheel', 'keydown', 'click']) stage.addEventListener(ev, invalidate, true);
+  stage.addEventListener('pointerdown', (e) => { controls.zoomSpeed = e.pointerType === 'touch' ? ZOOM_PINCH : ZOOM_WHEEL; }, true);
+  stage.addEventListener('wheel', () => { controls.zoomSpeed = ZOOM_WHEEL; }, true);
   renderer.domElement.addEventListener('pointerdown', onPress);
   renderer.domElement.addEventListener('pointerup', onRelease);
   renderer.domElement.addEventListener('pointermove', onHover);
