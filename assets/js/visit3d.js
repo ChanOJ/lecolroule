@@ -370,16 +370,16 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   // WC block: teal outside, orange inside, door on its east side
   wall(g, 'z', 273.5, 0, 118, PART, LIVING_H, M.teal, [], [M.teal, M.orange]);
   wall(g, 'x', 121.5, 255, 270, PART, LIVING_H, M.teal);                      // 15 cm stub: right support of the shelves
-  wall(g, 'x', 121.5, 270, 410, PART, LIVING_H, M.teal, [], [M.orange, M.teal]);
+  wall(g, 'x', 121.5, 270, 395, PART, LIVING_H, M.teal, [], [M.orange, M.teal]);   // south wall: 125 cm outside (the sideboard)
   box(g, 0, 15, 0, LIVING_H, 112, 127, M.wall);                               // post: left support of the west shelves
-  wall(g, 'z', 406.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
+  wall(g, 'z', 391.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
   // Its door: hinged at the south end, it opens towards the entrance; the visit closes it (see tour)
-  wcDoor.position.set(406.5 * CM, 0, 104 * CM);
+  wcDoor.position.set(391.5 * CM, 0, 104 * CM);
   box(wcDoor, -2, 2, 0, 203, -73, 0, leafFaces('z', -1, 'porte', M.pine));
   g.add(wcDoor);
   addDoor(wcDoor, WC_DOOR_OPEN, 'wcUp');
-  paint(g, 'x', 0.5, 277, 403, LIVING_H, M.orange);
-  paint(g, 'x', 0.5, 410, 650, 217, M.teal);                                  // entrance
+  paint(g, 'x', 0.5, 277, 388, LIVING_H, M.orange);
+  paint(g, 'x', 0.5, 395, 650, 217, M.teal);                                  // entrance
   paint(g, 'x', 0.75, 0, 270, LIVING_H, M.cladding);                         // wood cladding behind the sofa
 
   // Service ducts between the entrance and the kitchen, lowered ceiling of the entrance
@@ -398,7 +398,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
     box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
-  box(g, 410, 650, 217, LIVING_H, 0, 118, M.wall);
+  box(g, 395, 650, 217, LIVING_H, 0, 118, M.wall);
 
   // Staircase: 15 risers; south flight goes down westwards, winders, north flight comes back east
   const rise = LIVING_Y / 15, going = (S.x - S.turn) / 5, T = 4;
@@ -626,28 +626,41 @@ function roundedSlab(g, x1, x2, z1, z2, y1, y2, r, m) {
 }
 // Round swivel armchair.
 // (m: a material on metre texture coordinates, e.g. FABRIC)
+// (black base, seat cushion and a back 10 cm thick round the rear, every edge rounded)
 function tubChair(g, x, z, deg, m) {
   const c = placed(g, x, z, deg);
-  cyl(c, 0, 0, 30, 0, 8, M.black);
-  metreUV(cyl(c, 0, 0, 40, 8, 42, m), 40, 34);
-  const geo = new THREE.CylinderGeometry(43 * CM, 40 * CM, 34 * CM, 28, 1, true, Math.PI * 0.42, Math.PI * 1.16), uv = geo.attributes.uv;
-  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 43 * Math.PI * 1.16 * CM, uv.getY(i) * 34 * CM);   // metres
-  const shell = new THREE.Mesh(geo, Object.assign(m.clone(), { side: THREE.DoubleSide }));
-  shell.position.y = 59 * CM;
-  c.add(shell);
+  roundedCyl(c, 0, 0, 30, 8, 2, M.black);
+  roundedCyl(c, 0, 0, 40, 34, 3, m, 8);
+  // Back: an arc in plan (radii 36..46 cm, round the rear over about 210 degrees, rounded ends),
+  // extruded from 42 to 76 cm with a bevel that rounds every edge (2 cm). Shape (u, v) -> plan (u, -v).
+  const R1 = 38, R2 = 44, Rm = (R1 + R2) / 2, rc = (R2 - R1) / 2, f0 = -0.08 * Math.PI, f1 = 1.08 * Math.PI;
+  const s = new THREE.Shape();
+  s.absarc(0, 0, R2 * CM, f0, f1, false);
+  s.absarc(Rm * CM * Math.cos(f1), Rm * CM * Math.sin(f1), rc * CM, f1, f1 + Math.PI, false);
+  s.absarc(0, 0, R1 * CM, f1, f0, true);
+  s.absarc(Rm * CM * Math.cos(f0), Rm * CM * Math.sin(f0), rc * CM, f0 + Math.PI, f0 + 2 * Math.PI, false);
+  const geo = new THREE.ExtrudeGeometry(s, { depth: 30 * CM, bevelEnabled: true, bevelSize: 2 * CM, bevelThickness: 2 * CM, bevelSegments: 3, curveSegments: 24 });
+  geo.rotateX(-Math.PI / 2);
+  const back = new THREE.Mesh(geo, m);   // texture coordinates of the shape: metres
+  back.position.y = 44 * CM;
+  c.add(back);
 }
-// Pouf: a cylinder 48 cm wide and 38 cm high in FABRIC, its edges rounded (3 cm), on a lathe profile
-function pouf(g, x, z, r = 24, h = 38, rr = 3) {
+// Cylinder of radius r and height h standing at (x, y, z), its edges rounded (radius rr), on a lathe
+// profile, with texture coordinates in metres (materials such as FABRIC)
+function roundedCyl(g, x, z, r, h, rr, m, y = 0) {
   const pts = [new THREE.Vector2(0, 0)];
   for (let i = 0; i <= 6; i++) { const a = -Math.PI / 2 + i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (rr + rr * Math.sin(a)) * CM)); }
   for (let i = 0; i <= 6; i++) { const a = i * Math.PI / 12; pts.push(new THREE.Vector2((r - rr + rr * Math.cos(a)) * CM, (h - rr + rr * Math.sin(a)) * CM)); }
   pts.push(new THREE.Vector2(0, h * CM));
   const geo = new THREE.LatheGeometry(pts, 40), uv = geo.attributes.uv;
-  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2 * Math.PI * r * CM, uv.getY(i) * (2 * r + h) * CM);   // metres
-  const mesh = new THREE.Mesh(geo, FABRIC);
-  mesh.position.set(x * CM, 0, z * CM);
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2 * Math.PI * r * CM, uv.getY(i) * (2 * r + h) * CM);
+  const mesh = new THREE.Mesh(geo, m);
+  mesh.position.set(x * CM, y * CM, z * CM);
   g.add(mesh);
+  return mesh;
 }
+// Pouf: 48 cm wide, 38 cm high, in FABRIC, its edges rounded
+const pouf = (g, x, z) => roundedCyl(g, x, z, 24, 38, 3, FABRIC);
 // Double bed with its pine headboard and side panels; head = 'w' or 'e'.
 function bed(g, x1, x2, z1, z2, head, side) {
   box(g, x1, x2, 0, 28, z1, z2, M.pine);
@@ -923,11 +936,14 @@ function ceilingLamp(g, x, z, y) {
   box(tv, -14, 14, 45, 50, -8, 8, glossy);
   box(tv, -50, 50, 50, 112, -2, 2, [glossy, glossy, glossy, glossy, satin, glossy]);   // glossy black, satin screen
   // Sideboard (nearly as wide as the wall) and mirror on the south face of the WC block
-  // (sideboard: 120 wide, 70 high, 35 deep, centred under the mirror; its body 6..70 cm between four
+  // (sideboard: 120 wide, 70 high, 35 deep, centred on the wall (x 270..395) under the mirror; its body 6..70 cm between four
   // glossy black posts at its corners, flush with its front and back, 6 cm longer below: its feet)
-  box(g, 277, 389, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
+  box(g, 276.5, 388.5, 6, 70, 125, 160, faced(M.pine, { s: 'buffet', e: 'buffet-side', w: 'buffet-side', t: 'buffet-top' }));
   { const glossyBlack = mat(0x111214, { roughness: 0.12, envMapIntensity: 0.8 });
-    for (const x of [273, 389]) for (const z of [125, 156]) box(g, x, x + 4, 0, 70, z, z + 4, glossyBlack); }
+    for (const x of [272.5, 388.5]) {
+      for (const z of [125, 156]) box(g, x, x + 4, 0, 70, z, z + 4, glossyBlack);
+      box(g, x, x + 4, 66, 70, 129, 156, glossyBlack);                        // top rail joining the pair
+    } }
   box(g, 300, 366, 112, 188, 125, 129, PINE);
   mirror(g, 's', 129, 308, 358, 120, 180);
   // Wall decoration: bear clock above the mirror (cut to its shape, 1 cm from the wall), metal mountain on the cladding, three ski panels
@@ -985,7 +1001,7 @@ function ceilingLamp(g, x, z, y) {
 
   // WC: toilet against the north wall, corner basin and mirror cabinet in the south-west corner
   toilet(g, 345, 1, 0);
-  ceilingLight(g, 340, 59, LIVING_H);
+  ceilingLight(g, 332.5, 59, LIVING_H);
   model(g, 'Bathroom_ToiletPaper', 277 + 4.8, 60, 90, [16.5, 9.6, 19], paperParts, 60);   // on the west wall
   cyl(g, 292, 103, 15, 76, 84, M.white);
   // Corner cabinet: a triangle in plan (20 cm along each wall); its door is the mirror, flat on the diagonal
