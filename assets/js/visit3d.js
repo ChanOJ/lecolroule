@@ -1070,18 +1070,28 @@ function ceilingLamp(g, x, z, y) {
     const d = 43.5 * Math.SQRT1_2, base = [BOWL.x2 + 1, BOWL.z2 + 2.5];
     model(g, 'Kitchen_Sink', base[0] - d, base[1] - d, -135, [102, 113, 192], off, 91 - 162); }
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
-  // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
-  // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
+  // Wall units with doors, 140..215 cm, the one above the oven shorter (154..215): one photo of
+  // them (kitchen-top.jpg, z 214..396.6, cropped from the photo of the whole run), each block
+  // showing its part of it; tiles behind the gap
   const wallUnit = (z1, z2, y1) => {
-    const L = 453.5 - 182.5, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
+    const Z0 = 214, L = 396.6 - Z0, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.offset.set((z1 - 182.5) / L, (y1 - 140) / 75);
+    tex.offset.set((z1 - Z0) / L, (y1 - 140) / 75);
     tex.repeat.set((z2 - z1) / L, (215 - y1) / 75);
     const m = Array(6).fill(M.pine);
     m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });                     // west face: u along z, v up
     box(g, 665, 700, y1, 215, z1, z2, m);
   };
   wallUnit(214, 275, 154); wallUnit(275, 396.6, 140);
+  // Strip light under the two cupboards above the sink, centred on them (z 275..396.6): 57 cm long,
+  // 2.2 cm wide, near their front, lit at 3200 K: a glowing underside and a wide spot down
+  { const zc = (275 + 396.6) / 2, alu = mat(0xc8cbce, { metalness: 0.8, roughness: 0.4 });
+    const glow = mat(0xfff3e0, { emissive: LAMP, emissiveIntensity: 1.5 });
+    box(g, 667, 669.2, 139, 140, zc - 28.5, zc + 28.5, [alu, alu, alu, glow, alu, alu]);
+    const spot = new THREE.SpotLight(LAMP, 3, 0, Math.PI * 0.42, 1, 2);
+    spot.position.set(668.1 * CM, 138.5 * CM, zc * CM);
+    spot.target.position.set(668.1 * CM, 90 * CM, zc * CM);
+    g.add(spot, spot.target); }
   // the open units at both ends (photo: x 0..117 and 790..1000 of 1000 px): hollow, two shelves
   openUnit(g, 665, 700, 140, 215, 182.5, 214, 7.5, 'kitchen-upper-left-bottom');   // solid bottom 7.5 cm
   openUnit(g, 665, 700, 140, 215, 396.6, 453.5, 7.5, 'kitchen-upper-right-bottom');
