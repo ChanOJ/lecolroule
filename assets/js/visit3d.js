@@ -540,7 +540,7 @@ livingCeiling.visible = false;
   wall(g, 'x', BC, 321 - H, 342 + H, BT, NIGHT_H, C, [], [C, LB]);             // end of wall north of the cabin:
   wall(g, 'x', BC, 342 + H, 401, BT, NIGHT_H, LB, [], [TG, LB]);               // light blue on the cabin side
   wall(g, 'z', 259, 212, 325 - H, PART, NIGHT_H, C, [{ s: 214, e: 320, head: 215 }]);
-  box(g, 258, 261, 0, 215, 214, 320, M.pine);                                  // two sliding doors
+  box(g, 258, 261, 0, 215, 214, 320, faced(M.pine, { w: 'placard-coulissant' }));   // two sliding doors, seen from bedroom 1
   wall(g, 'x', 325, 259 - H, 321 - H, PART, NIGHT_H, C);                       // desk recess south of the wardrobe
   wall(g, 'z', 321, 212, D, PART, NIGHT_H, C, [], [C, LB]);                    // bedroom 1 / bunk cabin
   paint(g, 'z', 0.5, 186, D, NIGHT_H, M.sage);
@@ -990,8 +990,8 @@ function ceilingLamp(g, x, z, y) {
   // Light fittings (the living level has no ceiling in the model: they hang at ceiling height)
   // Pendants (Light_Icosahedron2, 90 cm long) over the dining table and the sitting area
   for (const [x, z] of [[435, 354], [150, 215]]) {
-    model(g, 'Light_Icosahedron2', x, z, 0, [90, 28, 49], { Grey: M.black, LightMetal: steel,
-      White: mat(0xf2f2ee, { roughness: 0.5 }), Light: M.bulb }, LIVING_H - 49);
+    model(g, 'Light_Icosahedron2', x, z, 0, [90, 28, 49], { Grey: M.anthracite, LightMetal: steel,   // black shades, anthracite canopy
+      White: mat(0x151516, { roughness: 0.5 }), Light: M.bulb }, LIVING_H - 49);
     lamp(g, x, LIVING_H - 40, z, 2.4);
   }
   track(g, 530, 60, 30, 'x', 217, 2);
@@ -1022,7 +1022,7 @@ function ceilingLamp(g, x, z, y) {
   const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
-    const worktop = mat(0x4a4f55, { roughness: 0.35, envMapIntensity: 0.6 });   // the grey of the tiles, satin
+    const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });   // darker than the tiles (it catches the light), satin
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
   // Induction hob (kitchen-induction.jpg), glossy: its controls at the front (west)
   plate(g, rrect(THREE.Shape, 646, 696, 215, 271, 1), 90.6, 0.6,
@@ -1045,9 +1045,11 @@ function ceilingLamp(g, x, z, y) {
       buv.setXY(i, ...uv(b.position.x / CM + pos.getX(i) / CM, b.position.z / CM + pos.getZ(i) / CM));
     buv.needsUpdate = true;
     // Chrome tap: the tap of the pack's Kitchen_Sink, the rest of that model hidden (1 unit = 1 m:
-    // tap about 30 cm high); its base on the rim behind the bowl, spout over the bowl
+    // tap about 30 cm high); its base on the rim at the south-east corner of the bowl, turned
+    // north-west (deg -135). Its base is 43.5 cm behind the model's centre, along its back.
     const off = { Kitchen: hidden, KitchenTop: hidden, White: hidden, LightMetal: chrome };
-    model(g, 'Kitchen_Sink', 695 - 43.5, (BOWL.z1 + BOWL.z2) / 2, -90, [102, 113, 192], off, 91 - 162); }
+    const d = 43.5 * Math.SQRT1_2, base = [BOWL.x2 + 1, BOWL.z2 + 2.5];
+    model(g, 'Kitchen_Sink', base[0] - d, base[1] - d, -135, [102, 113, 192], off, 91 - 162); }
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
   // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
   // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
