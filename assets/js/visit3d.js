@@ -27,8 +27,8 @@ import MODELS from './visit3d-models.js';
 // The night level has its own origin (its inner north-west corner), which is
 // NIGHT_Z south of the living room origin (north edge of the stairwell).
 const CM = 0.01;
-// Quality: lower on touch screens (phones, tablets): no ambient occlusion, smaller shadow map and
-// mirrors, lower pixel ratio. In the page URL, ?quality=low or ?quality=high forces one, ?merge=0
+// Quality: lower on touch screens (phones, tablets): lighter ambient occlusion, smaller shadow map
+// and mirrors, lower pixel ratio, 30 images per second full screen. In the page URL, ?quality=low or ?quality=high forces one, ?merge=0
 // keeps every mesh apart (see mergeStatic()), to compare.
 const URL_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
 const LOW = URL_PARAMS.get('quality') ? URL_PARAMS.get('quality') === 'low'
@@ -1422,7 +1422,7 @@ scene.traverse((o) => {
   o.receiveShadow = solid;
 });
 
-const FPS_PREVIEW = 30, FPS_FULL = 60;   // see frame()
+const FPS_PREVIEW = 30, FPS_FULL = LOW ? 30 : 60;   // see frame(); phones: a steady 30 rather than an uneven 60
 let current = null;   // one viewer at a time (a page swapped in by the in-site navigation gets a new one)
 
 export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = () => {}, standalone = false } = {}) {
@@ -1451,12 +1451,13 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   // Ambient occlusion (darker corners and contact shadows); plain rendering if it cannot be set up
   let composer = null;
-  if (!LOW) try {
-    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+  try {
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: LOW ? 2 : 4 });
     composer = new EffectComposer(renderer, target);
     composer.addPass(new RenderPass(scene, camera));
     const ao = new GTAOPass(scene, camera, 1, 1);
-    ao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.1, samples: 16 });
+    ao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.1, samples: LOW ? 8 : 16 });
+    ao.updatePdMaterial({ samples: LOW ? 8 : 16 });                           // its denoising (phones: lighter)
     composer.addPass(ao);
     composer.addPass(new OutputPass());
   } catch (e) { console.warn('Ambient occlusion disabled:', e); composer = null; }
