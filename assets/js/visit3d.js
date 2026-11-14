@@ -1070,12 +1070,13 @@ function ceilingLamp(g, x, z, y) {
     const d = 43.5 * Math.SQRT1_2, base = [BOWL.x2 + 1, BOWL.z2 + 2.5];
     model(g, 'Kitchen_Sink', base[0] - d, base[1] - d, -135, [102, 113, 192], off, 91 - 162); }
   box(g, 699, 700, 90, 140, 182.5, 453.5, M.slate);
-  // Wall units, 140..215 cm, the one above the oven shorter (154..215): one photo of the whole run
-  // (kitchen-top.jpg, z 182.5..453.5), each block showing its part of it; tiles behind the gap
+  // Wall units with doors, 140..215 cm, the one above the oven shorter (154..215): one photo of
+  // them (kitchen-top.jpg, z 214..396.6, cropped from the photo of the whole run), each block
+  // showing its part of it; tiles behind the gap
   const wallUnit = (z1, z2, y1) => {
-    const L = 453.5 - 182.5, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
+    const Z0 = 214, L = 396.6 - Z0, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.offset.set((z1 - 182.5) / L, (y1 - 140) / 75);
+    tex.offset.set((z1 - Z0) / L, (y1 - 140) / 75);
     tex.repeat.set((z2 - z1) / L, (215 - y1) / 75);
     const m = Array(6).fill(M.pine);
     m[1] = mat(0xffffff, { map: tex, roughness: 0.7 });                     // west face: u along z, v up
