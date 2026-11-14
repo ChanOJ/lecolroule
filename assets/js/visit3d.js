@@ -111,7 +111,7 @@ function wood(key, size, grain, { turn = false, ...opts } = {}) {
 const PINE = wood('pine', [60, 60], 'v');    // pine (stairs, shelves, frames, bedside tables...)
 const OAK = wood('oak', [100, 50], 'u');     // oak (living room shelves)
 const TABLE_TOP = wood('wood034', [100, 50], 'u');                                   // top of the barrel table
-const BARREL = wood('pipe002', [30, 30], 'u', { color: 0xc89a6a, roughness: 0.5 });  // its hooped body, tinted brown
+const BARREL = wood('pipe002', [30, 30], 'u', { roughness: 0.15, metalness: 0.5 });    // its hooped body, glossy metal
 // Grey woven fabric (ambientCG Fabric030): sofa, armchairs, poufs, spare mattress. FABRIC on metre
 // texture coordinates, FABRIC_MODEL on a model's (1 unit of the pack is about 40 cm, see boxUV())
 const FABRIC = wood('fabric030', [25, 25], 'u', { roughness: 1 });
@@ -892,12 +892,15 @@ function ceilingLamp(g, x, z, y) {
   curtain(g, 'z', 8, 410, 424, 95, 218, 90, M.drape);
   rod(g, 'z', 8, 328, 428, 214, rodGrey, [0, 0]);
   // Floor lamp against the north wall, between the west shelves and the sofa: beige fabric shade, steel
-  model(g, 'Light_Stand1', 32, 19.5, 0, [36, 36, 150], { White: fabric(0xd9ccb0), LightMetal: steel });
+  // (its shade: Fabric066, a little translucent: the lit bulb shows through)
+  const shade = Object.assign(wood('fabric066', [62.5, 62.5], 'u', { roughness: 1, transparent: true, opacity: 0.88,
+    emissive: LAMP, emissiveIntensity: 0.25 }), { side: THREE.DoubleSide });
+  model(g, 'Light_Stand1', 32, 19.5, 0, [36, 36, 150], { White: shade, LightMetal: steel });
   lamp(g, 32, 128, 22, 1.5);
   box(g, 210, 275, 12, 80, 506, 512, M.white);                                // radiator under the double window
   // Barrel coffee table, two swivel armchairs, two poufs
   metreUV(cyl(g, 137, 165, 29, 0, 44, BARREL), 29, 44);
-  metreUV(cyl(g, 137, 165, 31, 44, 49, TABLE_TOP), 31, 5);
+  metreUV(cyl(g, 137, 165, 31, 44, 46.5, TABLE_TOP), 31, 2.5);
   tubChair(g, 135, 262, 180, FABRIC);
   tubChair(g, 255, 215, 215, FABRIC);
   metreUV(cyl(g, 45, 160, 24, 0, 38, FABRIC), 24, 38);

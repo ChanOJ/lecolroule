@@ -170,8 +170,8 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   `oak-bump.jpg` as bump maps (`wood(key, [u, v] cm, grain)`). A box drawn in a wood gets texture
   coordinates in metres with the grain along its longest side (`woodUV()`). Also `planks001`
   (night level floor, turned a quarter with `opts.turn`), `wood034` (top of the barrel table) and
-  `pipe002` (its hooped body), `fabric030` (`FABRIC`: sofa, armchairs, poufs, spare mattress), all
-  ambientCG CC0; `opts.color` tints a texture (the barrel browner). The terrace deck (`DECK`) and
+  `pipe002` (its hooped body), `fabric030` (`FABRIC`: sofa, armchairs, poufs, spare mattress),
+  `fabric066` (floor lamp shade, a little translucent), all ambientCG CC0; `opts.color` tints a texture. The terrace deck (`DECK`) and
   the tiles (`tiles()`) are drawn in a canvas instead: planks 11 cm wide with 1 cm black joints.
   Cylinders get metre coordinates with `metreUV()`.
 - **Curtains and lights**: `curtain()` (the `Curtains_Single` model, drawn back, its own rod hidden)
