@@ -1083,6 +1083,15 @@ function ceilingLamp(g, x, z, y) {
     box(g, 665, 700, y1, 215, z1, z2, m);
   };
   wallUnit(214, 275, 154); wallUnit(275, 396.6, 140);
+  // Strip light under the two cupboards above the sink, centred on them (z 275..396.6): 57 cm long,
+  // 2.2 cm wide, near their front, lit at 3200 K: a glowing underside and a wide spot down
+  { const zc = (275 + 396.6) / 2, alu = mat(0xc8cbce, { metalness: 0.8, roughness: 0.4 });
+    const glow = mat(0xfff3e0, { emissive: LAMP, emissiveIntensity: 1.5 });
+    box(g, 667, 669.2, 139, 140, zc - 28.5, zc + 28.5, [alu, alu, alu, glow, alu, alu]);
+    const spot = new THREE.SpotLight(LAMP, 3, 0, Math.PI * 0.42, 1, 2);
+    spot.position.set(668.1 * CM, 138.5 * CM, zc * CM);
+    spot.target.position.set(668.1 * CM, 90 * CM, zc * CM);
+    g.add(spot, spot.target); }
   // the open units at both ends (photo: x 0..117 and 790..1000 of 1000 px): hollow, two shelves
   openUnit(g, 665, 700, 140, 215, 182.5, 214, 7.5, 'kitchen-upper-left-bottom');   // solid bottom 7.5 cm
   openUnit(g, 665, 700, 140, 215, 396.6, 453.5, 7.5, 'kitchen-upper-right-bottom');
