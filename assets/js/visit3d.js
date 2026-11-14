@@ -16,7 +16,7 @@ import { GTAOPass } from '../vendor/three-0.160.0/addons/postprocessing/GTAOPass
 import { OutputPass } from '../vendor/three-0.160.0/addons/postprocessing/OutputPass.js';
 import { OBJLoader } from '../vendor/three-0.160.0/addons/loaders/OBJLoader.js';
 import { RoundedBoxGeometry } from '../vendor/three-0.160.0/addons/geometries/RoundedBoxGeometry.js';
-// Generated from assets/3d/textures/ by scripts/textures.py: { name: data URI }
+// Generated from assets/3d/textures/ by scripts/textures.py: { name: file name }, OUTLINES
 import TEX, { OUTLINES } from './visit3d-textures.js';
 // Generated from assets/3d/models/ by scripts/models.py: { name: OBJ text }
 import MODELS from './visit3d-models.js';
@@ -73,6 +73,13 @@ function addDoor(pivot, open, name, home = 1) {
 
 // Pictures cut out of the photos of the flat: TEX (assets/3d/textures/, see scripts/textures.py).
 // texture(key, flip): the texture of that image, mirrored left to right when flip is true.
+// URL of a texture: on the site, the WebP file Hugo made of it (map in the data-visit-textures
+// attribute of the stage, layouts/_shortcodes/visit3d.html); on the test page, the image itself.
+const SITE_TEX = (() => {
+  const el = typeof document !== 'undefined' && document.querySelector('[data-visit-textures]');
+  return el ? JSON.parse(el.getAttribute('data-visit-textures')) : null;
+})();
+const texUrl = (key) => (SITE_TEX ? SITE_TEX[key] : new URL(`../3d/textures/${TEX[key]}`, import.meta.url).href);
 const TEXTURES = new Map();
 // Bumped when an image finishes loading after the model is built: the viewer then draws a new frame
 let loaded = 0;
@@ -80,7 +87,7 @@ function texture(key, flip = false) {
   const id = key + (flip ? ':flip' : '');
   if (!TEXTURES.has(id)) {
     if (!TEX[key]) console.error(`3D model: no texture "${key}" (assets/3d/textures/${key}.jpg, then scripts/textures.py)`);
-    const tex = new THREE.TextureLoader().load(TEX[key], () => loaded++);
+    const tex = new THREE.TextureLoader().load(texUrl(key), () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
     if (flip) { tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = -1; }
     TEXTURES.set(id, tex);
@@ -95,7 +102,7 @@ const texMat = (key, flip = false) => mat(0xffffff, { map: texture(key, flip), r
 // opts.turn: true turns the image a quarter turn (its u along v): planks in the other direction.
 function wood(key, size, grain, { turn = false, ...opts } = {}) {
   const load = (k) => {
-    const tex = new THREE.TextureLoader().load(TEX[k], () => loaded++);
+    const tex = new THREE.TextureLoader().load(texUrl(k), () => loaded++);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(1 / (size[0] * CM), 1 / (size[1] * CM));
     if (turn) tex.rotation = Math.PI / 2;
@@ -843,7 +850,7 @@ const metalShadows = new Map();
 const METAL = { depth: 0.1, gap: 0.5, metal: true };   // metal cut-out, 1 mm thick, 5 mm from the wall
 function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
   const w = (b - a) * CM, h = (y2 - y1) * CM, mid = (a + b) / 2, y = (y1 + y2) / 2;
-  const cutOut = (TEX[key] || '').startsWith('data:image/png');   // PNG: transparent background
+  const cutOut = (TEX[key] || '').endsWith('.png');   // PNG: transparent background
   if (!opts) {
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
       new THREE.MeshStandardMaterial({ map: texture(key), roughness: 0.7, envMapIntensity: 0.38, alphaTest: cutOut ? 0.5 : 0 }));
@@ -886,7 +893,7 @@ function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
         tex.needsUpdate = true;
         loaded++;
       };
-      img.src = TEX[key];
+      img.src = texUrl(key);
       metalShadows.set(key, tex);
     }
     // the canvas has a 16 px margin around the image (256 px on its longest side): 1/16 of that side
@@ -1074,7 +1081,7 @@ function ceilingLamp(g, x, z, y) {
   // them (kitchen-top.jpg, z 214..396.6, cropped from the photo of the whole run), each block
   // showing its part of it; tiles behind the gap
   const wallUnit = (z1, z2, y1) => {
-    const Z0 = 214, L = 396.6 - Z0, tex = new THREE.TextureLoader().load(TEX['kitchen-top'], () => loaded++);
+    const Z0 = 214, L = 396.6 - Z0, tex = new THREE.TextureLoader().load(texUrl('kitchen-top'), () => loaded++);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.offset.set((z1 - Z0) / L, (y1 - 140) / 75);
     tex.repeat.set((z2 - z1) / L, (215 - y1) / 75);
