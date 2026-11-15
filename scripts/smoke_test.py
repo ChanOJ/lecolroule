@@ -194,13 +194,20 @@ def main() -> int:
     for path, lang in PAGES.items():
         report.check(f"Page {path}", expect_page(base + path, lang))
 
-    # Root: the language page (layouts/alias.html), whose script sends the
-    # visitor to their language. Not tested here (JavaScript): its content is.
+    # Root: the language page (layouts/alias.html), whose script (a file,
+    # assets/js/root.js: no inline script under the CSP) sends the visitor to
+    # their language. Not run here (JavaScript): the page and the script are
+    # checked.
     def root():
         r = fetch(f"{base}/")
         expect_status(r, 200)
         body = r.body.decode()
-        assert "lcr_lang" in body and "location.replace" in body, "no language script"
+        m = re.search(r'<script src="?(/js/root\.(?:min\.)?[0-9a-f]+\.js)"?[^>]*data-langs="?([a-z,]+)', body)
+        assert m, "no language script"
+        assert set(m.group(2).split(",")) == set(LANGUAGES), f"data-langs {m.group(2)!r}"
+        js = fetch(base + m.group(1))
+        expect_status(js, 200)
+        assert b"lcr_lang" in js.body and b"location.replace" in js.body, f"{m.group(1)} is not the language script"
         assert re.search(r'<meta name="?robots"? content="?noindex', body), "not noindex"
         missing = [l for l in LANGUAGES if not re.search(rf'href="?/{l}/"?[ >]', body)]
         assert not missing, "no link to " + ", ".join(missing)
