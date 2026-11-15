@@ -1345,11 +1345,13 @@ function ceilingLamp(g, x, z, y) {
     cyl(g, x, z, 3, 78, 84, M.bulb);
     lamp(g, x + (x < 400 ? 8 : -8), 82, z, 0.6);
   }
-  box(g, 786, 859.5, 0, 56, 17, 187, M.white);
-  box(g, 786, 859.5, 0, 55.5, 1, 17, M.bathTile);                              // tiled ledge north of the bath
-  slab(g, [[786, 1], [859.5, 1], [859.5, 17], [786, 17]], 56, 0.5, [BATH_TILES, M.bathTile]);
-  box(g, 792, 853, 56, 56.5, 23, 181, M.mirror);
-  box(g, 784.5, 786, 0, 52, 17, 187, PINE);
+  // Bath, 150 cm long, against the south wall; tiled ledge north of it, up to the north wall
+  const BATH_N = 37;
+  box(g, 786, 859.5, 0, 56, BATH_N, 187, M.white);
+  box(g, 786, 859.5, 0, 55.5, 1, BATH_N, M.bathTile);                          // tiled ledge north of the bath
+  slab(g, [[786, 1], [859.5, 1], [859.5, BATH_N], [786, BATH_N]], 56, 0.5, [BATH_TILES, M.bathTile]);
+  box(g, 792, 853, 56, 56.5, BATH_N + 6, 181, M.mirror);
+  box(g, 784.5, 786, 0, 52, BATH_N, 187, PINE);
   box(g, 786, 787, 56, 196, 106, 186, M.glass);
 }
 
