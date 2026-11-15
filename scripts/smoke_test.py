@@ -77,7 +77,17 @@ class Response:
 
 
 def fetch(url: str, headers: dict | None = None) -> Response:
-    """GET without following redirects; TLS certificates are verified."""
+    """GET without following redirects; TLS certificates are verified. A network
+    error (timeout, connection reset...) is retried once, 3 s later: a passing
+    hiccup must not fail the daily run."""
+    try:
+        return fetch_once(url, headers)
+    except (OSError, http.client.HTTPException):
+        time.sleep(3)
+        return fetch_once(url, headers)
+
+
+def fetch_once(url: str, headers: dict | None = None) -> Response:
     u = urllib.parse.urlsplit(url)
     conn_cls = http.client.HTTPSConnection if u.scheme == "https" else http.client.HTTPConnection
     conn = conn_cls(u.hostname.encode("idna").decode(), u.port, timeout=20)
@@ -175,6 +185,20 @@ def expect_build_content(base: str, wait: int):
     return run
 
 
+def retried(fn, wait: int):
+    """fn retried every 5 s while it fails (AssertionError), for up to `wait` seconds."""
+    def run():
+        deadline = time.monotonic() + wait
+        while True:
+            try:
+                return fn()
+            except AssertionError:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(5)
+    return run
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--env", choices=sorted(HOSTS), required=True)
@@ -182,6 +206,9 @@ def main() -> int:
                     help="every page of dist/ must be served identically (right after a deployment)")
     ap.add_argument("--redirect-domains", action="store_true",
                     help="also check the alternative domains redirections")
+    ap.add_argument("--after-apply", action="store_true",
+                    help="right after an infrastructure apply: the checks of the edge rules (headers, "
+                         "redirections) are retried while bunny.net spreads them")
     ap.add_argument("--wait", type=int, default=90,
                     help="seconds to wait for the CDN to serve the new content (default 90)")
     args = ap.parse_args()
@@ -189,6 +216,10 @@ def main() -> int:
     host = HOSTS[args.env]
     base = f"https://{host}"
     report = Report(f"Smoke test of {args.env} ({host})")
+    # Right after an infrastructure apply (--after-apply), the checks of the
+    # edge rules (headers, legacy and domain redirections) are retried while
+    # bunny.net spreads the new rules.
+    edge_wait = args.wait if args.after_apply else 0
 
     # Pages.
     for path, lang in PAGES.items():
@@ -236,7 +267,7 @@ def main() -> int:
     legacy = {k: v for k, v in json.loads(LEGACY_REDIRECTS.read_text()).items() if not k.startswith("_")}
     for new, olds in legacy.items():
         for old in olds:
-            report.check(f"Legacy {old}", expect_redirect(base + old, base + new))
+            report.check(f"Legacy {old}", retried(expect_redirect(base + old, base + new), edge_wait))
     report.check("Legacy URL with a query string",
                  expect_redirect(f"{base}/valloire/appartement?utm_source=x", f"{base}/fr/appartement-valloire/"))
 
@@ -276,10 +307,13 @@ def main() -> int:
     if args.expect_repo_content:
         report.check("Pages match the build", expect_build_content(base, args.wait))
 
-    # Headers (set by the "security_headers" edge rule).
-    page = fetch(f"{base}/fr/")
+    # Headers (set by the "security_headers" edge rule); each try of a check
+    # fetches the page again.
+    def header(name):
+        return fetch(f"{base}/fr/").header(name)
 
     def headers():
+        page = fetch(f"{base}/fr/")
         expected = {
             "Strict-Transport-Security": "max-age",
             "X-Content-Type-Options": "nosniff",
@@ -293,37 +327,38 @@ def main() -> int:
         missing = [h for h, v in expected.items() if v not in page.header(h)]
         assert not missing, "missing or wrong: " + ", ".join(missing)
         return ", ".join(expected)
-    report.check("Security headers", headers)
-
-    csp = page.header("Content-Security-Policy")
-    robots = page.header("X-Robots-Tag")
+    report.check("Security headers", retried(headers, edge_wait))
 
     def csp_strict():
+        csp = header("Content-Security-Policy")
         directives = {d.split()[0]: d.split()[1:] for d in csp.split(";") if d.strip()}
         script = directives.get("script-src", [])
         assert "'unsafe-inline'" not in script and "'unsafe-eval'" not in script, f"script-src {' '.join(script)}"
         missing = [d for d in ("object-src", "base-uri", "form-action", "frame-ancestors") if d not in directives]
         assert not missing, "CSP without " + ", ".join(missing)
         return "no inline script; object-src, base-uri, form-action, frame-ancestors"
-    report.check("CSP: no inline script", csp_strict)
+    report.check("CSP: no inline script", retried(csp_strict, edge_wait))
 
     # Google Analytics is disabled (hugo.toml): its sources are not allowed on
     # either environment (googletagmanager.com could load any script).
     def no_analytics():
+        csp = header("Content-Security-Policy")
         found = [s for s in ANALYTICS_SOURCES if s in csp]
         assert not found, "analytics allowed by CSP: " + ", ".join(found)
         return "no analytics source in CSP"
-    report.check("Analytics blocked", no_analytics)
+    report.check("Analytics blocked", retried(no_analytics, edge_wait))
     if args.env == "test":
         def noindex():
+            robots = header("X-Robots-Tag")
             assert "noindex" in robots, f"X-Robots-Tag {robots!r}"
             return robots
-        report.check("Not indexed (X-Robots-Tag)", noindex)
+        report.check("Not indexed (X-Robots-Tag)", retried(noindex, edge_wait))
     else:
         def indexed():
+            robots = header("X-Robots-Tag")
             assert "noindex" not in robots, f"X-Robots-Tag {robots!r} would deindex the site"
             return "no noindex"
-        report.check("Indexable (no noindex)", indexed)
+        report.check("Indexable (no noindex)", retried(indexed, edge_wait))
 
     if args.redirect_domains:
         for domain in REDIRECT_DOMAINS:
@@ -331,7 +366,7 @@ def main() -> int:
                 if h == HOSTS["prod"]:
                     continue  # the site itself, not a redirection
                 for scheme in ("http", "https"):
-                    report.check(f"{scheme}://{h}/", expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGET))
+                    report.check(f"{scheme}://{h}/", retried(expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGET), edge_wait))
 
     report.write()
     print(f"\n{len(report.rows) - report.failed}/{len(report.rows)} checks passed.")

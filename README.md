@@ -385,9 +385,11 @@ Checks, and the requests of the checks fetching many URLs, run in parallel: a fe
 
 It runs:
 
-- after every real deployment (`deploy.yml`), with `--expect-repo-content`, plus `--redirect-domains`
-  for prod;
-- after every infrastructure apply (`infra.yml`), on both environments;
+- after every real deployment (`deploy.yml`), with `--expect-repo-content` (the pages and their
+  files are retried for up to 90 s while the purge spreads), plus `--redirect-domains` for prod;
+- after every infrastructure apply (`infra.yml`), on both environments, with `--after-apply`: the
+  checks of the edge rules (headers, redirections) are retried for up to 90 s while bunny.net
+  spreads the new rules;
 - every day at 05:17 UTC (`smoke.yml`), on both environments, plus the redirect domains. A failure
   triggers GitHub's "workflow run failed" e-mail.
 
