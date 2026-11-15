@@ -1207,19 +1207,20 @@ function ceilingLamp(g, x, z, y) {
     const legs = new THREE.Group(); legs.position.set(0, 38 * CM, 45 * CM); legs.rotation.x = 0.35; c.add(legs);
     box(legs, -28, 28, -2, 2, 0, 45, M.lounger);
   }
-  // Planters: anthracite cubes of 50 cm in the south-west and south-east corners, soil 3 cm under
-  // their rim, a pine 70 cm tall in each (Pine_1, a little narrower than drawn to stay in its corner)
+  // Planters: anthracite cubes of 50 cm in the south-west and south-east corners, 2 cm from the
+  // walls, soil 3 cm under their rim, a pine 90 cm tall in each (Pine_1, narrower than drawn to
+  // stay in its corner)
   const planter = mat(0x3a3a3c, { roughness: 0.6 }), soil = mat(0x3b2b20, { roughness: 1 });
   const bark = texture('pine-bark'), needles = texture('pine-leaves');
   bark.wrapS = bark.wrapT = THREE.RepeatWrapping;
   const pine = { Bark: mat(0xffffff, { map: bark }), Pine_Leaves: mat(0xffffff, { map: needles, alphaTest: 0.5, side: THREE.DoubleSide }) };
   pine.Pine_Leaves.userData.noAO = true;                                      // see the ambient occlusion pass
-  for (const x1 of [0, 810]) {
-    const x2 = x1 + 50, z1 = 704.5, z2 = 754.5;
+  for (const x1 of [2, 808]) {
+    const x2 = x1 + 50, z1 = 702.5, z2 = 752.5;
     box(g, x1, x2, 0, 50, z1, z1 + 2, planter); box(g, x1, x2, 0, 50, z2 - 2, z2, planter);
     box(g, x1, x1 + 2, 0, 50, z1 + 2, z2 - 2, planter); box(g, x2 - 2, x2, 0, 50, z1 + 2, z2 - 2, planter);
     box(g, x1 + 2, x2 - 2, 0, 47, z1 + 2, z2 - 2, soil);
-    model(g, 'Pine_1', x1 + 25, z1 + 25, x1 ? -90 : 90, [50, 44, 70], pine, 47);
+    model(g, 'Pine_1', x1 + 25, z1 + 25, x1 > 400 ? -90 : 90, [50, 44, 90], pine, 47);
   }
   // Table 180 x 80 with slightly rounded corners, in front of the two east leaves of the bay window,
   // leaving the way out of the west leaf (French window, x 320..414) clear: two armchairs on each
