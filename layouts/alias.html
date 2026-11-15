@@ -9,6 +9,8 @@
   bunny.net edge rules cannot do it: they split Accept-Language at commas and
   so cannot tell which language comes first. Without JavaScript the page shows
   the flags. Not indexed: search engines index the language pages (hreflang).
+  The script is a file (assets/js/root.js): the Content-Security-Policy allows
+  no inline script.
   This template is also used by any other alias; the site has none.
 */ -}}
 {{- $default := "en" -}}
@@ -22,21 +24,7 @@
 		<meta name="color-scheme" content="dark" />
 		<meta name="robots" content="noindex, follow" />
 		<title>{{ site.Title }}</title>
-		<script>
-			(function() {
-				var langs = {{ $langs }}, lang = null,
-					cookie = document.cookie.match(/(?:^|;\s*)lcr_lang=([a-z]+)/),
-					browser = navigator.languages || [navigator.language || ''];
-				if (cookie && langs.indexOf(cookie[1]) >= 0)
-					lang = cookie[1];
-				for (var i = 0; !lang && i < browser.length; i++) {
-					var l = String(browser[i]).toLowerCase().split('-')[0];
-					if (langs.indexOf(l) >= 0)
-						lang = l;
-				}
-				location.replace('/' + (lang || {{ $default }}) + '/' + location.search + location.hash);
-			})();
-		</script>
+		<script src="{{ partial "asset-url.html" "js/root.js" }}" data-langs="{{ delimit $langs "," }}" data-default="{{ $default }}"></script>
 		{{- partial "favicon.html" . }}
 		<style>
 			html, body { margin: 0; height: 100%; background: #1b1f22; }

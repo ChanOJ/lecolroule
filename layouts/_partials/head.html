@@ -31,7 +31,10 @@
 		{{- partial "styles.html" . }}
 		{{- partial "favicon.html" . }}
 		{{- /* Google Analytics, only when params.googleAnalyticsID is set in
-		       hugo.toml (disabled for now: it would need a cookie banner). */}}
+		       hugo.toml (disabled for now: it would need a cookie banner). Its
+		       inline script would also need the Content-Security-Policy of prod
+		       to allow it and the analytics sources (infra: module "prod",
+		       analytics = true, and a hash or 'unsafe-inline' in script-src). */}}
 		{{- with site.Params.googleAnalyticsID }}
 		<!-- Google tag (gtag.js) -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>

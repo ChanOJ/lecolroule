@@ -4,8 +4,8 @@
 Checks the language home pages and a deep page per language, the root language
 page (its script picks the language), the 301 of every legacy /valloire/... URL
 (infra/legacy_redirects.json), HTTP -> HTTPS, the 404 page, security headers
-and environment-specific rules (noindex and analytics on test, no noindex on
-prod). Optionally:
+a strict Content-Security-Policy (no inline script, no analytics source) and
+environment-specific rules (noindex on test, no noindex on prod). Optionally:
   --expect-repo-content  every page of the build (dist/) must be served
                          byte-identical by the CDN (run right after a
                          deployment: proves both the upload and the purge);
@@ -272,6 +272,9 @@ def main() -> int:
             "X-Frame-Options": "DENY",
             "Referrer-Policy": "same-origin",
             "Content-Security-Policy": "default-src",
+            "X-XSS-Protection": "0",
+            "Permissions-Policy": "camera=()",
+            "Cross-Origin-Opener-Policy": "same-origin",
         }
         missing = [h for h, v in expected.items() if v not in page.header(h)]
         assert not missing, "missing or wrong: " + ", ".join(missing)
@@ -280,27 +283,33 @@ def main() -> int:
 
     csp = page.header("Content-Security-Policy")
     robots = page.header("X-Robots-Tag")
+
+    def csp_strict():
+        directives = {d.split()[0]: d.split()[1:] for d in csp.split(";") if d.strip()}
+        script = directives.get("script-src", [])
+        assert "'unsafe-inline'" not in script and "'unsafe-eval'" not in script, f"script-src {' '.join(script)}"
+        missing = [d for d in ("object-src", "base-uri", "form-action", "frame-ancestors") if d not in directives]
+        assert not missing, "CSP without " + ", ".join(missing)
+        return "no inline script; object-src, base-uri, form-action, frame-ancestors"
+    report.check("CSP: no inline script", csp_strict)
+
+    # Google Analytics is disabled (hugo.toml): its sources are not allowed on
+    # either environment (googletagmanager.com could load any script).
+    def no_analytics():
+        found = [s for s in ANALYTICS_SOURCES if s in csp]
+        assert not found, "analytics allowed by CSP: " + ", ".join(found)
+        return "no analytics source in CSP"
+    report.check("Analytics blocked", no_analytics)
     if args.env == "test":
         def noindex():
             assert "noindex" in robots, f"X-Robots-Tag {robots!r}"
             return robots
         report.check("Not indexed (X-Robots-Tag)", noindex)
-
-        def no_analytics():
-            found = [s for s in ANALYTICS_SOURCES if s in csp]
-            assert not found, "analytics allowed by CSP: " + ", ".join(found)
-            return "no analytics source in CSP"
-        report.check("Analytics blocked", no_analytics)
     else:
         def indexed():
             assert "noindex" not in robots, f"X-Robots-Tag {robots!r} would deindex the site"
             return "no noindex"
         report.check("Indexable (no noindex)", indexed)
-
-        def analytics():
-            assert "googletagmanager.com" in csp, "Google Tag Manager not allowed by CSP"
-            return "analytics allowed by CSP"
-        report.check("Analytics allowed", analytics)
 
     if args.redirect_domains:
         for domain in REDIRECT_DOMAINS:
