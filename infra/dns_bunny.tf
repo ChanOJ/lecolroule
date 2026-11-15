@@ -13,9 +13,9 @@ locals {
   # Key: zone name (punycode for "lecolroulé"), value: migration state.
   dns_domains = {
     "lecolroule.fr"         = "infomaniak"
-    "lecolroule.com"        = "infomaniak"
-    "xn--lecolroul-j4a.com" = "infomaniak" # lecolroulé.com
-    "xn--lecolroul-j4a.fr"  = "infomaniak" # lecolroulé.fr
+    "lecolroule.com"        = "bunny"
+    "xn--lecolroul-j4a.com" = "bunny" # lecolroulé.com
+    "xn--lecolroul-j4a.fr"  = "bunny" # lecolroulé.fr
   }
   dns_delegated = { for d, s in local.dns_domains : d => contains(["bunny", "dnssec"], s) }
 
