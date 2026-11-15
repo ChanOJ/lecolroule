@@ -1069,11 +1069,17 @@ function ceilingLamp(g, x, z, y) {
   for (const [x, y, m] of [[440, 185, M.grey], [468, 150, M.white], [492, 178, M.black], [520, 140, M.grey], [548, 172, M.white], [575, 188, M.black], [600, 150, M.grey], [625, 176, M.white]])
     box(g, x, x + 5, y, y + 11, 1, 5, m);
   // Light fittings (the living level has no ceiling in the model: they hang at ceiling height)
-  // Pendants (Light_Icosahedron2, 90 cm long) over the dining table and the sitting area
+  // Pendants over the dining table and the sitting area: an anthracite bar 75 cm long and five
+  // black wire shades about 13 cm wide on cords, their bottoms 30 cm under the ceiling (both cut from
+  // the Light_Icosahedron2 model of the pack: its bar, and one of its three pendants without its cord)
+  const cage = { Grey: M.anthracite, White: mat(0x151516, { roughness: 0.5 }), Light: M.bulb };
   for (const [x, z] of [[435, 354], [150, 215]]) {
-    model(g, 'Light_Icosahedron2', x, z, 0, [90, 28, 49], { Grey: M.anthracite, LightMetal: steel,   // black shades, anthracite canopy
-      White: mat(0x151516, { roughness: 0.5 }), Light: M.bulb }, LIVING_H - 49);
-    lamp(g, x, LIVING_H - 40, z, 2.4);
+    model(g, 'Light_Icosahedron2_Canopy', x, z, 0, [75, 12, 0.7], { Grey: M.anthracite }, LIVING_H - 0.7);
+    for (const dx of [-33, -16.5, 0, 16.5, 33]) {
+      model(g, 'Light_Icosahedron2_Pendant', x + dx, z, 0, [13.3, 13.9, 15.4], cage, LIVING_H - 30);
+      cyl(g, x + dx, z, 0.3, LIVING_H - 20, LIVING_H - 0.7, steel);
+    }
+    lamp(g, x, LIVING_H - 25, z, 2.4);
   }
   track(g, 530, 60, 30, 'x', 217, 2);
 
@@ -1322,8 +1328,8 @@ function ceilingLamp(g, x, z, y) {
   // (snowboard, panorama, paraglider: cut to their shape; map, plane, posters: blocks)
   picture(g, 'snowboard', 'e', 1, 235, 380, 172, 216, { depth: 1 });
   picture(g, 'panorama', 'w', 859, 255, 385, 165, 212, { depth: 1 });
-  picture(g, 'map', 'e', 345.5, 112, 176, 128, 174, { depth: 1 });
-  picture(g, 'plane', 's', 1, 560, 632, 130, 181, { depth: 2 });
+  picture(g, 'map', 'e', 345.5, 103.5, 167.5, 128, 174, { depth: 1 });       // centred on its wall (z 84..187)
+  picture(g, 'plane', 's', 1, 574.25, 646.25, 130, 181, { depth: 2 });        // centred on the WC north wall (x 552.5..668)
   picture(g, 'valloire1', 'e', 547.5, 377, 410, 160, 208, { depth: 1, edge: M.pine });   // bedroom 2, left of the wardrobe
   picture(g, 'valloire2', 'e', 547.5, 322, 357, 127, 174, { depth: 1, edge: M.pine });
   // Bedroom 1: paraglider on the south wall, centred between the window (x = 114) and the cabin
