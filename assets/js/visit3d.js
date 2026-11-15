@@ -1319,7 +1319,9 @@ function ceilingLamp(g, x, z, y) {
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   for (const x of [710, 745]) box(g, x, x + 35, 0, 82, 1, 58, faced(M.pine, { s: 'kitchen-front' }));   // vanity unit: two doors, the kitchen fronts
   plate(g, rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), 86, 4, [worktop, worktop], { bevel: 0.5 });   // top: the kitchen worktop's
-  cyl(g, 745, 30, 20, 86, 89, M.white).scale.set(1, 1, 0.75);
+  // Basin (Bathroom_Sink): glossy white ceramic, 55 cm wide, standing on the top; chrome tap, its
+  // waste pipe hidden in the unit; 6 cm from the wall, clear of the mirror frame
+  model(g, 'Bathroom_Sink', 745, 23.2, 0, [55, 32.3, 57.3], { White: ceramic, Grey: chrome }, 56.5);
   box(g, 714, 776, 100, 195, 1, 6, PINE);
   mirror(g, 's', 6, 722, 768, 108, 180);
   // Towel radiator on the south wall, next to the door
@@ -1352,7 +1354,14 @@ function ceilingLamp(g, x, z, y) {
   slab(g, [[786, 1], [859.5, 1], [859.5, BATH_N], [786, BATH_N]], 56, 0.5, [BATH_TILES, M.bathTile]);
   box(g, 792, 853, 56, 56.5, BATH_N + 6, 181, M.mirror);
   box(g, 784.5, 786, 0, 52, BATH_N, 187, PINE);
-  box(g, 786, 787, 56, 196, 106, 186, M.glass);
+  // Glass screen of the shower, its top corner on the room side (north) rounded (15 cm)
+  { const r = 15, z1 = 106, z2 = 186, y1 = 56, y2 = 196, sh = new THREE.Shape();
+    sh.moveTo(z1 * CM, y1 * CM); sh.lineTo(z2 * CM, y1 * CM); sh.lineTo(z2 * CM, y2 * CM); sh.lineTo((z1 + r) * CM, y2 * CM);
+    sh.absarc((z1 + r) * CM, (y2 - r) * CM, r * CM, Math.PI / 2, Math.PI, false); sh.lineTo(z1 * CM, y1 * CM);
+    const screen = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: CM, bevelEnabled: false, curveSegments: 16 }), M.glass);
+    screen.rotation.y = -Math.PI / 2;                                           // shape x -> z, extrusion -> -x
+    screen.position.x = 787 * CM;
+    g.add(screen); }
 }
 
 
