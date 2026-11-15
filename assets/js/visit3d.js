@@ -877,6 +877,8 @@ const curtain = (g, axis, c, a1, a2, y1, y2, deg, m) =>
   model(g, 'Curtains_Single', axis === 'x' ? (a1 + a2) / 2 : c, axis === 'x' ? c : (a1 + a2) / 2, deg, [a2 - a1, 6, y2 - y1], { Couch_Blue: m, LightMetal: hidden }, y1);
 // Lights: ceiling light (Light_Ceiling5, white opaque glass in a stainless steel ring), 35 cm wide
 // and 9 cm high, under a ceiling at height top; floor lamp (Light_Stand1)
+// Kitchen worktop and bathroom vanity top: dark grey (darker than the tiles: it catches the light), satin
+const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });
 const rodGrey = mat(0x3a3a3c, { roughness: 0.4, metalness: 0.4 });   // window curtain rods: anthracite satin
 const steel = mat(0xc8cbce, { metalness: 1, roughness: 0.35, envMapIntensity: 1 });
 const litGlass = mat(0xf7f7f4, { roughness: 0.25, emissive: 0xffb87b, emissiveIntensity: 0.9 });   // lit (see lamp())
@@ -1110,7 +1112,6 @@ function ceilingLamp(g, x, z, y) {
   // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
   const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
   const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
-  const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });     // darker than the tiles (it catches the light), satin
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
@@ -1317,7 +1318,7 @@ function ceilingLamp(g, x, z, y) {
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
   for (const x of [710, 745]) box(g, x, x + 35, 0, 82, 1, 58, faced(M.pine, { s: 'kitchen-front' }));   // vanity unit: two doors, the kitchen fronts
-  box(g, 709, 781, 82, 86, 1, 60, M.wcGrey);
+  plate(g, rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), 86, 4, [worktop, worktop], { bevel: 0.5 });   // top: the kitchen worktop's
   cyl(g, 745, 30, 20, 86, 89, M.white).scale.set(1, 1, 0.75);
   box(g, 714, 776, 100, 195, 1, 6, PINE);
   mirror(g, 's', 6, 722, 768, 108, 180);
