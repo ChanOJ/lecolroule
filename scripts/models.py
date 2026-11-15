@@ -6,8 +6,9 @@ are OBJ files in assets/3d/models/, taken from a pack kept in 3d-sources/ (see R
 "3D visit"). This script:
 
 - with --add <pack>/<Name>.obj ...: copies those models into assets/3d/models/, reduced to
-  what the visit uses: vertices (4 decimals), material names and faces (no normals, texture
-  coordinates or material library: the visit computes flat normals and sets the materials);
+  what the visit uses: vertices (4 decimals), texture coordinates when the model has some
+  (textured models, e.g. trees), material names and faces (no normals or material library: the
+  visit computes flat normals and sets the materials);
 - writes assets/js/visit3d-models.js, the module imported by visit3d.js, with every model as
   OBJ text (short lines).
 
@@ -32,18 +33,24 @@ MODULE = REPO_ROOT / "assets" / "js" / "visit3d-models.js"
 
 
 def clean(text: str) -> str:
-    """OBJ reduced to vertices, objects, material names and faces (vertex indices only)."""
+    """OBJ reduced to vertices, texture coordinates (if any), objects, material names and faces
+    (vertex and texture coordinate indices)."""
+    num = lambda c: f"{float(c):.4f}".rstrip("0").rstrip(".")
+    has_vt = any(line.startswith("vt ") for line in text.splitlines())
     out = []
     for line in text.splitlines():
         parts = line.split()
         if not parts:
             continue
         if parts[0] == "v":
-            out.append("v " + " ".join(f"{float(c):.4f}".rstrip("0").rstrip(".") for c in parts[1:4]))
+            out.append("v " + " ".join(num(c) for c in parts[1:4]))
+        elif parts[0] == "vt":
+            out.append("vt " + " ".join(num(c) for c in parts[1:3]))
         elif parts[0] in ("o", "usemtl"):
             out.append(f"{parts[0]} {parts[1]}")
         elif parts[0] == "f":
-            out.append("f " + " ".join(p.split("/")[0] for p in parts[1:]))
+            idx = [p.split("/") for p in parts[1:]]
+            out.append("f " + " ".join(f"{i[0]}/{i[1]}" if has_vt and len(i) > 1 and i[1] else i[0] for i in idx))
     return "\n".join(out) + "\n"
 
 
