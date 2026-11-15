@@ -15,6 +15,10 @@ module "prod" {
   replication_regions = ["UK"]
 
   legacy_redirects = local.legacy_redirects
+
+  # Google Analytics is disabled (hugo.toml): its sources are kept out of the
+  # Content-Security-Policy (googletagmanager.com could load any script).
+  analytics = false
 }
 
 # Staging environment: validate a version here before deploying it to prod.

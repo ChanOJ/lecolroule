@@ -343,7 +343,8 @@ ePrivacy rules), so it has no cookie banner:
 
 - Google Analytics is disabled: `googleAnalyticsID` is commented out in `hugo.toml`
   (`layouts/_partials/head.html` adds it back to every page when set; it would then need a
-  consent banner).
+  consent banner, and the Content-Security-Policy of prod to allow it: `analytics = true` in
+  `infra/main.tf` and its inline script in `script-src`).
 - Maps are OpenStreetMap (`map` shortcode, Leaflet): no cookie; the tiles come from
   tile.openstreetmap.org (light use, within its usage policy, attribution shown).
 - `lcr_lang` (language menu) only stores a choice the visitor made.
@@ -374,8 +375,8 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
 `scripts/smoke_test.py --env test|prod` checks a deployed environment: language home pages and a
 deep page per language, the root language page, HTTP→HTTPS, the 301 of every legacy
 `/valloire/...` URL listed in `infra/legacy_redirects.json` (404 for unknown ones), `404.html` on
-unknown URLs, the IndexNow key file, security headers, and the environment rules (test: `noindex` and analytics blocked;
-prod: indexable, analytics allowed). Options: `--expect-repo-content` (every page of `dist/` served
+unknown URLs, the IndexNow key file, security headers, a strict Content-Security-Policy (no inline
+script, no analytics source), and the environment rules (test: `noindex`; prod: indexable). Options: `--expect-repo-content` (every page of `dist/` served
 byte-identical, proving upload and purge; run `hugo` first) and `--redirect-domains`
 (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com`, `lecolroulé.fr`, with and without `www`, over
 HTTP and HTTPS, must answer 301 to the prod site).
@@ -418,8 +419,16 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 Environments are named `prod` and `test`. Each serves one page per URL under `/<lang>/`, the
 root language page at `/`, and the permanent 301 from the former single-page site URLs listed in
 `infra/legacy_redirects.json`. `test` is a staging copy of the site used to validate a
-version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow` and its
-Content-Security-Policy blocks analytics (Google Analytics) so that stats stay clean.
+version before deploying it to `prod`: it sends `X-Robots-Tag: noindex, nofollow`.
+
+Security headers (`edgerules.tf`, every environment): HSTS, a Content-Security-Policy, `nosniff`,
+`X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`,
+`X-XSS-Protection: 0` (the browsers' filter is obsolete). The CSP allows the site's own scripts
+only, plus Cloudflare Turnstile (newsletter captcha): **no inline script**, so the pages (and the
+root page, `assets/js/root.js`) must keep their scripts in files; inline styles stay allowed
+(style attributes, Leaflet). Also `object-src 'none'`, `base-uri 'self'`, `frame-ancestors
+'none'`, forms posted to the site or Brevo only. Analytics sources (Google) are allowed only with
+the module option `analytics` (false everywhere while Google Analytics is disabled).
 Its DNS record is created by `dns.tf` before the environment, so that the TLS certificate can be
 issued in the same apply.
 `tofu output` shows, per environment, the storage zone name, the pull zone id and the

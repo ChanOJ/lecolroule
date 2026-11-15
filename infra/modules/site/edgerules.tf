@@ -21,11 +21,18 @@ locals {
     ["img-src", "'self'", "data:", "https://tile.openstreetmap.org", "https://*.google-analytics.com", "https://*.analytics.google.com"],
     # Requests: the newsletter form, posted to its Brevo form.
     ["connect-src", "'self'", "https://*.sibforms.com", "https://*.google-analytics.com", "https://*.analytics.google.com"],
-    # Scripts: Turnstile (newsletter form).
-    ["script-src", "'self'", "'unsafe-inline'", "https://challenges.cloudflare.com", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
+    # Scripts: the site's files only (no inline script, so an injected one
+    # would not run) and Turnstile (newsletter form).
+    ["script-src", "'self'", "https://challenges.cloudflare.com", "https://www.googletagmanager.com", "https://*.google-analytics.com"],
+    # Styles: style attributes are used in the pages (and set by Leaflet).
     ["style-src", "'self'", "'unsafe-inline'"],
     ["font-src", "'self'"],
     ["object-src", "'none'"],
+    # No <base> pointing elsewhere; forms only posted to the site or Brevo
+    # (newsletter); the site is never shown in a frame (like X-Frame-Options).
+    ["base-uri", "'self'"],
+    ["form-action", "'self'", "https://*.sibforms.com"],
+    ["frame-ancestors", "'none'"],
   ]
   csp = join("; ", [
     for d in local.csp_directives :
@@ -58,7 +65,7 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
     {
       type       = "SetResponseHeader"
       parameter1 = "Strict-Transport-Security"
-      parameter2 = "max-age= 63072000; includeSubdomains; preload"
+      parameter2 = "max-age=63072000; includeSubdomains; preload"
     },
     {
       type       = "SetResponseHeader"
@@ -76,13 +83,27 @@ resource "bunnynet_pullzone_edgerule" "security_headers" {
       parameter2 = "DENY"
     },
     {
+      # The browsers' XSS filter is gone, and it could be abused where it
+      # remained: turned off, as recommended (the CSP protects instead).
       type       = "SetResponseHeader"
       parameter1 = "X-XSS-Protection"
-      parameter2 = "1; mode=block"
+      parameter2 = "0"
     },
     {
       type       = "SetResponseHeader"
       parameter1 = "Referrer-Policy"
+      parameter2 = "same-origin"
+    },
+    {
+      # Browser features the site never uses: denied to it and to frames.
+      type       = "SetResponseHeader"
+      parameter1 = "Permissions-Policy"
+      parameter2 = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    {
+      # A page opened from the site cannot reach it back (window.opener), and the reverse.
+      type       = "SetResponseHeader"
+      parameter1 = "Cross-Origin-Opener-Policy"
       parameter2 = "same-origin"
     },
     ], var.noindex ? [{
