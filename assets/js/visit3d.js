@@ -1316,7 +1316,7 @@ function ceilingLamp(g, x, z, y) {
   mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
-  box(g, 710, 780, 0, 82, 1, 58, M.pine);
+  for (const x of [710, 745]) box(g, x, x + 35, 0, 82, 1, 58, faced(M.pine, { s: 'kitchen-front' }));   // vanity unit: two doors, the kitchen fronts
   box(g, 709, 781, 82, 86, 1, 60, M.wcGrey);
   cyl(g, 745, 30, 20, 86, 89, M.white).scale.set(1, 1, 0.75);
   box(g, 714, 776, 100, 195, 1, 6, PINE);
