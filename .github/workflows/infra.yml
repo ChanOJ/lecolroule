@@ -112,9 +112,9 @@ jobs:
       - name: Smoke test (test)
         if: steps.apply.outcome == 'success'
         working-directory: .
-        run: python3 scripts/smoke_test.py --env test
+        run: python3 scripts/smoke_test.py --env test --after-apply
 
       - name: Smoke test (prod)
         if: steps.apply.outcome == 'success'
         working-directory: .
-        run: python3 scripts/smoke_test.py --env prod --redirect-domains
+        run: python3 scripts/smoke_test.py --env prod --redirect-domains --after-apply
