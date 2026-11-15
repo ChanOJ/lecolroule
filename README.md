@@ -84,14 +84,15 @@ give them.
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers
-of openstreetmap.de and simplified: `getting-there` (Saint-Michel → Valloire by car), `walk-trail`
+of openstreetmap.de and simplified: `getting-there` (Saint-Michel → the flat by car), `walk-trail`
 (flat → village centre and ESF on foot, by the footpath: summer and shops pages) and `walk-road`
 (the same walk by the road, its switchbacks: winter page; computed with the car profile). E.g.
 `https://routing.openstreetmap.de/routed-foot/route/v1/driving/<lon>,<lat>;<lon>,<lat>?overview=full&geometries=geojson`
-(`routed-car` for the road). Option `gpx="village"` adds a "Download the GPX track" link under the
+(`routed-car` for the road). Option `gpx="village"` adds a "Download the track" (GPX) link under the
 map (`assets/maps/village.gpx`, our own track). `main.js` loads Leaflet (`assets/vendor/`) and
-draws a map when it comes into view (without JavaScript: a link to the route on
-openstreetmap.org).
+draws a map when it comes into view. Below every map, links open the same route (first to last
+point, by car or on foot) in OpenStreetMap, Google Maps and Apple Maps (`mapOpenIn` in `i18n/`),
+to see it large or follow it.
 
 **3D visit** (also the guide for working on the model, e.g. with Fable): a 3D model of the
 flat written as code with three.js, with a first-person visit, on the apartment page

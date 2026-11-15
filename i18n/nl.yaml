@@ -3,8 +3,8 @@ language: Taal
 close: Sluiten
 logoAlt: Logo Le Col Roulé
 mapAria: "Kaart: route van {{ .from }} naar {{ .to }}"
-mapOpen: "Openen in OpenStreetMap"
-mapGpx: "GPX-track downloaden"
+mapOpenIn: "Route openen in:"
+mapGpx: "Track downloaden"
 appleMaps: "Kaarten (Apple)"
 emailRead: "Lees op de website"
 emailSentTo: "Deze e-mail werd verzonden naar"

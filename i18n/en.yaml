@@ -3,8 +3,8 @@ language: Language
 close: Close
 logoAlt: Logo Le Col Roulé
 mapAria: "Map: route from {{ .from }} to {{ .to }}"
-mapOpen: "Open in OpenStreetMap"
-mapGpx: "Download the GPX track"
+mapOpenIn: "Open the route in:"
+mapGpx: "Download the track"
 appleMaps: "Apple Maps"
 emailRead: "Read on the website"
 emailSentTo: "This e-mail was sent to"

@@ -194,15 +194,41 @@ li > .icon:first-child {
 			border-bottom: 0;
 		}
 
-	.osm-block .map-gpx {
-		display: inline-block;
+	/* Below the map, on one line (wrapped on narrow screens): links opening the
+	   route in OpenStreetMap, Google Maps, Apple Maps, then the GPX download */
+	.osm-block .map-links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 1.5rem;
 		margin-top: 0.5rem;
 		font-size: 0.8rem;
+	}
+
+	.osm-block .map-open {
+		margin: 0;
+	}
+
+		.osm-block .map-open:before {
+			margin-right: 0.5em;
+		}
+
+	.osm-block .map-gpx {
 		border-bottom: 0;
 	}
 
 		.osm-block .map-gpx:before {
 			margin-right: 0.5em;
+		}
+
+		/* its text underlined like the other links, not its icon */
+		.osm-block .map-gpx span {
+			border-bottom: dotted 1px rgba(255, 255, 255, 0.5);
+			transition: border-bottom-color 0.2s ease-in-out;
+		}
+
+		.osm-block .map-gpx:hover span {
+			border-bottom-color: transparent;
 		}
 
 /* Newsletter sign-up form (layouts/_partials/newsletter.html, main.js

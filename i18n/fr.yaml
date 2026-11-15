@@ -3,8 +3,8 @@ language: Langue
 close: Fermer
 logoAlt: Logo Le Col Roulé
 mapAria: "Carte : itinéraire de {{ .from }} à {{ .to }}"
-mapOpen: "Ouvrir dans OpenStreetMap"
-mapGpx: "Télécharger la trace GPX"
+mapOpenIn: "Ouvrir l'itinéraire dans :"
+mapGpx: "Télécharger la trace"
 appleMaps: "Plans (Apple)"
 emailRead: "Lire sur le site"
 emailSentTo: "Cet e-mail a été envoyé à"
