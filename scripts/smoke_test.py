@@ -249,14 +249,21 @@ def main() -> int:
     def assets():
         # Every stylesheet, script, image and preloaded font referenced by a
         # page (fingerprinted URLs: their names change with their content).
-        body = fetch(f"{base}/fr/appartement-valloire/").body.decode()
-        # Attribute values may be unquoted: the HTML is minified.
-        urls = sorted(set(m[0] or m[1] for m in re.findall(
-            r'(?<![\w-])(?:href|src|data-src)=(?:"(/(?:css|js|images|webfonts)/[^"]+)"|(/(?:css|js|images|webfonts)/[^\s"\'>]+))', body)))
-        assert urls, "no stylesheet, script or image found in the page"
-        broken = [u for u, r in zip(urls, fetch_all([base + u for u in urls])) if r.status != 200]
-        assert not broken, "not served: " + ", ".join(broken)
-        return f"{len(urls)} files served"
+        # Right after a deployment, retried while the purge propagates: a CDN
+        # node may still serve the former page, whose files were just deleted.
+        deadline = time.monotonic() + (args.wait if args.expect_repo_content else 0)
+        while True:
+            body = fetch(f"{base}/fr/appartement-valloire/").body.decode()
+            # Attribute values may be unquoted: the HTML is minified.
+            urls = sorted(set(m[0] or m[1] for m in re.findall(
+                r'(?<![\w-])(?:href|src|data-src)=(?:"(/(?:css|js|images|webfonts)/[^"]+)"|(/(?:css|js|images|webfonts)/[^\s"\'>]+))', body)))
+            assert urls, "no stylesheet, script or image found in the page"
+            broken = [u for u, r in zip(urls, fetch_all([base + u for u in urls])) if r.status != 200]
+            if not broken:
+                return f"{len(urls)} files served"
+            if time.monotonic() >= deadline:
+                raise AssertionError("not served: " + ", ".join(broken))
+            time.sleep(5)
     report.check("Stylesheets, scripts, images and fonts", assets)
 
     def not_found():
