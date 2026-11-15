@@ -1605,13 +1605,56 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
 
   const tour = (() => {
     const EYE = 160, WALK = 105, CLIMB = 55, TURN = 55;        // cm, cm/s, cm/s, degrees/s
-    const times = [0];
+    const still = (a, b) => a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+    const span = [0];
     for (let i = 1; i < TOUR.length; i++) {
       const [x0, z0, h0, y0] = TOUR[i - 1], [x1, z1, h1, y1, , t] = TOUR[i];
       const d = Math.hypot(x1 - x0, z1 - z0);
-      times.push(times[i - 1] + (t ?? Math.max(d / (h0 === h1 ? WALK : CLIMB), Math.abs(y1 - y0) / TURN, 0.4)));
+      span.push(t ?? Math.max(d / (h0 === h1 ? WALK : CLIMB), Math.abs(y1 - y0) / TURN, 0.4));
     }
+    // A turn on the spot between two walks, without a duration of its own, is a corner: it gets
+    // CORNER seconds, and the smoothing below spreads it over the walk before and after (the eye
+    // turns while walking round the corner, slowing down a little)
+    const CORNER = 0.5;
+    for (let i = 2; i < TOUR.length - 1; i++)
+      if (TOUR[i][5] == null && still(TOUR[i - 1], TOUR[i]) && !still(TOUR[i - 2], TOUR[i - 1]) && !still(TOUR[i], TOUR[i + 1]))
+        span[i] = Math.min(span[i], CORNER);
+    const times = [0];
+    for (let i = 1; i < TOUR.length; i++) times.push(times[i - 1] + span[i]);
     const total = times[times.length - 1];
+    // Steadicam: the path through the rows (straight lines, turns eased in and out) is sampled
+    // RATE times a second and smoothed with a Gaussian of SIGMA seconds (position, then heading
+    // and pitch): no sharp corner, no sudden start or stop, the eye turns while walking. Computed
+    // once, so the visit stays a function of time (seek, pause). Then a slow float is added (a few
+    // millimetres, a fraction of a degree, sines of unrelated frequencies) and the camera banks a
+    // little into turns.
+    const RATE = 50, SIGMA = [0.45, 0.45, 0.45, 0.6, 0.6];
+    const rows = (time) => {
+      let i = 1;
+      while (i < TOUR.length - 1 && times[i] < time) i++;
+      const a = TOUR[i - 1], b = TOUR[i], u = Math.min(1, Math.max(0, (time - times[i - 1]) / (times[i] - times[i - 1])));
+      const e = u * u * (3 - 2 * u), mix = (k, w) => a[k] + (b[k] - a[k]) * w;
+      return [mix(0, u), mix(2, u) + EYE, mix(1, u), mix(3, e), mix(4, e)];   // x, y, z (cm), heading, pitch (degrees)
+    };
+    const count = Math.ceil(total * RATE) + 1;
+    const path = SIGMA.map((sigma, k) => {
+      const raw = new Float32Array(count), out = new Float32Array(count);
+      for (let i = 0; i < count; i++) raw[i] = rows(i / RATE)[k];
+      const r = Math.ceil(3 * sigma * RATE), w = Array.from({ length: 2 * r + 1 }, (_, j) => Math.exp(-(((j - r) / RATE / sigma) ** 2) / 2));
+      const sum = w.reduce((a, b) => a + b);
+      for (let i = 0; i < count; i++) {
+        let v = 0;
+        for (let j = -r; j <= r; j++) v += w[j + r] * raw[Math.min(count - 1, Math.max(0, i + j))];   // ends held
+        out[i] = v / sum;
+      }
+      return out;
+    });
+    const at = (k, time) => {
+      const f = Math.min(Math.max(time * RATE, 0), count - 1), i = Math.min(Math.floor(f), count - 2);
+      return path[k][i] + (path[k][i + 1] - path[k][i]) * (f - i);
+    };
+    const float = (time, amp, ...f) => amp * (Math.sin(2 * Math.PI * f[0] * time + f[1]) * 0.6 + Math.sin(2 * Math.PI * f[2] * time + f[3]) * 0.4);
+    camera.rotation.order = 'YXZ';
     // [row index, door] of the rows that close a door
     const closing = TOUR.flatMap((row, j) => {
       const name = row[6] && row[6].close;
@@ -1642,19 +1685,21 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
       camera.updateProjectionMatrix();
     };
     const pose = (time) => {
-      let i = 1;
-      while (i < TOUR.length - 1 && times[i] < time) i++;
-      const a = TOUR[i - 1], b = TOUR[i], u = Math.min(1, Math.max(0, (time - times[i - 1]) / (times[i] - times[i - 1])));
-      const e = u * u * (3 - 2 * u), mix = (k, w) => a[k] + (b[k] - a[k]) * w;
-      const yaw = mix(3, e) * Math.PI / 180, pitch = mix(4, e) * Math.PI / 180;
-      camera.position.set(mix(0, u) * CM, (mix(2, u) + EYE) * CM, mix(1, u) * CM);
+      camera.position.set(
+        (at(0, time) + float(time, 0.8, 0.13, 0, 0.31, 1.7)) * CM,
+        (at(1, time) + float(time, 0.6, 0.21, 2.1, 0.47, 0.4)) * CM,
+        (at(2, time) + float(time, 0.8, 0.17, 4.2, 0.37, 3.1)) * CM);
+      const turning = (at(3, time + 0.1) - at(3, time - 0.1)) / 0.2;             // degrees per second
+      const yaw = at(3, time) + float(time, 0.35, 0.11, 0.9, 0.27, 2.6);
+      const pitch = at(4, time) + float(time, 0.25, 0.15, 3.3, 0.33, 5.2);
+      const roll = Math.max(-1.5, Math.min(1.5, -0.02 * turning)) + float(time, 0.3, 0.09, 1.3, 0.23, 4.4);
+      camera.rotation.set(pitch * Math.PI / 180, -yaw * Math.PI / 180, roll * Math.PI / 180);
       // Doors closed by the visit: open before their row, closing during it, closed after
       for (const [j, d] of closing) {
         const k = Math.min(1, Math.max(0, (time - times[j - 1]) / (times[j] - times[j - 1])));
         setDoor(d, 1 - k * k * (3 - 2 * k));
         d.target = d.openness;
       }
-      camera.lookAt(camera.position.x + Math.sin(yaw) * Math.cos(pitch), camera.position.y + Math.sin(pitch), camera.position.z - Math.cos(yaw) * Math.cos(pitch));
     };
     return {
       get running() { return running; },
