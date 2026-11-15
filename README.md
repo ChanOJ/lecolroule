@@ -141,7 +141,12 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
 - **Visit**: `TOUR` rows are `[x, z, floor height, heading, pitch, duration, event]` (heading in
   degrees, 0 = north, 90 = east, not wrapped so each turn's direction is explicit; duration
   optional, `null` when an event follows; event `{ close: 'wcDown' }` closes that door during the
-  row). Every door is back as at load when the visit starts (open, or closed with `closed: true` / the `home` of `addDoor()`: front door, closets). In the site the preview plays it in a loop;
+  row). The camera does not follow the rows as straight lines: like a steadicam shot, the path is
+  sampled and smoothed once at load (a Gaussian of 0.45 s on the position, 0.6 s on heading and
+  pitch: rounded corners, no sudden start or stop, the eye turning while walking), a turn on the
+  spot between two walks without a duration of its own is a corner of 0.5 s spread over the walk,
+  and a slow float of a few millimetres and a fraction of a degree, with a slight bank into turns,
+  is added (`tour` in `createVisit`). Every door is back as at load when the visit starts (open, or closed with `closed: true` / the `home` of `addDoor()`: front door, closets). In the site the preview plays it in a loop;
   full screen, it stops at the end or with the view buttons (top left). Full screen, a player at the
   bottom drives it: -5 s, play/pause, +5 s, a slider over the whole path, the time; a click on the
   view (elsewhere than on a door) pauses it; keys: space, left and right arrows. Paused, the view
