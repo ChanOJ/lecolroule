@@ -1322,7 +1322,7 @@ function ceilingLamp(g, x, z, y) {
   for (const x of [710, 745]) { const m = faced(M.pine, { s: 'kitchen-front' }); m[2] = hidden; box(g, x, x + 35, 0, 82, 1, 58, m); }
   // Top: the kitchen worktop's, cut out for the basin sunk into it (its outline 2 cm under the rim,
   // in the model's units, centred on the model: 1 unit = 39.58 cm)
-  const BASIN_Z = 39.85;                                                       // its front 4 cm from the front edge (z = 60)
+  const BASIN_Z = 35.85;                                                       // its front 8 cm from the front edge (z = 60)
   { const top = rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), hole = new THREE.Path();
     const outline = [[-0.67, -0.24], [-0.62, -0.039], [-0.513, 0.277], [-0.287, 0.493], [0.287, 0.493], [0.513, 0.277], [0.62, -0.039], [0.67, -0.24]];
     outline.forEach(([u, v], i) => hole[i ? 'lineTo' : 'moveTo']((745 + u * 39.58) * CM, (BASIN_Z + (v - 0.104) * 39.58) * CM));
