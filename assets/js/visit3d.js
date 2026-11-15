@@ -550,6 +550,7 @@ TOUR_ONLY.push(livingCeiling);
     g.addColorStop(1, `rgb(${c.map(Math.round).join(',')})`);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, img.width, top + 4);
+    tex.dispose();                                                              // a copy sized for the empty canvas may exist
     tex.needsUpdate = true;
     loaded++;
   };
@@ -787,11 +788,12 @@ function bed(g, x1, x2, z1, z2, head, side) {
 // 90 = east, as placed()). The models face +z (south) as drawn. materials = { name of a material
 // of the OBJ file: material of the visit }; a material not listed is grey (reported).
 const OBJS = new Map();
-// The OBJ files have no texture coordinates: each face gets a planar projection along its main
+// Most OBJ files have no texture coordinates: each face gets a planar projection along its main
 // axis (1 unit of the pack, about 40 cm, = 1 repeat), enough for a grain bump map (grain()).
+// Textured models (trees) keep their own.
 function boxUV(obj) {
   obj.traverse((o) => {
-    if (!o.isMesh) return;
+    if (!o.isMesh || o.geometry.attributes.uv) return;
     const pos = o.geometry.attributes.position, uv = new Float32Array(pos.count * 2);
     const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), n = new THREE.Vector3();
     for (let i = 0; i + 2 < pos.count; i += 3) {
@@ -945,6 +947,7 @@ function picture(g, key, facing, c, a, b, y1, y2, opts = null) {
         ctx.globalCompositeOperation = 'source-in';
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        tex.dispose();                                                          // a copy sized for the empty canvas may exist
         tex.needsUpdate = true;
         loaded++;
       };
@@ -1195,7 +1198,7 @@ function ceilingLamp(g, x, z, y) {
   // Terrace: two loungers at the west end, one in the south-east corner, table and six plastic armchairs
   // (lounger: back raised to the north, feet to the south when deg = 0; a third one in the
   // south-east corner, its feet turned 30 degrees west)
-  for (const [x, z, deg] of [[55, 650, 0], [125, 650, 0], [795.5, 654.3, -30]]) {
+  for (const [x, z, deg] of [[85, 650, 0], [155, 650, 0], [785.5, 654.3, -30]]) {
     const c = placed(g, x, z, deg);
     box(c, -28, 28, 36, 40, -20, 45, M.lounger);
     for (const lx of [-28, 25]) { box(c, lx, lx + 3, 0, 36, -18, -15, M.plastic); box(c, lx, lx + 3, 0, 36, 30, 33, M.plastic); }
@@ -1203,6 +1206,20 @@ function ceilingLamp(g, x, z, y) {
     box(back, -28, 28, -2, 2, -65, 0, M.lounger);
     const legs = new THREE.Group(); legs.position.set(0, 38 * CM, 45 * CM); legs.rotation.x = 0.35; c.add(legs);
     box(legs, -28, 28, -2, 2, 0, 45, M.lounger);
+  }
+  // Planters: anthracite cubes of 50 cm in the south-west and south-east corners, soil 3 cm under
+  // their rim, a pine 70 cm tall in each (Pine_1, a little narrower than drawn to stay in its corner)
+  const planter = mat(0x3a3a3c, { roughness: 0.6 }), soil = mat(0x3b2b20, { roughness: 1 });
+  const bark = texture('pine-bark'), needles = texture('pine-leaves');
+  bark.wrapS = bark.wrapT = THREE.RepeatWrapping;
+  const pine = { Bark: mat(0xffffff, { map: bark }), Pine_Leaves: mat(0xffffff, { map: needles, alphaTest: 0.5, side: THREE.DoubleSide }) };
+  pine.Pine_Leaves.userData.noAO = true;                                      // see the ambient occlusion pass
+  for (const x1 of [0, 810]) {
+    const x2 = x1 + 50, z1 = 704.5, z2 = 754.5;
+    box(g, x1, x2, 0, 50, z1, z1 + 2, planter); box(g, x1, x2, 0, 50, z2 - 2, z2, planter);
+    box(g, x1, x1 + 2, 0, 50, z1 + 2, z2 - 2, planter); box(g, x2 - 2, x2, 0, 50, z1 + 2, z2 - 2, planter);
+    box(g, x1 + 2, x2 - 2, 0, 47, z1 + 2, z2 - 2, soil);
+    model(g, 'Pine_1', x1 + 25, z1 + 25, x1 ? -90 : 90, [50, 44, 70], pine, 47);
   }
   // Table 180 x 80 with slightly rounded corners, in front of the two east leaves of the bay window,
   // leaving the way out of the west leaf (French window, x 320..414) clear: two armchairs on each
@@ -1502,6 +1519,15 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     ahead.subVectors(controls.target, camera.position).normalize();
     controls.target.addScaledVector(ahead, 1.5);
   });
+  // The view always turns round a point 2 m ahead of the eye, not round a fixed point of the
+  // model: set again after each action on the view (drag, wheel, pinch), where the eye now is
+  const PIVOT = 2;
+  const pivotAhead = () => {
+    camera.getWorldDirection(ahead);
+    controls.target.copy(camera.position).addScaledVector(ahead, PIVOT);
+    controls.update();
+  };
+  controls.addEventListener('end', pivotAhead);
   controls.maxPolarAngle = Math.PI / 2;
   controls.enabled = false;
 
@@ -1514,6 +1540,10 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     const ao = new GTAOPass(scene, camera, 1, 1);
     ao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.5, thickness: 1, scale: 1.1, samples: LOW ? 8 : 16 });
     ao.updatePdMaterial({ samples: LOW ? 8 : 16 });                           // its denoising (phones: lighter)
+    // Its depth and normals ignore cut-out textures (alphaTest): the needles of the pines would cast
+    // their whole leaf cards. Materials with userData.noAO are left out of it.
+    const hide = ao.overrideVisibility.bind(ao);
+    ao.overrideVisibility = () => { hide(); scene.traverse((o) => { if (o.material && o.material.userData && o.material.userData.noAO) o.visible = false; }); };
     composer.addPass(ao);
     composer.addPass(new OutputPass());
   } catch (e) { console.warn('Ambient occlusion disabled:', e); composer = null; }
@@ -1556,7 +1586,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     const fit = Math.max(1, 1.2 / camera.aspect);   // step back on portrait screens
     camera.fov = 45; camera.updateProjectionMatrix();
     camera.position.set(4.3, 13 * fit, 3.7 + 11.3 * fit);
-    controls.target.set(4.3, 1.5, 3.7);
+    camera.lookAt(4.3, 1.5, 3.7);                   // looking at the middle of the model
+    pivotAhead();
     controls.enabled = full;
   };
   const setView = (view) => {
@@ -1594,12 +1625,9 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     seekBar.max = total;
     // Paused, the view is free (as outside the visit): it turns round a point 2 m ahead of the eye;
     // playing again puts the camera back on the path, where the visit is
-    const look = new THREE.Vector3();
     const freeView = () => {
-      camera.getWorldDirection(look);
-      controls.target.copy(camera.position).addScaledVector(look, 2);
+      pivotAhead();
       controls.enabled = full;
-      controls.update();
     };
     const lens = () => {
       // wide lens: about 109 degrees of horizontal field of view, whatever the shape of the frame
