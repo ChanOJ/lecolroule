@@ -186,11 +186,13 @@ function metreUV(mesh, r, h) {
   return mesh;
 }
 // Texture coordinates of a box in a wood material: on each face, the grain runs along the longer of
-// the face's two sides, in metres from the centre of the box
-function woodUV(geo, grain) {
+// the face's two sides, in metres from the centre of the box. With one material per face (mats),
+// only the wood faces: the others keep their image (door leaves: photos on the faces, pine edges)
+function woodUV(geo, grain, mats = null) {
   const pos = geo.attributes.position, uv = geo.attributes.uv, p = geo.parameters;
   const dims = [p.width, p.height, p.depth];
   for (let f = 0; f < 6; f++) {
+    if (mats && !mats[f].userData.grain) continue;
     const n = Math.floor(f / 2), [a, b] = [0, 1, 2].filter((k) => k !== n);
     const [along, across] = dims[a] >= dims[b] ? [a, b] : [b, a];
     for (let i = f * 4; i < f * 4 + 4; i++) {
@@ -219,7 +221,7 @@ function leafFaces(axis, dir, key, m) {
 function box(g, x1, x2, y1, y2, z1, z2, m) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry((x2 - x1) * CM, (y2 - y1) * CM, (z2 - z1) * CM), m);
   const w = [].concat(m).find((mm) => mm.userData.grain);
-  if (w) woodUV(mesh.geometry, w.userData.grain);
+  if (w) woodUV(mesh.geometry, w.userData.grain, Array.isArray(m) ? m : null);
   mesh.position.set((x1 + x2) / 2 * CM, (y1 + y2) / 2 * CM, (z1 + z2) / 2 * CM);
   g.add(mesh);
   return mesh;
@@ -394,7 +396,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   wall(g, 'z', 376.5, 0, 118, PART, LIVING_H, M.teal, [{ s: 30, e: 105, head: 204 }], [M.orange, M.teal]);
   // Its door: hinged at the south end, it opens towards the entrance; the visit closes it (see tour)
   wcDoor.position.set(376.5 * CM, 0, 104 * CM);
-  box(wcDoor, -2, 2, 0, 203, -73, 0, leafFaces('z', -1, 'porte', M.pine));
+  box(wcDoor, -2, 2, 0, 203, -73, 0, leafFaces('z', -1, 'porte', PINE));
   g.add(wcDoor);
   addDoor(wcDoor, WC_DOOR_OPEN, 'wcUp');
   paint(g, 'x', 0.5, 277, 373, LIVING_H, M.orange);
@@ -414,7 +416,7 @@ const BATH_TILES = tiles(187 / 4.6, (NIGHT_H - 56) / 7, 0xb3ae9b, '#9a9480');
   // Entrance closet door: hinged on the east (on the left seen from the entrance), it opens onto
   // the entrance; closed at load
   { const pivot = new THREE.Group(); pivot.position.set(572 * CM, 0, 117 * CM);
-    box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', M.pine)); g.add(pivot);
+    box(pivot, -66, 0, 0, 204, -1, 1, leafFaces('x', -1, 'porte', PINE)); g.add(pivot);
     addDoor(pivot, -Math.PI / 2, 'closet', 0); }
   box(g, 506.6, 571.4, 8, 118, 182.5, 188, M.white);                          // kitchen radiator: 90 % of the wall (x 503..575), centred, 110 high
   TOUR_ONLY.push(box(g, 380, 650, 217, LIVING_H, 0, 118, M.wall));            // lowered ceiling of the entrance
@@ -582,7 +584,7 @@ for (const o of TOUR_ONLY) o.visible = false;
   // (the east bedroom window has 6 small panes: 2 columns, 3 rows)
   wall(g, 'x', D + EXT / 2, -EXT, W + EXT, EXT, NIGHT_H, M.cut, [{ ...win1, glass: true, out: 1 }, { ...win2, glass: true, bars: [2, 3], out: 1 }], [C, M.render]);
 
-  const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: M.pine, tex: 'porte', swing: [hinge, side] });   // open doors
+  const door = (s, e, hinge, side) => ({ s, e, head: 204, leaf: PINE, tex: 'porte', swing: [hinge, side] });   // open doors
   // Load-bearing line crossing the level from west to east: the beam of bedroom 1 and every wall in line with it
   const BN = 187, BS = 212, BC = (BN + BS) / 2, BT = BS - BN;
   // Bedroom 1 and the foot of the stairs
@@ -1280,15 +1282,15 @@ function ceilingLamp(g, x, z, y) {
   box(g, 30, 110, 12, 72, 420, 426, M.white);
   box(g, 745, 816, 12, 72, 419, 425.5, M.white);
 
-  // Cabin: bunk beds (90 x 200), curtains
-  for (const x of [325, 409]) for (const z of [227, 421]) box(g, x, x + 6, 0, 165, z, z + 6, M.pine);
+  // Cabin: bunk beds (90 x 200) in pine (PINE: the textured wood), curtains
+  for (const x of [325, 409]) for (const z of [227, 421]) box(g, x, x + 6, 0, 165, z, z + 6, PINE);
   for (const y of [28, 118]) {
-    box(g, 325, 415, y, y + 12, 227, 427, M.pine);
+    box(g, 325, 415, y, y + 12, 227, 427, PINE);
     box(g, 329, 411, y + 12, y + 26, 231, 423, M.bunk);
   }
-  box(g, 412, 415, 142, 150, 227, 427, M.pine);
-  for (const y of [40, 68, 96]) box(g, 412, 416, y, y + 4, 233, 279, M.pine);    // ladder at the north end
-  box(g, 411, 416, 0, 150, 279, 284, M.pine);                                  // upright holding the south side of the rungs
+  box(g, 412, 415, 142, 150, 227, 427, PINE);
+  for (const y of [40, 68, 96]) box(g, 412, 416, y, y + 4, 233, 279, PINE);    // ladder at the north end
+  box(g, 411, 416, 0, 150, 279, 284, PINE);                                  // upright holding the south side of the rungs
   // Cabin curtains, drawn back; their rods go from wall to wall (the models' own rods are hidden)
   const cabinCurtain = { Couch_Blue: M.curtain, LightMetal: hidden };
   model(g, 'Curtains_Single', 481, 329, -90, [18, 6, 247], cabinCurtain);         // recess curtain, 1 cm under the ceiling
