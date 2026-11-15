@@ -15,7 +15,7 @@ With --check it changes nothing and fails if the module is not up to date (the d
 workflow runs it before building the site).
 
 Usage:
-  python3 scripts/models.py --add 3d-sources/quaternius/OBJ/Bathroom_Toilet.obj
+  python3 scripts/models.py --add "3d-sources/quaternius/Ultimate House Interior Pack/OBJ/Bathroom_Toilet.obj"
   python3 scripts/models.py
   python3 scripts/models.py --check
 Standard library only.

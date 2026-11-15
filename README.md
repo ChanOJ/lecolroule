@@ -160,12 +160,14 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   in `data-visit-textures`), loaded apart and cached across versions of the model; the test page
   loads the JPG/PNG files themselves. The CI installs Hugo extended (WebP encoding). Keep them
   small all the same. The repository is public: photos of the flat only, never people.
-- **Furniture models**: the "Ultimate House Interior" pack of Quaternius (CC0, 123 OBJ models
-  without textures) is kept in `3d-sources/quaternius/` (`OBJ/`, `License.txt`). To choose: serve
-  the repository root, open http://localhost:8000/assets/3d/catalog.html, pick models by name. The
-  pack's sizes are not to scale and its MTL colours are linear values (the catalog corrects
+- **Furniture models**: packs of Quaternius (CC0) are kept in `3d-sources/quaternius/<pack>/`
+  (`OBJ/`, maybe `Textures/`, `License.txt`): "Ultimate House Interior Pack" (123 models without
+  textures) and "Stylized Tree Pack" (45 trees; their MTL files name no image: the catalog takes
+  the image of `Textures/` named after each material). To choose: serve the repository root,
+  open http://localhost:8000/assets/3d/catalog.html, choose the pack, pick models by name. The
+  packs' sizes are not to scale and their MTL colours are linear values (the catalog corrects
   them): a model used in the visit is scaled to the real size of the piece of furniture.
-  To use one: `python3 scripts/models.py --add 3d-sources/quaternius/OBJ/<Name>.obj` (copies it,
+  To use one: `python3 scripts/models.py --add "3d-sources/quaternius/<pack>/OBJ/<Name>.obj"` (copies it,
   reduced, into `assets/3d/models/` and regenerates `visit3d-models.js`), then in `visit3d.js`
   `model(g, '<Name>', x, z, deg, [width, depth, height], { <OBJ material>: <material> })`:
   fitted in that box (cm), bottom centre at (x, z), facing deg (0 = south, like `placed()`); each
