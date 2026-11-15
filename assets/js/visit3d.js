@@ -1192,9 +1192,11 @@ function ceilingLamp(g, x, z, y) {
   { const m = mirror(g, 's', 0, 0, 26, 124, 176); m.position.set(287.2 * CM, 150 * CM, 107.8 * CM); m.rotation.y = Math.PI * 0.75; }
   box(g, 294, 356, 120, 185, 1, 18, M.grey);                                   // wall cabinet above the toilet, centred on it
 
-  // Terrace: two loungers at the west end, table and six plastic armchairs
-  for (const x of [55, 125]) {
-    const c = placed(g, x, 650, 0);
+  // Terrace: two loungers at the west end, one in the south-east corner, table and six plastic armchairs
+  // (lounger: back raised to the north, feet to the south when deg = 0; a third one in the
+  // south-east corner, its feet turned 30 degrees west)
+  for (const [x, z, deg] of [[55, 650, 0], [125, 650, 0], [795.5, 654.3, -30]]) {
+    const c = placed(g, x, z, deg);
     box(c, -28, 28, 36, 40, -20, 45, M.lounger);
     for (const lx of [-28, 25]) { box(c, lx, lx + 3, 0, 36, -18, -15, M.plastic); box(c, lx, lx + 3, 0, 36, 30, 33, M.plastic); }
     const back = new THREE.Group(); back.position.set(0, 38 * CM, -20 * CM); back.rotation.x = 0.9; c.add(back);
