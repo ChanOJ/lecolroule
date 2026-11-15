@@ -1319,9 +1319,13 @@ function ceilingLamp(g, x, z, y) {
   mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
-  // Vanity unit: two doors, the kitchen fronts; no top face (under the worktop, it would show in
-  // the basin sunk into it)
-  for (const x of [710, 745]) { const m = faced(M.pine, { s: 'kitchen-front' }); m[2] = hidden; box(g, x, x + 35, 0, 82, 1, 58, m); }
+  // Vanity unit: two doors, the kitchen fronts; no top face, and no faces between its two halves
+  // (they would show in the basin sunk into the worktop, whose bottom goes down to 79.5 cm)
+  for (const x of [710, 745]) {
+    const m = faced(M.pine, { s: 'kitchen-front' });
+    m[2] = m[x === 710 ? 0 : 1] = hidden;                                       // top, and the east or west face
+    box(g, x, x + 35, 0, 82, 1, 58, m);
+  }
   // Top: the kitchen worktop's, cut out for the basin sunk into it (its outline 2 cm under the rim,
   // in the model's units, centred on the model: 1 unit = 39.58 cm)
   const BASIN_Z = 35.85;                                                       // its front 8 cm from the front edge (z = 60)
