@@ -1317,11 +1317,21 @@ function ceilingLamp(g, x, z, y) {
   mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
-  for (const x of [710, 745]) box(g, x, x + 35, 0, 82, 1, 58, faced(M.pine, { s: 'kitchen-front' }));   // vanity unit: two doors, the kitchen fronts
-  plate(g, rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), 86, 4, [worktop, worktop], { bevel: 0.5 });   // top: the kitchen worktop's
-  // Basin (Bathroom_Sink): glossy white ceramic, 55 cm wide, standing on the top; chrome tap, its
-  // waste pipe hidden in the unit; 6 cm from the wall, clear of the mirror frame
-  model(g, 'Bathroom_Sink', 745, 23.2, 0, [55, 32.3, 57.3], { White: ceramic, Grey: chrome }, 56.5);
+  // Vanity unit: two doors, the kitchen fronts; no top face (under the worktop, it would show in
+  // the basin sunk into it)
+  for (const x of [710, 745]) { const m = faced(M.pine, { s: 'kitchen-front' }); m[2] = hidden; box(g, x, x + 35, 0, 82, 1, 58, m); }
+  // Top: the kitchen worktop's, cut out for the basin sunk into it (its outline 2 cm under the rim,
+  // in the model's units, centred on the model: 1 unit = 39.58 cm)
+  const BASIN_Z = 39.85;                                                       // its front 4 cm from the front edge (z = 60)
+  { const top = rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), hole = new THREE.Path();
+    const outline = [[-0.67, -0.24], [-0.62, -0.039], [-0.513, 0.277], [-0.287, 0.493], [0.287, 0.493], [0.513, 0.277], [0.62, -0.039], [0.67, -0.24]];
+    outline.forEach(([u, v], i) => hole[i ? 'lineTo' : 'moveTo']((745 + u * 39.58) * CM, (BASIN_Z + (v - 0.104) * 39.58) * CM));
+    hole.closePath();
+    top.holes.push(hole);
+    plate(g, top, 86, 4, [worktop, worktop], { bevel: 0.5 }); }
+  // Basin (Bathroom_Sink): glossy white ceramic, 55 cm wide, sunk into the top (its rim 2 cm above
+  // it), towards the front; chrome tap, its waste pipe hidden in the unit
+  model(g, 'Bathroom_Sink', 745, BASIN_Z, 0, [55, 32.3, 57.3], { White: ceramic, Grey: chrome }, 39.5);
   box(g, 714, 776, 100, 195, 1, 6, PINE);
   mirror(g, 's', 6, 722, 768, 108, 180);
   // Towel radiator on the south wall, next to the door
