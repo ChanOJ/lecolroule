@@ -877,6 +877,8 @@ const curtain = (g, axis, c, a1, a2, y1, y2, deg, m) =>
   model(g, 'Curtains_Single', axis === 'x' ? (a1 + a2) / 2 : c, axis === 'x' ? c : (a1 + a2) / 2, deg, [a2 - a1, 6, y2 - y1], { Couch_Blue: m, LightMetal: hidden }, y1);
 // Lights: ceiling light (Light_Ceiling5, white opaque glass in a stainless steel ring), 35 cm wide
 // and 9 cm high, under a ceiling at height top; floor lamp (Light_Stand1)
+// Kitchen worktop and bathroom vanity top: dark grey (darker than the tiles: it catches the light), satin
+const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });
 const rodGrey = mat(0x3a3a3c, { roughness: 0.4, metalness: 0.4 });   // window curtain rods: anthracite satin
 const steel = mat(0xc8cbce, { metalness: 1, roughness: 0.35, envMapIntensity: 1 });
 const litGlass = mat(0xf7f7f4, { roughness: 0.25, emissive: 0xffb87b, emissiveIntensity: 0.9 });   // lit (see lamp())
@@ -1110,7 +1112,6 @@ function ceilingLamp(g, x, z, y) {
   // Worktop: glossy, its edges very slightly rounded, cut out under the sink bowl
   const SINK = { x1: 646, x2: 696, z1: 328, z2: 425 };                           // sink, 50 x 97 cm (kitchen-sink.jpg)
   const BOWL = { x1: 648.3, x2: 694, z1: 330.1, z2: 377.3 };                     // its bowl, measured on the photo (+1 cm: its sloped edge)
-  const worktop = mat(0x34383d, { roughness: 0.35, envMapIntensity: 0.6 });     // darker than the tiles (it catches the light), satin
   { const top = rrect(THREE.Shape, 636.5, 699.5, 183, 453, 0.1);
     top.holes.push(rrect(THREE.Path, BOWL.x1 - 0.5, BOWL.x2 + 0.5, BOWL.z1 - 0.5, BOWL.z2 + 0.5, 3));
     plate(g, top, 90, 4, [worktop, worktop], { bevel: 0.5 }); }
@@ -1316,9 +1317,21 @@ function ceilingLamp(g, x, z, y) {
   mirror(g, 's', 3, 375, 409, 48, 182);
 
   // Bathroom: vanity unit and mirror on the north wall, bath along the east wall with its glass screen
-  box(g, 710, 780, 0, 82, 1, 58, M.pine);
-  box(g, 709, 781, 82, 86, 1, 60, M.wcGrey);
-  cyl(g, 745, 30, 20, 86, 89, M.white).scale.set(1, 1, 0.75);
+  // Vanity unit: two doors, the kitchen fronts; no top face (under the worktop, it would show in
+  // the basin sunk into it)
+  for (const x of [710, 745]) { const m = faced(M.pine, { s: 'kitchen-front' }); m[2] = hidden; box(g, x, x + 35, 0, 82, 1, 58, m); }
+  // Top: the kitchen worktop's, cut out for the basin sunk into it (its outline 2 cm under the rim,
+  // in the model's units, centred on the model: 1 unit = 39.58 cm)
+  const BASIN_Z = 35.85;                                                       // its front 8 cm from the front edge (z = 60)
+  { const top = rrect(THREE.Shape, 709.5, 780.5, 1.5, 59.5, 0.1), hole = new THREE.Path();
+    const outline = [[-0.67, -0.24], [-0.62, -0.039], [-0.513, 0.277], [-0.287, 0.493], [0.287, 0.493], [0.513, 0.277], [0.62, -0.039], [0.67, -0.24]];
+    outline.forEach(([u, v], i) => hole[i ? 'lineTo' : 'moveTo']((745 + u * 39.58) * CM, (BASIN_Z + (v - 0.104) * 39.58) * CM));
+    hole.closePath();
+    top.holes.push(hole);
+    plate(g, top, 86, 4, [worktop, worktop], { bevel: 0.5 }); }
+  // Basin (Bathroom_Sink): glossy white ceramic, 55 cm wide, sunk into the top (its rim 2 cm above
+  // it), towards the front; chrome tap, its waste pipe hidden in the unit
+  model(g, 'Bathroom_Sink', 745, BASIN_Z, 0, [55, 32.3, 57.3], { White: ceramic, Grey: chrome }, 39.5);
   box(g, 714, 776, 100, 195, 1, 6, PINE);
   mirror(g, 's', 6, 722, 768, 108, 180);
   // Towel radiator on the south wall, next to the door
@@ -1344,12 +1357,21 @@ function ceilingLamp(g, x, z, y) {
     cyl(g, x, z, 3, 78, 84, M.bulb);
     lamp(g, x + (x < 400 ? 8 : -8), 82, z, 0.6);
   }
-  box(g, 786, 859.5, 0, 56, 17, 187, M.white);
-  box(g, 786, 859.5, 0, 55.5, 1, 17, M.bathTile);                              // tiled ledge north of the bath
-  slab(g, [[786, 1], [859.5, 1], [859.5, 17], [786, 17]], 56, 0.5, [BATH_TILES, M.bathTile]);
-  box(g, 792, 853, 56, 56.5, 23, 181, M.mirror);
-  box(g, 784.5, 786, 0, 52, 17, 187, PINE);
-  box(g, 786, 787, 56, 196, 106, 186, M.glass);
+  // Bath, 150 cm long, against the south wall; tiled ledge north of it, up to the north wall
+  const BATH_N = 37;
+  box(g, 786, 859.5, 0, 56, BATH_N, 187, M.white);
+  box(g, 786, 859.5, 0, 55.5, 1, BATH_N, M.bathTile);                          // tiled ledge north of the bath
+  slab(g, [[786, 1], [859.5, 1], [859.5, BATH_N], [786, BATH_N]], 56, 0.5, [BATH_TILES, M.bathTile]);
+  box(g, 792, 853, 56, 56.5, BATH_N + 6, 181, M.mirror);
+  box(g, 784.5, 786, 0, 52, BATH_N, 187, PINE);
+  // Glass screen of the shower, its top corner on the room side (north) rounded (15 cm)
+  { const r = 15, z1 = 106, z2 = 186, y1 = 56, y2 = 196, sh = new THREE.Shape();
+    sh.moveTo(z1 * CM, y1 * CM); sh.lineTo(z2 * CM, y1 * CM); sh.lineTo(z2 * CM, y2 * CM); sh.lineTo((z1 + r) * CM, y2 * CM);
+    sh.absarc((z1 + r) * CM, (y2 - r) * CM, r * CM, Math.PI / 2, Math.PI, false); sh.lineTo(z1 * CM, y1 * CM);
+    const screen = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: CM, bevelEnabled: false, curveSegments: 16 }), M.glass);
+    screen.rotation.y = -Math.PI / 2;                                           // shape x -> z, extrusion -> -x
+    screen.position.x = 787 * CM;
+    g.add(screen); }
 }
 
 
