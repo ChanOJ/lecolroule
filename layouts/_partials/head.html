@@ -30,7 +30,14 @@
 		<!-- Styles; fonts and background fetched at once rather than once the stylesheets are parsed -->
 		<link rel="preload" href="/webfonts/source-sans-pro-5.3.0-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/webfonts/source-sans-pro-5.3.0-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="{{ partial "asset-url.html" "/images/bg.jpg" }}" as="image" />
+		{{- /* The background is preloaded on the home page only, where it is the
+		       first screen; elsewhere the article covers it, and the first photo
+		       of the page (Largest Contentful Paint) must not wait for it. */}}
+		{{- if .IsHome }}
+		{{- $bg := partial "bg.html" . }}
+		<link rel="preload" href="{{ $bg.webpSmall }}" as="image" type="image/webp" media="(max-width: 736px)" />
+		<link rel="preload" href="{{ $bg.jpg }}" as="image" media="(min-width: 737px)" />
+		{{- end }}
 		{{- partial "styles.html" . }}
 		{{- partial "favicon.html" . }}
 		{{- /* Google Analytics, only when params.googleAnalyticsID is set in

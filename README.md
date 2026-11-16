@@ -378,9 +378,13 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
 - Font Source Sans Pro served by the site (`static/webfonts/source-sans-pro-*`, `@font-face` in
   `assets/css/site.css`, latin subset, preloaded): no third-party font CDN. The theme's `@import`
   of a font CDN is removed when `main.css` is built.
-- Intro (`main.js`): the theme's animations start once the page and its preloaded background
-  image are ready, not on window `load` (which also waits for Google Analytics); the header text
-  fades in without unfolding (an animated height moves the page: layout shift).
+- Intro (`main.js`): on the home page the theme's animations start once the page and its
+  background image (preloaded for the screen size, home page only) are ready; on the other pages at
+  once, so that the article and its first photo (Largest Contentful Paint) do not wait for the
+  background they cover. The background is the JPEG on large screens, a 900 px WebP on phones
+  (`layouts/_partials/bg.html`); photos have WebP sources at 480, 800 and 1200 px (`srcset`), so
+  phones load a smaller file. The intro never waits for window `load` (which also waits for
+  analytics); the header text fades in without unfolding (an animated height moves the page: layout shift).
 - Logo resized and converted to WebP at build time (`img.html` option `resize`); language flags
   are SVG.
 - Icons (`layouts/_partials/favicon.html`, also used by the 404 page): `/favicon.ico` (16 and

@@ -982,9 +982,12 @@
 				articles().hide();
 
 			// Intro: show the article of this page, if any, then play the initial
-			// animations (background fade-in, header). They start as soon as the
-			// page and its background image (preloaded by the <head>) are ready,
-			// not on window "load", which also waits for analytics.
+			// animations (background fade-in, header). On the home page they start
+			// as soon as the page and its background image (preloaded by the
+			// <head>, for the screen size) are ready; on the other pages at once,
+			// so that the article and its first photo (Largest Contentful Paint)
+			// do not wait for the background it covers. Never later than window
+			// "load".
 				var introPlayed = false;
 
 				function playIntro() {
@@ -1011,9 +1014,15 @@
 				}
 
 				$(function() {
-					var bg = document.querySelector('link[rel="preload"][as="image"]');
-					if (!bg)
+					var bg = null;
+					document.querySelectorAll('link[rel="preload"][as="image"]').forEach(function(link) {
+						if (!bg && (!link.media || window.matchMedia(link.media).matches))
+							bg = link;
+					});
+					if (!bg) {
+						playIntro();
 						return;
+					}
 					var img = new Image();
 					img.onload = img.onerror = playIntro;
 					img.src = bg.href;
