@@ -787,3 +787,10 @@ picture {
 	text-transform: none;
 	letter-spacing: 0.1rem;
 }
+
+/* Background on the other pages than the home page (body.bg-later, baseof.html):
+   fetched once the page has loaded (main.js), as the article covers it; the
+   article's first photo (Largest Contentful Paint) does not wait for it. */
+body.bg-later #bg:after {
+	background-image: none !important;
+}

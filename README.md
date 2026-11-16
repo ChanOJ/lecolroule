@@ -403,8 +403,11 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
   background image (preloaded for the screen size, home page only) are ready; on the other pages at
   once, so that the article and its first photo (Largest Contentful Paint) do not wait for the
   background they cover. The background is the JPEG on large screens, a 900 px WebP on phones
-  (`layouts/_partials/bg.html`); photos have WebP sources at 480, 800 and 1200 px (`srcset`), so
-  phones load a smaller file. The intro never waits for window `load` (which also waits for
+  (`layouts/_partials/bg.html`); photos have WebP sources at 360, 640, 800 and 1200 px (`srcset`,
+  quality 75, `sizes` = their real width in an article), so phones load a smaller file. On the
+  other pages than the home page the background is only fetched once the page has loaded
+  (`body.bg-later`), and the home page is preloaded when the browser is idle. Font Awesome's fonts
+  use `font-display: swap` (rewritten in `styles.html`). The intro never waits for window `load` (which also waits for
   analytics); the header text fades in without unfolding (an animated height moves the page: layout shift).
 - Logo resized and converted to WebP at build time (`img.html` option `resize`); language flags
   are SVG.

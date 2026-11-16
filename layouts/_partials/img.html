@@ -15,10 +15,10 @@
   original format to the others: a <picture> with a WebP <source> (made by
   Hugo, quality 80), the <img> keeping the JPEG/PNG file; the high-definition
   version opened by the viewer likewise (data-webp, hd-webp-url.html).
-  The WebP source of a photo comes in several widths (480, 800 and its own
-  width, srcset): phones load a smaller file. "sizes" option: the width the
-  image is shown at (default: the full width on phones, 600 px otherwise, as
-  in an article).
+  The WebP source of a photo comes in several widths (360, 640, 800 and its
+  own width, srcset; quality 75): phones load a smaller file. "sizes" option:
+  the width the image is shown at (default: as in an article, the screen width
+  less 4.5rem of margins on phones, 560 px otherwise).
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
 {{- $res := false -}}
@@ -37,14 +37,14 @@
 {{- $webp := "" -}}
 {{- if in (slice "jpeg" "png") $res.MediaType.SubType -}}
   {{- $set := slice -}}
-  {{- range slice 480 800 -}}
-    {{- if lt . $res.Width }}{{ $set = $set | append (printf "%s %dw" ($res.Resize (printf "%dx webp q80" .) | fingerprint "md5").RelPermalink .) }}{{ end -}}
+  {{- range slice 360 640 800 -}}
+    {{- if lt . $res.Width }}{{ $set = $set | append (printf "%s %dw" ($res.Resize (printf "%dx webp q75" .) | fingerprint "md5").RelPermalink .) }}{{ end -}}
   {{- end -}}
-  {{- $set = $set | append (printf "%s %dw" ($res.Process "webp q80" | fingerprint "md5").RelPermalink $res.Width) -}}
+  {{- $set = $set | append (printf "%s %dw" ($res.Process "webp q75" | fingerprint "md5").RelPermalink $res.Width) -}}
   {{- $webp = delimit $set ", " -}}
 {{- end -}}
 {{- with $zoom }}<a class="zoom" href="{{ . }}"{{ with $.caption }} data-caption="{{ . }}"{{ end }}{{ with partial "hd-webp-url.html" $.src }} data-webp="{{ . }}"{{ end }}>{{ end -}}
-{{- with $webp }}<picture><source srcset="{{ . }}" sizes="{{ $.sizes | default "(max-width: 736px) 100vw, 600px" }}" type="image/webp" />{{ end -}}
+{{- with $webp }}<picture><source srcset="{{ . }}" sizes="{{ $.sizes | default "(max-width: 736px) calc(100vw - 4.5rem), 560px" }}" type="image/webp" />{{ end -}}
 <img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
 	{{- with $width }} width="{{ . }}" height="{{ $height }}"{{ end }}
 	{{- if .eager }}{{ if .priority }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }} decoding="async" />

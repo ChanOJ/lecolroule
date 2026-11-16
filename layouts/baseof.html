@@ -9,7 +9,7 @@
 		{{- partial "head.html" . }}
 		{{- block "head" . }}{{ end }}
 	</head>
-	<body class="is-preload" data-home="{{ site.Home.RelPermalink }}" data-home-title="{{ partial "title.html" site.Home }}">
+	<body class="is-preload{{ if not .IsHome }} bg-later{{ end }}" data-home="{{ site.Home.RelPermalink }}" data-home-title="{{ partial "title.html" site.Home }}">
 
 		<!-- Wrapper -->
 			<div id="wrapper">
