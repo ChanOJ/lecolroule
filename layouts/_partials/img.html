@@ -11,6 +11,10 @@
   "caption" (shown by the viewer).
   The image shown comes from photo.html: a photo may exist only as its
   "_hd" file, of which the page shows a 1200 px copy.
+  Photos (JPEG, PNG) are served as WebP to the browsers that read it, the
+  original format to the others: a <picture> with a WebP <source> (made by
+  Hugo, quality 80), the <img> keeping the JPEG/PNG file; the high-definition
+  version opened by the viewer likewise (data-webp, hd-webp-url.html).
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
 {{- $res := false -}}
@@ -26,9 +30,13 @@
 {{- $height := .height -}}
 {{- if not $width }}{{ $width = $res.Width }}{{ $height = $res.Height }}{{ end -}}
 {{- $zoom := cond (.zoom | default false) (partial "hd-url.html" .src) "" -}}
-{{- with $zoom }}<a class="zoom" href="{{ . }}"{{ with $.caption }} data-caption="{{ . }}"{{ end }}>{{ end -}}
+{{- $webp := "" -}}
+{{- if in (slice "jpeg" "png") $res.MediaType.SubType }}{{ $webp = ($res.Process "webp q80" | fingerprint "md5").RelPermalink }}{{ end -}}
+{{- with $zoom }}<a class="zoom" href="{{ . }}"{{ with $.caption }} data-caption="{{ . }}"{{ end }}{{ with partial "hd-webp-url.html" $.src }} data-webp="{{ . }}"{{ end }}>{{ end -}}
+{{- with $webp }}<picture><source srcset="{{ . }}" type="image/webp" />{{ end -}}
 <img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
 	{{- with $width }} width="{{ . }}" height="{{ $height }}"{{ end }}
 	{{- if .eager }}{{ if .priority }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }} decoding="async" />
+{{- if $webp }}</picture>{{ end -}}
 {{- if $zoom }}</a>{{ end -}}
 {{- /* */ -}}

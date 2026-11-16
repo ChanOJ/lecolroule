@@ -1,7 +1,7 @@
 {{- /* Blog: newsletter form, then every post (newest first). */ -}}
 {{ define "main" }}
 						<article id="{{ .Section }}">
-							<h2 class="major">{{ .Title }}</h2>
+							<h1 class="major">{{ .Title }}</h1>
 							{{- partial "newsletter.html" . }}
 							<hr/>
 							{{ .Content }}

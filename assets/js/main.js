@@ -679,14 +679,14 @@
 				el.className = 'viewer';
 				el.setAttribute('role', 'dialog');
 				el.setAttribute('aria-modal', 'true');
-				el.innerHTML = '<figure><img alt="" /><figcaption></figcaption></figure>'
+				el.innerHTML = '<figure><picture><source type="image/webp" /><img alt="" /></picture><figcaption></figcaption></figure>'
 					+ '<button type="button" class="viewer-prev" aria-label="&larr;">&#8249;</button>'
 					+ '<button type="button" class="viewer-next" aria-label="&rarr;">&#8250;</button>'
 					+ '<button type="button" class="viewer-close" aria-label="&times;">&times;</button>'
 					+ '<span class="viewer-count"></span>';
 				document.body.appendChild(el);
 
-				var v = { el: el, img: el.querySelector('img'), caption: el.querySelector('figcaption'),
+				var v = { el: el, img: el.querySelector('img'), source: el.querySelector('source'), caption: el.querySelector('figcaption'),
 					count: el.querySelector('.viewer-count'), links: [], index: 0 };
 
 				// Clicks stay in the viewer (the body handler would close the article).
@@ -717,6 +717,17 @@
 
 			}
 
+			// The file the viewer will show for a link: its WebP copy when the
+			// browser reads WebP (it then shows the pages' WebP images).
+			var webpOk = null;
+			function preloadUrl(a) {
+				if (webpOk === null) {
+					var shown = document.querySelector('picture img');
+					webpOk = !!(shown && /\.webp/.test(shown.currentSrc));
+				}
+				return (webpOk && a.getAttribute('data-webp')) || a.getAttribute('href');
+			}
+
 			function showImage(index) {
 
 				var links = viewer.links,
@@ -727,6 +738,9 @@
 				var a = links[viewer.index],
 					thumb = a.querySelector('img');
 
+				// WebP copy (data-webp, img.html) in the browsers that read it: the
+				// <source> of the viewer's <picture>, the JPEG/PNG file otherwise.
+				viewer.source.srcset = a.getAttribute('data-webp') || '';
 				viewer.img.src = a.getAttribute('href');
 				viewer.img.alt = thumb ? thumb.alt : '';
 				viewer.caption.textContent = a.getAttribute('data-caption') || '';
@@ -736,7 +750,7 @@
 				// Preload the neighbours.
 				[1, -1].forEach(function(d) {
 					if (n > 1)
-						(new Image()).src = links[(viewer.index + d + n) % n].getAttribute('href');
+						(new Image()).src = preloadUrl(links[(viewer.index + d + n) % n]);
 				});
 
 			}

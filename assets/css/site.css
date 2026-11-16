@@ -658,3 +658,42 @@ html.viewer-is-open {
 		font-size: 0.75rem;
 		pointer-events: none;
 	}
+
+/* Headings for search engines (layouts/_partials/header.html, page.html,
+   section.html): the H1 of a page is its own title, shown like the theme's
+   article title (an H2); the site name in the header, an H1 on the home page
+   only, keeps the look of the theme's H1 elsewhere. */
+#main article > h1.major {
+	font-size: 1.5rem;
+	line-height: 1.4;
+	letter-spacing: 0.5rem;
+}
+
+#header .content p.site-title {
+	color: #ffffff;
+	font-weight: 600;
+	font-size: 2.25rem;
+	line-height: 1.3;
+	letter-spacing: 0.5rem;
+	text-transform: uppercase;
+	margin: 0 0 1rem 0;
+}
+
+@media screen and (max-width: 768px) {
+	#main article > h1.major {
+		font-size: 1.25em;
+		line-height: 1.5;
+	}
+
+	#header .content p.site-title {
+		font-size: 1.75rem;
+		line-height: 1.4;
+	}
+}
+
+/* Photos served as WebP with a JPEG/PNG fallback (img.html, the viewer of
+   main.js): the <picture> around the <img> lays out nothing of its own, so
+   the styles of the images apply as before. */
+picture {
+	display: contents;
+}
