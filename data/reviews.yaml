@@ -6,8 +6,9 @@
 # The rating and the number of reviews are on the listing page.
 #
 # Each review: the guest's first name only (no photo), the last day of the
-# stay, the stars, the language it was written in (`lang`), its full original
-# `text`, and its translation into each other language of the site
+# stay, the stars, the language it was written in (`lang`), its original `text`
+# (as the back-office list shows it: long ones end with "…", enough as the page
+# shortens them anyway), and its translation into each other language of the site
 # (`translations`). The page shows the text of its language, shortened.
 updated: 2026-11-16
 rating: 4.92
@@ -23,7 +24,6 @@ reviews:
       nl: "Valloire ontdekt: een rustige en prachtige plek. Het uitzicht vanuit het appartement is ongelooflijk. Het appartement is schoon en zoals beschreven, niets op aan te merken. We komen zeker terug naar de streek! En graag naar dit appartement, als het kan."
       de: "Valloire entdeckt: ein ruhiger und wunderschöner Ort. Die Aussicht von der Wohnung ist unglaublich. Die Wohnung ist sauber und entspricht der Beschreibung, nichts auszusetzen. Wir kommen ganz bestimmt wieder in die Gegend! Und gerne auch in diese Wohnung, wenn möglich."
       it: "Alla scoperta di Valloire: un luogo tranquillo e magnifico. La vista dall'alloggio è incredibile. L'alloggio è pulito e conforme alla descrizione, niente da ridire. Torneremo sicuramente in zona! E volentieri in questo alloggio, se possibile."
-  # The end of this text (after "vacances de") is still to be copied from the back office.
   - name: Elsie
     date: 2026-08-22
     stars: 5
@@ -34,7 +34,6 @@ reviews:
       nl: "We hebben 3 prachtige weken doorgebracht in Le Col Roulé, het appartement van Hélène en Charles. In de zomer verveel je je nooit in Valloire! Talloze wandelingen, zwembad, schaatsbaan, karten in de bergen, riviertrekking, uitstekende restaurants en zelfs een bioscoop! Kortom, een vakantie…"
       de: "Wir haben 3 wunderbare Wochen im Col Roulé verbracht, der Wohnung von Hélène und Charles. Im Sommer wird es in Valloire nie langweilig! Viele Wanderungen, Schwimmbad, Eisbahn, Kartfahren in den Bergen, Bachwandern, ausgezeichnete Restaurants und sogar ein Kino! Kurz gesagt, Ferien…"
       it: "Abbiamo trascorso 3 splendide settimane al Col Roulé, l'appartamento di Hélène e Charles. D'estate a Valloire non ci si annoia mai! Tante escursioni, piscina, pista di pattinaggio, kart in montagna, torrentismo, ottimi ristoranti e persino un cinema! Insomma, una vacanza…"
-  # The end of this text (after "het grote terras") is still to be copied from the back office.
   - name: Nathalie
     date: 2026-07-19
     stars: 5

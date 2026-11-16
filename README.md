@@ -88,7 +88,8 @@ give them.
 number of reviews and the latest reviews, from `data/reviews.yaml`, copied by hand from Airbnb (no
 public API), with the date of the copy (`updated`). The original texts, untranslated, are in the host
 back office: https://www.airbnb.fr/performance/quality/overall/reviews?ds-start=-60&ds-end=0 (the
-rating and the number of reviews on the listing page). Each review keeps its full original `text`,
+rating and the number of reviews on the listing page). Each review keeps its original `text` (as the back-office list shows it, long ones cut with
+"…": enough, as the page shortens them),
 its language (`lang`) and a translation into each other language of the site (`translations`); a
 page shows the text of its language, shortened to about 170 characters, after the flag of the
 original language, "translated" in the byline when it is a translation. Guests' first names only,
