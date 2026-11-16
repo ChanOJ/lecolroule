@@ -440,7 +440,9 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 
 - Internal links and images: Hugo fails the build on a link to an unknown page or a missing image.
 - External links: `scripts/check_links.py` (after `hugo`) requests every external link of `dist/`
-  without following redirects. Broken links (4xx, 5xx, unreachable) fail; redirects are listed with
+  without following redirects. Broken links (4xx, or a domain that no longer
+  resolves) fail; sites down (5xx, 429, timeouts, cut connections, after 3 attempts) are only listed,
+  as they are almost always back within days; redirects are listed with
   the final URL to use instead; sites blocking robots or asking for a login (Facebook, LinkedIn,
   BlaBlaCar, Google Maps, ...) are only listed. Runs every Monday (`links.yml`, "Monitoring: weekly
   link check") and manually.

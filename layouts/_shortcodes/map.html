@@ -23,7 +23,7 @@
 {{- $links := slice
   (dict "name" "OpenStreetMap" "url" (printf "https://www.openstreetmap.org/directions?engine=fossgis_osrm_%s&route=%s;%s" $p.mode $a $b))
   (dict "name" "Google Maps" "url" (printf "https://www.google.com/maps/dir/?api=1&origin=%s&destination=%s&travelmode=%s" $a $b (cond $car "driving" "walking")))
-  (dict "name" (i18n "appleMaps") "url" (printf "https://maps.apple.com/?saddr=%s&daddr=%s&dirflg=%s" $a $b (cond $car "d" "w")))
+  (dict "name" (i18n "appleMaps") "url" (printf "https://maps.apple.com/directions?source=%s&destination=%s&mode=%s" $a $b (cond $car "driving" "walking")))
 -}}
 <div class="osm-block">
 <div class="osm-map" style="height: {{ .Get "height" | default "350" }}px"

@@ -5,7 +5,11 @@ Every http(s) link of the HTML pages (href, src, data-src) is requested without
 following redirects:
   - 2xx: OK;
   - 3xx: warning, with the final URL (update the link to it);
-  - 4xx, 5xx, network errors: error.
+  - 4xx, and a domain that no longer resolves: error (the link is dead);
+  - 5xx, 429, timeouts and cut connections, after 3 attempts: warning only
+    ("unavailable"): the remote site is down or overloaded, almost always
+    for a while, and the link itself is fine (a failed weekly run for a site
+    down that day would be a false alarm).
 Sites that block robots or require a login are only reported, never failing
 (BOT_PROTECTED). Internal links are not checked here: Hugo fails the build on
 an unknown page or image.
@@ -23,6 +27,7 @@ import argparse
 import html
 import os
 import re
+import socket
 import sys
 import time
 import urllib.error
@@ -56,6 +61,7 @@ BOT_PROTECTED = [
     "oura.com",
     "google.com/maps",
     "maps.app.goo.gl",
+    "maps.apple/p/",  # Apple Maps short links: always a redirect to the place
     "youtube.com",
 ]
 
@@ -86,8 +92,14 @@ def request(url: str, follow: bool):
         return e.code, e.headers.get("Location") or ""
 
 
+def dead_domain(e: Exception) -> bool:
+    """The domain no longer resolves (expired, deleted): a dead link, unlike a
+    timeout or a cut connection."""
+    return isinstance(getattr(e, "reason", None), socket.gaierror)
+
+
 def check(url: str):
-    """(category, detail): ok / redirect / error / protected."""
+    """(category, detail): ok / redirect / error / unavailable / protected."""
     # Up to 3 attempts on transient failures (network errors, 429, 5xx), so
     # that a site briefly down does not raise a false alarm.
     attempts = 3
@@ -96,7 +108,7 @@ def check(url: str):
             status, location = request(url, follow=False)
         except Exception as e:  # DNS, TLS, timeout...
             if attempt == attempts:
-                return "error", f"{type(e).__name__}: {e}"
+                return ("error" if dead_domain(e) else "unavailable"), f"{type(e).__name__}: {e}"
         else:
             if status != 429 and status < 500 or attempt == attempts:
                 break
@@ -114,6 +126,8 @@ def check(url: str):
             return "redirect", f"{status} → {location}"
     if protected:
         return "protected", str(status)
+    if status == 429 or status >= 500:
+        return "unavailable", str(status)
     return "error", str(status)
 
 
@@ -145,10 +159,11 @@ def main() -> int:
         by_cat[cat].append((url, detail))
 
     titles = {"error": "❌ Broken", "redirect": "↪️ Redirected (update the link)",
+              "unavailable": "⏳ Site unavailable (server error or no answer): not failing, see next week",
               "protected": "🔒 Not checkable (robots blocked or login), check by hand"}
     lines = ["## External links", "",
-             f"{len(results)} links: " + ", ".join(f"{len(by_cat[c])} {c}" for c in ("ok", "redirect", "error", "protected"))]
-    for cat in ("error", "redirect", "protected"):
+             f"{len(results)} links: " + ", ".join(f"{len(by_cat[c])} {c}" for c in ("ok", "redirect", "error", "unavailable", "protected"))]
+    for cat in ("error", "redirect", "unavailable", "protected"):
         if by_cat[cat]:
             lines += ["", f"### {titles[cat]}", "", "| Link | Result | Pages |", "|---|---|---|"]
             lines += [f"| {u} | {d} | {', '.join(sorted(links[u]))} |" for u, d in by_cat[cat]]
