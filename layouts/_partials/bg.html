@@ -1,0 +1,14 @@
+{{- /*
+  The background image of every page (assets/images/bg.jpg, #bg in main.css),
+  darkened by the theme's overlay. Large screens: the JPEG file itself (a WebP
+  copy of this textured photo is not smaller). Phones: a 900 px copy, WebP
+  quality 35 (enough under the overlay) with a JPEG fallback. Used by
+  styles.html (CSS) and head.html (preload, home page).
+  Returns: dict jpg, jpgSmall, webpSmall (URLs).
+*/ -}}
+{{- $bg := resources.Get "images/bg.jpg" -}}
+{{- return dict
+  "jpg" ($bg | fingerprint "md5").RelPermalink
+  "jpgSmall" ($bg.Resize "900x q50" | fingerprint "md5").RelPermalink
+  "webpSmall" ($bg.Resize "900x webp q35" | fingerprint "md5").RelPermalink
+-}}

@@ -30,7 +30,7 @@
 	{{- range $i, $src := site.Params.homeGallery -}}
 	{{- $hd := partial "hd-url.html" $src -}}
 	{{- $shown = $shown | append $hd }}
-	{{ partial "img.html" (dict "src" $src "alt" (index $captions $hd | default site.Title) "eager" (and $home (eq $i 0)) "zoom" true "caption" (index $captions $hd)) }}
+	{{ partial "img.html" (dict "src" $src "alt" (index $captions $hd | default site.Title) "eager" (and $home (eq $i 0)) "sizes" (cond (eq $i 0) "(max-width: 736px) 100vw, 570px" "(max-width: 736px) 1px, 285px") "zoom" true "caption" (index $captions $hd)) }}
 	{{- end }}
 	{{- range $order }}{{ if not (in $shown .) }}
 	<a class="zoom" href="{{ . }}" data-caption="{{ index $captions . }}"{{ with index $webps . }} data-webp="{{ . }}"{{ end }} hidden></a>

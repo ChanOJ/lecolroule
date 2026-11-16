@@ -5,20 +5,24 @@
        - its intro no longer unfolds the header text (animated height and
          padding move the whole page while it loads: layout shift); the text
          only fades in;
-       - its image URLs point to the fingerprinted files. */ -}}
+       - its image URLs point to the fingerprinted files; on phones the
+         background is a smaller WebP image, JPEG fallback (bg.html). */ -}}
+{{- $bg := partial "bg.html" . -}}
 {{- $main := resources.Get "css/main.css" -}}
 {{- $css := $main.Content -}}
 {{- $rewrites := dict
   "@import url(fontawesome-all.min.css);" ""
   `@import url("https://fonts.bunny.net/css?family=Source+Sans+Pro:300italic,600italic,300,600");` ""
   "body.is-preload #header .content .inner {\n\t\t\t\tmax-height: 0;\n\t\t\t\tpadding-top: 0;\n\t\t\t\tpadding-bottom: 0;\n" "body.is-preload #header .content .inner {\n"
-  "/images/bg.jpg" (partial "asset-url.html" "/images/bg.jpg")
+  "/images/bg.jpg" $bg.jpg
   "/images/overlay.png" (partial "asset-url.html" "/images/overlay.png")
 -}}
 {{- range $from, $to := $rewrites -}}
   {{- if not (strings.Contains $css $from) }}{{ errorf "styles.html: %q not found in main.css" $from }}{{ end -}}
   {{- $css = replace $css $from $to -}}
 {{- end -}}
+{{- $css = printf `%s
+@media screen and (max-width: 736px) { #bg:after { background-image: url("%s"); background-image: image-set(url("%s") type("image/webp"), url("%s") type("image/jpeg")); } }` $css $bg.jpgSmall $bg.webpSmall $bg.jpgSmall -}}
 {{- $main = $css | resources.FromString "css/main.css" | minify | fingerprint "md5" }}
 {{- /* Font Awesome: its @font-face rules list 5 formats per font; every
        current browser uses woff2, the only one kept (static/webfonts/). */ -}}

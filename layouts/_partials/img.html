@@ -15,6 +15,10 @@
   original format to the others: a <picture> with a WebP <source> (made by
   Hugo, quality 80), the <img> keeping the JPEG/PNG file; the high-definition
   version opened by the viewer likewise (data-webp, hd-webp-url.html).
+  The WebP source of a photo comes in several widths (480, 800 and its own
+  width, srcset): phones load a smaller file. "sizes" option: the width the
+  image is shown at (default: the full width on phones, 600 px otherwise, as
+  in an article).
 */ -}}
 {{- $path := strings.TrimPrefix "/" .src -}}
 {{- $res := false -}}
@@ -31,9 +35,16 @@
 {{- if not $width }}{{ $width = $res.Width }}{{ $height = $res.Height }}{{ end -}}
 {{- $zoom := cond (.zoom | default false) (partial "hd-url.html" .src) "" -}}
 {{- $webp := "" -}}
-{{- if in (slice "jpeg" "png") $res.MediaType.SubType }}{{ $webp = ($res.Process "webp q80" | fingerprint "md5").RelPermalink }}{{ end -}}
+{{- if in (slice "jpeg" "png") $res.MediaType.SubType -}}
+  {{- $set := slice -}}
+  {{- range slice 480 800 -}}
+    {{- if lt . $res.Width }}{{ $set = $set | append (printf "%s %dw" ($res.Resize (printf "%dx webp q80" .) | fingerprint "md5").RelPermalink .) }}{{ end -}}
+  {{- end -}}
+  {{- $set = $set | append (printf "%s %dw" ($res.Process "webp q80" | fingerprint "md5").RelPermalink $res.Width) -}}
+  {{- $webp = delimit $set ", " -}}
+{{- end -}}
 {{- with $zoom }}<a class="zoom" href="{{ . }}"{{ with $.caption }} data-caption="{{ . }}"{{ end }}{{ with partial "hd-webp-url.html" $.src }} data-webp="{{ . }}"{{ end }}>{{ end -}}
-{{- with $webp }}<picture><source srcset="{{ . }}" type="image/webp" />{{ end -}}
+{{- with $webp }}<picture><source srcset="{{ . }}" sizes="{{ $.sizes | default "(max-width: 736px) 100vw, 600px" }}" type="image/webp" />{{ end -}}
 <img src="{{ ($res | fingerprint "md5").RelPermalink }}" alt="{{ .alt }}"
 	{{- with $width }} width="{{ . }}" height="{{ $height }}"{{ end }}
 	{{- if .eager }}{{ if .priority }} fetchpriority="high"{{ end }}{{ else }} loading="lazy"{{ end }} decoding="async" />
