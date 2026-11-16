@@ -1,0 +1,57 @@
+# Airbnb rating and latest reviews, shown at the bottom of the home page
+# (layouts/_partials/reviews.html). Airbnb has no public API: copied by hand,
+# newest first, with the date of the copy (`updated`). The original texts
+# (untranslated) are in the host back office:
+#   https://www.airbnb.fr/performance/quality/overall/reviews?ds-start=-60&ds-end=0
+# The rating and the number of reviews are on the listing page.
+#
+# Each review: the guest's first name only (no photo), the last day of the
+# stay, the stars, the language it was written in (`lang`), its full original
+# `text`, and its translation into each other language of the site
+# (`translations`). The page shows the text of its language, shortened.
+updated: 2026-11-16
+rating: 4.92
+count: 77
+reviews:
+  - name: Mick
+    date: 2026-09-06
+    stars: 5
+    lang: fr
+    text: "Découverte de Valloire : Endroit paisible et magnifique. La vue depuis le logement est incroyable. Le logement est propre et conforme, rien à redire. Nous reviendrons très certainement dans le coin ! Et dans ce logement avec plaisir si possible."
+    translations:
+      en: "Discovering Valloire: a peaceful and magnificent place. The view from the flat is incredible. The flat is clean and as described, nothing to fault. We will very certainly come back to the area! And to this flat, with pleasure, if possible."
+      nl: "Valloire ontdekt: een rustige en prachtige plek. Het uitzicht vanuit het appartement is ongelooflijk. Het appartement is schoon en zoals beschreven, niets op aan te merken. We komen zeker terug naar de streek! En graag naar dit appartement, als het kan."
+      de: "Valloire entdeckt: ein ruhiger und wunderschöner Ort. Die Aussicht von der Wohnung ist unglaublich. Die Wohnung ist sauber und entspricht der Beschreibung, nichts auszusetzen. Wir kommen ganz bestimmt wieder in die Gegend! Und gerne auch in diese Wohnung, wenn möglich."
+      it: "Alla scoperta di Valloire: un luogo tranquillo e magnifico. La vista dall'alloggio è incredibile. L'alloggio è pulito e conforme alla descrizione, niente da ridire. Torneremo sicuramente in zona! E volentieri in questo alloggio, se possibile."
+  # The end of this text (after "vacances de") is still to be copied from the back office.
+  - name: Elsie
+    date: 2026-08-22
+    stars: 5
+    lang: fr
+    text: "Nous avons passé 3 magnifiques semaines au Col Roulé, l'appartement d'Hélène et Charles. L'été à Valloire, on ne s'ennuie pas ! Randonnées multiples , piscine , patinoire, du kart dans la montagne, du ruisseling, des restaurants excellents et même un ciné ! Bref des vacances de…"
+    translations:
+      en: "We spent 3 wonderful weeks at Le Col Roulé, Hélène and Charles's flat. Summer in Valloire is never boring! Lots of hikes, swimming pool, ice rink, karting in the mountains, river trekking, excellent restaurants and even a cinema! In short, a holiday…"
+      nl: "We hebben 3 prachtige weken doorgebracht in Le Col Roulé, het appartement van Hélène en Charles. In de zomer verveel je je nooit in Valloire! Talloze wandelingen, zwembad, schaatsbaan, karten in de bergen, riviertrekking, uitstekende restaurants en zelfs een bioscoop! Kortom, een vakantie…"
+      de: "Wir haben 3 wunderbare Wochen im Col Roulé verbracht, der Wohnung von Hélène und Charles. Im Sommer wird es in Valloire nie langweilig! Viele Wanderungen, Schwimmbad, Eisbahn, Kartfahren in den Bergen, Bachwandern, ausgezeichnete Restaurants und sogar ein Kino! Kurz gesagt, Ferien…"
+      it: "Abbiamo trascorso 3 splendide settimane al Col Roulé, l'appartamento di Hélène e Charles. D'estate a Valloire non ci si annoia mai! Tante escursioni, piscina, pista di pattinaggio, kart in montagna, torrentismo, ottimi ristoranti e persino un cinema! Insomma, una vacanza…"
+  # The end of this text (after "het grote terras") is still to be copied from the back office.
+  - name: Nathalie
+    date: 2026-07-19
+    stars: 5
+    lang: nl
+    text: "Wij verbleven 3 nachten in het mooie appartement van Charles en Hélène, en hadden er een fantastische tijd. Het appartement is zeer ruim en bijzonder goed uitgerust, ook gezellig ingericht. Er is voldoende bergruimte. Wij hielden heel heel erg van het grote terras…"
+    translations:
+      fr: "Nous avons séjourné 3 nuits dans le bel appartement de Charles et Hélène, et y avons passé un moment fantastique. L'appartement est très spacieux et particulièrement bien équipé, et aussi décoré avec chaleur. Il y a assez de rangements. Nous avons vraiment, vraiment adoré la grande terrasse…"
+      en: "We stayed 3 nights in Charles and Hélène's lovely flat and had a fantastic time. The flat is very spacious and particularly well equipped, and cosily furnished too. There is plenty of storage space. We really, really loved the large terrace…"
+      de: "Wir haben 3 Nächte in der schönen Wohnung von Charles und Hélène verbracht und eine fantastische Zeit gehabt. Die Wohnung ist sehr geräumig und besonders gut ausgestattet, auch gemütlich eingerichtet. Es gibt genügend Stauraum. Die grosse Terrasse hat uns ganz, ganz besonders gefallen…"
+      it: "Abbiamo soggiornato 3 notti nel bell'appartamento di Charles e Hélène e abbiamo passato dei momenti fantastici. L'appartamento è molto spazioso e particolarmente ben attrezzato, anche arredato in modo accogliente. C'è abbastanza spazio per riporre le cose. Abbiamo amato davvero tantissimo la grande terrazza…"
+  - name: Moritz
+    date: 2026-07-04
+    stars: 4
+    lang: de
+    text: "Alles super, vielen Dank!"
+    translations:
+      fr: "Tout était super, merci beaucoup !"
+      en: "Everything was great, thank you very much!"
+      nl: "Alles super, hartelijk dank!"
+      it: "Tutto ottimo, grazie mille!"

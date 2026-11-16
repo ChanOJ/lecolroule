@@ -697,3 +697,93 @@ html.viewer-is-open {
 picture {
 	display: contents;
 }
+
+/* Airbnb rating and latest reviews, in the header below the menu (home page,
+   layouts/_partials/reviews.html): framed like the header content, the
+   reviews in two columns, one on phones. */
+#header .reviews {
+	width: 56rem;
+	max-width: 100%;
+	padding: 2rem 2rem 1.5rem 2rem;
+	border-style: solid;
+	border-color: #ffffff;
+	border-width: 1px 0;
+	font-size: 0.9rem;
+}
+
+	#header .reviews h2 {
+		font-size: 1rem;
+		letter-spacing: 0.2rem;
+		margin: 0 0 1.5rem 0;
+	}
+
+		#header .reviews h2 a {
+			border-bottom: dotted 1px rgba(255, 255, 255, 0.5);
+		}
+
+	#header .reviews .reviews-flag img {
+		display: inline-block;
+		width: 18px;
+		height: 12px;
+		margin-right: 0.15rem;
+		vertical-align: -1px;
+		border-radius: 1px;
+	}
+
+	#header .reviews ul {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem 2.5rem;
+		list-style: none;
+		padding: 0;
+		margin: 0 0 1.5rem 0;
+		text-align: left;
+	}
+
+		#header .reviews li {
+			padding: 0;
+		}
+
+	#header .reviews .reviews-stars {
+		margin: 0 0 0.35rem 0;
+		font-size: 0.7rem;
+		letter-spacing: 0.15rem;
+	}
+
+	#header .reviews blockquote {
+		margin: 0 0 0.5rem 0;
+		padding: 0;
+		border: 0;
+		font-style: normal;
+		line-height: 1.6;
+	}
+
+	#header .reviews .reviews-by {
+		margin: 0;
+		font-size: 0.75rem;
+		letter-spacing: 0.1rem;
+		text-transform: uppercase;
+		opacity: 0.75;
+	}
+
+	#header .reviews .reviews-all {
+		margin: 0;
+		font-size: 0.8rem;
+	}
+
+@media screen and (max-width: 736px) {
+	#header .reviews {
+		padding: 1.5rem 1rem 1rem 1rem;
+	}
+
+		#header .reviews ul {
+			grid-template-columns: 1fr;
+		}
+}
+
+/* Contact address in the footer (layouts/_partials/footer.html): in lower
+   case, as it is written, in the upper-case footer. */
+#footer .copyright a.contact {
+	text-transform: none;
+	letter-spacing: 0.1rem;
+}

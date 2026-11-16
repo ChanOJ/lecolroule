@@ -84,6 +84,17 @@ grid, all 3:2; on phones the first one only), in the header (`layouts/_partials/
 A click opens the viewer on every high-definition photo of the site, with the captions their pages
 give them.
 
+**Airbnb reviews** (home page, below the menu, `layouts/_partials/reviews.html`): the rating, the
+number of reviews and the latest reviews, from `data/reviews.yaml`, copied by hand from Airbnb (no
+public API), with the date of the copy (`updated`). The original texts, untranslated, are in the host
+back office: https://www.airbnb.fr/performance/quality/overall/reviews?ds-start=-60&ds-end=0 (the
+rating and the number of reviews on the listing page). Each review keeps its full original `text`,
+its language (`lang`) and a translation into each other language of the site (`translations`); a
+page shows the text of its language, shortened to about 170 characters, after the flag of the
+original language, "translated" in the byline when it is a translation. Guests' first names only,
+no photo. No `aggregateRating` in the structured data: Google ignores reviews a business publishes
+about itself. A monthly reminder (first Monday) prompts the update.
+
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers
 of openstreetmap.de and simplified: `getting-there` (Saint-Michel → the flat by car), `walk-trail`
