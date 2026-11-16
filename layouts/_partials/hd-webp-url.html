@@ -1,0 +1,13 @@
+{{- /*
+  URL of the WebP copy of the high-definition version of an image (see
+  hd-url.html), or "" when it has none: the image viewer of main.js shows it
+  in browsers that read WebP, the JPEG/PNG file elsewhere.
+  Usage: {{ partial "hd-webp-url.html" "/images/salon.jpg" }}
+*/ -}}
+{{- $path := strings.TrimPrefix "/" . -}}
+{{- $ext := path.Ext $path -}}
+{{- $url := "" -}}
+{{- with resources.Get (printf "%s_hd%s" (strings.TrimSuffix $ext $path) $ext) -}}
+  {{- $url = (.Fit "2560x2560 webp q80" | fingerprint "md5").RelPermalink -}}
+{{- end -}}
+{{- return $url -}}

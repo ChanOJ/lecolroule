@@ -10,12 +10,14 @@
 */ -}}
 {{- /* Every zoomable image of the site in this language: HD URL -> caption, in page order. */ -}}
 {{- $captions := dict -}}
+{{- $webps := dict -}}
 {{- $order := slice -}}
 {{- range site.RegularPages -}}
-  {{- range findRESubmatch `<a class="zoom" href="([^"]+)"(?: data-caption="([^"]*)")?>` .Content -}}
+  {{- range findRESubmatch `<a class="zoom" href="([^"]+)"(?: data-caption="([^"]*)")?(?: data-webp="([^"]+)")?>` .Content -}}
     {{- $href := index . 1 -}}
     {{- if not (isset $captions $href) -}}
       {{- $captions = merge $captions (dict $href (index . 2 | htmlUnescape)) -}}
+      {{- $webps = merge $webps (dict $href (index . 3)) -}}
       {{- $order = $order | append $href -}}
     {{- end -}}
   {{- end -}}
@@ -31,6 +33,6 @@
 	{{ partial "img.html" (dict "src" $src "alt" (index $captions $hd | default site.Title) "eager" (and $home (eq $i 0)) "zoom" true "caption" (index $captions $hd)) }}
 	{{- end }}
 	{{- range $order }}{{ if not (in $shown .) }}
-	<a class="zoom" href="{{ . }}" data-caption="{{ index $captions . }}" hidden></a>
+	<a class="zoom" href="{{ . }}" data-caption="{{ index $captions . }}"{{ with index $webps . }} data-webp="{{ . }}"{{ end }} hidden></a>
 	{{- end }}{{ end }}
 </div>

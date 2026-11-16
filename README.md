@@ -73,7 +73,9 @@ On top of it:
 **Images**: an image of a page or a blog post that has an `_hd` version is clickable: it opens
 full screen (`main.js`, "Image viewer"), with arrows (also keyboard and swipe) to the other
 images of the page that have one. Decided at build time (`img.html`): images without `_hd` are
-plain images. The default share image (`ogImage` in `hugo.toml`) is also published at the
+plain images. Photos (JPEG, PNG) are served as WebP (quality 80, made by Hugo) to the browsers that
+read it, the original file to the others: a `<picture>` with a WebP `<source>`, the HD version of the
+viewer likewise (`data-webp`, `hd-webp-url.html`); share images stay JPEG. The default share image (`ogImage` in `hugo.toml`) is also published at the
 fixed URL `/cover.jpg` (no fingerprint, 5-minute browser cache), for listings asking for an
 image URL (OpenStreetMap...).
 
@@ -328,6 +330,8 @@ run the workflow in `test` mode, check the e-mails, then run it in `send` mode.
 - Each page: `seoTitle` (<title>, ~60 characters max), `description` (~150 characters) and
   `ogImage` (share image) in its front matter; canonical URL, `hreflang` alternates (one per
   language, x-default = en), Open Graph and Twitter tags are generated (`layouts/_partials/head.html`).
+- One H1 per page: the page's own title (its article, `page.html`, `section.html`); the site name in
+  the header is the H1 of the home page only (elsewhere a `p.site-title` with the same look).
 - Structured data (schema.org JSON-LD, `layouts/_partials/structured-data.html`) from
   `params.lodging` in `hugo.toml`: LodgingBusiness (home), Apartment (apartment page), Blog with
   its posts (blog page). They include the amenities (`amenities`) and, as `sameAs`, the Airbnb
@@ -486,7 +490,7 @@ Goal: the 4 domains (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com` = `xn-
 `lecolroulé.fr` = `xn--lecolroul-j4a.fr`) fully described in `infra/dns_bunny.tf`: their Bunny DNS
 zones with every record (mail included), and the redirection of the alternative hostnames (the 4
 apexes, `www` of the 3 alternative domains) to `https://www.lecolroule.fr/` by the
-`le-col-roule-redirects` pull zone (301 edge rule). Infomaniak stays the registrar: the name servers
+`le-col-roule-redirects` pull zone (301 edge rule, keeping the path: `https://lecolroule.com/fr/...` lands on the same page). Infomaniak stays the registrar: the name servers
 and the DNSSEC DS record of each domain are set there by hand, once.
 
 `local.dns_domains` in `infra/dns_bunny.tf` holds the state of each domain: `infomaniak` (still
@@ -512,7 +516,8 @@ Procedure, per domain (the 3 alternative ones first, they have no mail; `lecolro
 5. Set it to `dnssec`, apply, then publish the DS record of `tofu output dns` at Infomaniak
    (DNSSEC → add a DS: key tag, algorithm, digest type, digest).
 
-Afterwards: remove the Infomaniak web redirections and the `infomaniak_record` resources of
+Afterwards: remove `lecolroule.fr` from `PATH_NOT_KEPT` in `scripts/smoke_test.py` (its Infomaniak
+redirection dropped the path), remove the Infomaniak web redirections and the `infomaniak_record` resources of
 `infra/dns.tf` (with a `removed` block, so that nothing is deleted at Infomaniak while it may
 still be needed), and this "in progress".
 

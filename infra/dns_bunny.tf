@@ -91,8 +91,10 @@ resource "bunnynet_pullzone_edgerule" "redirects" {
   }]
 
   actions = [{
-    type       = "Redirect"
-    parameter1 = "https://www.lecolroule.fr/"
+    type = "Redirect"
+    # {{path}}: the path and query string of the request (bunny.net variable
+    # expansion), so that https://lecolroule.com/fr/... lands on the same page
+    parameter1 = "https://www.lecolroule.fr{{path}}"
     parameter2 = "301"
     parameter3 = null
   }]

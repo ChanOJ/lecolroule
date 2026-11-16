@@ -1,11 +1,17 @@
 <!-- Header -->
 					<header id="header">
 						<div class="logo">
-							{{ partial "img.html" (dict "src" "/images/logo-256-noborder.png" "alt" (i18n "logoAlt") "eager" true "priority" true "resize" "240x webp q75") }}
+							{{ partial "img.html" (dict "src" "/images/logo-256-noborder.png" "alt" (i18n "logoAlt") "eager" true "priority" .IsHome "resize" "240x webp q75") }}
 						</div>
 						<div class="content">
 							<div class="inner">
+								{{- /* The site name is the H1 of the home page only: on the other pages,
+								       the H1 is the title of the page (its article, page.html). */}}
+								{{- if .IsHome }}
 								<h1>{{ site.Title }}</h1>
+								{{- else }}
+								<p class="site-title">{{ site.Title }}</p>
+								{{- end }}
 								{{- with site.Home }}
 								<h2>{{ .Params.tagline }}</h2>
 								<p>{{ .Params.intro }}</p>

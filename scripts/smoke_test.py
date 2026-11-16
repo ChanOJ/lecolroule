@@ -40,6 +40,12 @@ HOSTS = {"test": "test.lecolroule.fr", "prod": "www.lecolroule.fr"}
 # Alternative domains redirected to the prod site by Infomaniak, and their target.
 REDIRECT_DOMAINS = ["lecolroule.fr", "lecolroule.com", "lecolroulé.com", "lecolroulé.fr"]
 REDIRECT_TARGET = "https://www.lecolroule.fr/"
+# The redirections keep the path (bunny.net edge rule of infra/dns_bunny.tf):
+# a deep page of an alternative domain lands on the same page of the site.
+# Not yet for the domains still delegated to Infomaniak, whose web redirection
+# drops the path: remove them from here once they are at Bunny (README, "DNS").
+REDIRECT_PATH = "/fr/appartement-valloire/"
+PATH_NOT_KEPT = {"lecolroule.fr"}
 
 # Language home pages and one deep page per language.
 PAGES = {
@@ -367,6 +373,9 @@ def main() -> int:
                     continue  # the site itself, not a redirection
                 for scheme in ("http", "https"):
                     report.check(f"{scheme}://{h}/", retried(expect_redirect(f"{scheme}://{h}/", REDIRECT_TARGET), edge_wait))
+                if domain not in PATH_NOT_KEPT:
+                    url, target = f"https://{h}{REDIRECT_PATH}", REDIRECT_TARGET.rstrip("/") + REDIRECT_PATH
+                    report.check(f"{url} (path kept)", retried(expect_redirect(url, target), edge_wait))
 
     report.write()
     print(f"\n{len(report.rows) - report.failed}/{len(report.rows)} checks passed.")
