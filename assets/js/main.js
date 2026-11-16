@@ -1033,7 +1033,15 @@
 			// The current page and its home page are known: no need to fetch them again.
 				pages[location.pathname] = Promise.resolve(document.cloneNode(true));
 				$window.on('load', function() {
-					fetchPage($body.data('home')).catch(function() {});
+					// The background, covered by the article on the other pages than
+					// the home page, is only fetched now (body.bg-later, site.css):
+					// it does not compete with the article's first photo.
+					$body.removeClass('bg-later');
+					// The home page, preloaded for the in-site navigation, once the
+					// browser is idle: out of the page's critical path.
+					(window.requestIdleCallback || function(f) { window.setTimeout(f, 1000); })(function() {
+						fetchPage($body.data('home')).catch(function() {});
+					});
 				});
 
 })(jQuery);

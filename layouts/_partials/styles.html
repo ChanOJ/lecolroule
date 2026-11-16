@@ -30,6 +30,10 @@
 {{- $faCss := $fa.Content -}}
 {{- $faFont := `src:url\([^)]*\.eot\);src:[^}]*?url\(([^)]*\.woff2)\) format\("woff2"\)[^}]*` -}}
 {{- if ne (len (findRE $faFont $faCss)) 3 }}{{ errorf "styles.html: the 3 Font Awesome @font-face rules were not found" }}{{ end -}}
+{{- /* font-display: swap rather than block: the text of the page is not
+       held back by the icon fonts (the icons appear when their font arrives). */ -}}
+{{- if ne (len (findRE `font-display:block` $faCss)) 3 }}{{ errorf "styles.html: the 3 Font Awesome font-display:block were not found" }}{{ end -}}
+{{- $faCss = replace $faCss "font-display:block" "font-display:swap" -}}
 {{- $fa = replaceRE $faFont `src:url($1) format("woff2")` $faCss | resources.FromString "css/fontawesome-all.min.css" | fingerprint "md5" }}
 		<link rel="stylesheet" href="{{ $fa.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ $main.RelPermalink }}" />
