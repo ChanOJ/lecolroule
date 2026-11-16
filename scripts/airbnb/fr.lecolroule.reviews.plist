@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  LaunchAgent of scripts/airbnb/reviews.py: every day at 20:00 (or when the Mac
+  wakes up, if it slept then). Runs the script of the up-to-date main branch, in
+  the clone of the script (~/Library/Application Support/lecolroule-reviews/repo).
+  Installed by scripts/airbnb/install.sh; see README.md, "Airbnb reviews".
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>fr.lecolroule.reviews</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/zsh</string>
+		<string>-lc</string>
+		<string>cd "$HOME/Library/Application Support/lecolroule-reviews/repo" &amp;&amp; git fetch -q origin &amp;&amp; git reset -q --hard origin/main &amp;&amp; "$HOME/Library/Application Support/lecolroule-reviews/venv/bin/python" scripts/airbnb/reviews.py --update</string>
+	</array>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>20</integer>
+		<key>Minute</key>
+		<integer>0</integer>
+	</dict>
+	<key>StandardOutPath</key>
+	<string>/tmp/lecolroule-reviews.out</string>
+	<key>StandardErrorPath</key>
+	<string>/tmp/lecolroule-reviews.err</string>
+</dict>
+</plist>

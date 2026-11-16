@@ -1,15 +1,14 @@
 # Airbnb rating and latest reviews, shown at the bottom of the home page
-# (layouts/_partials/reviews.html). Airbnb has no public API: copied by hand,
-# newest first, with the date of the copy (`updated`). The original texts
-# (untranslated) are in the host back office:
+# (layouts/_partials/reviews.html). Updated by scripts/airbnb/reviews.py on the
+# owners' Mac (see README.md, "Airbnb reviews"), or by hand: the original texts
+# are in the host back office
 #   https://www.airbnb.fr/performance/quality/overall/reviews?ds-start=-60&ds-end=0
-# The rating and the number of reviews are on the listing page.
+# and the rating and the number of reviews on the listing page.
 #
 # Each review: the guest's first name only (no photo), the last day of the
-# stay, the stars, the language it was written in (`lang`), its original `text`
-# (as the back-office list shows it: long ones end with "…", enough as the page
-# shortens them anyway), and its translation into each other language of the site
-# (`translations`). The page shows the text of its language, shortened.
+# stay, the stars, the language it was written in (`lang`), its original `text`,
+# and its translation into each other language of the site (`translations`).
+# The page shows the text of its language, shortened.
 updated: 2026-11-16
 rating: 4.92
 count: 77

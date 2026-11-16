@@ -50,6 +50,8 @@ en veut toujours plus », Skilehrpersonen, Einheimische, « chi ama la disciplin
 needed (moniteurs et monitrices, maestre e maestri), no point médian or brackets (« inscrit·e »,
 « certain(e)s »): harder to read and badly read by screen readers. Icon titles name the activity,
 not the person (randonnée, Wandern, corsa). Keep it when writing or translating a page.
+Exception: the Airbnb reviews (`data/reviews.yaml`) are the guests' own words: their translations
+stay faithful to the original, its grammatical genders included.
 
 Adding a language = adding it in `hugo.toml` (with a flag in `assets/images/`) and `i18n/`,
 translating the files, and adding its pages to `PAGES` in `scripts/smoke_test.py`.
@@ -94,7 +96,26 @@ its language (`lang`) and a translation into each other language of the site (`t
 page shows the text of its language, shortened to about 170 characters, after the flag of the
 original language, "translated" in the byline when it is a translation. Guests' first names only,
 no photo. No `aggregateRating` in the structured data: Google ignores reviews a business publishes
-about itself. A monthly reminder (first Monday) prompts the update.
+about itself.
+
+**Automatic update of the reviews** (`scripts/airbnb/`, on the owners' MacBook, never on a server):
+a LaunchAgent runs `reviews.py --update` every day at 20:00 (or when the Mac wakes up). It reads the
+rating and the number of reviews on the public listing page (plain HTTP, no login) and stops when
+they match `data/reviews.yaml`. Otherwise it opens the back office in a headless Chromium with its
+own profile (`~/Library/Application Support/lecolroule-reviews/`), where Airbnb keeps the session:
+the script never logs in, and when the session has ended a macOS notification asks to run
+`reviews.py --login` (log in by hand; Airbnb sends a code by SMS to a new device). New or changed
+reviews get their language and translations from the Claude API (credentials: the Mac's
+`ant auth login`, renewed by the SDK; no API key to rotate). It then writes the YAML in a clone of
+its own, checks `hugo --panicOnWarning`, opens a pull request, merges it, waits for the test
+deployment and deploys to prod. A notification says what happened; log:
+`~/Library/Logs/lecolroule-reviews.log`. Setup, once: `brew install anthropics/tap/ant`,
+`ant auth login`, `scripts/airbnb/install.sh` (Python environment with Playwright, PyYAML and
+anthropic; clone; LaunchAgent `fr.lecolroule.reviews`), then
+`"~/Library/Application Support/lecolroule-reviews/venv/bin/python" scripts/airbnb/reviews.py --login`.
+Test without publishing: `... reviews.py --update --dry-run --force`. The Airbnb terms do not allow
+automated access: run from the owners' own Mac and account, once a day at most, the back office only
+when the public listing changed.
 
 **Route maps**: `assets/maps/<route>.json` is a GeoJSON `Feature` (a `LineString`; properties
 `mode` = `car` or `foot`, `from`, `to`, `distance` in metres), computed once with the OSRM servers
