@@ -573,8 +573,7 @@ Procedure, per domain (the 3 alternative ones first, they have no mail; `lecolro
 5. Set it to `dnssec`, apply, then publish the DS record of `tofu output dns` at Infomaniak
    (DNSSEC → add a DS: key tag, algorithm, digest type, digest).
 
-Afterwards: remove `lecolroule.fr` from `PATH_NOT_KEPT` in `scripts/smoke_test.py` (its Infomaniak
-redirection dropped the path), remove the Infomaniak web redirections and the `infomaniak_record` resources of
+Afterwards: remove the Infomaniak web redirections and the `infomaniak_record` resources of
 `infra/dns.tf` (with a `removed` block, so that nothing is deleted at Infomaniak while it may
 still be needed), and this "in progress".
 
