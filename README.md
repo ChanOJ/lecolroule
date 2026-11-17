@@ -188,8 +188,8 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   bottom drives it: -5 s, play/pause, +5 s, a slider over the whole path, the time; a click on the
   view (elsewhere than on a door) pauses it; keys: space, left and right arrows. While it plays,
   the controls (view buttons, close button, player) and the pointer slide away after 1 s
-  (`HIDE_AFTER`: a clean picture to record a video); a click, a tap or a key brings them back, that
-  click doing nothing else. Paused, the view
+  (`HIDE_AFTER`: a clean picture to record a video); a click or a tap then pauses the visit (even
+  over a door), which brings them back, as does a key. Paused, the view
   is free; playing again puts the camera back on the path. The view always turns round a point
   2 m ahead of the eye, never round a fixed point of the model: it is set again after each action
   on the view (drag, wheel, pinch) and when the overview is shown.

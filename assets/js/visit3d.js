@@ -1923,8 +1923,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   let press = null, hoverAt = 0;
   // Controls tucked away, full screen, while the visit plays: the view buttons, the close button and
   // the player slide out of the screen HIDE_AFTER ms after the last action (a clean picture, e.g. to
-  // record a video of the visit) and come back on a click or a tap anywhere, or a key; that click
-  // only brings them back (it neither pauses the visit nor opens a door). Paused or outside the
+  // record a video of the visit). A click or a tap anywhere then pauses the visit (not a door, even
+  // under the pointer), which brings them back; a key brings them back too. Paused or outside the
   // visit, they stay.
   let tucked = false, hideTimer = 0, holding = false, pressTucked = false;
   const tuck = (on) => {
@@ -1960,7 +1960,8 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     if (!full || !press) return;
     const still = Math.hypot(event.clientX - press.x, event.clientY - press.y) < 6 && performance.now() - press.t < 600;
     press = null;
-    if (!still || pressTucked) return;   // the click that brought the controls back does nothing else
+    if (!still) return;
+    if (pressTucked) { tour.pause(); return; }   // controls tucked away: pause, whatever is under the pointer
     const d = doorAt(event);
     if (d) d.target = d.target > 0.5 ? 0 : 1;
     else if (tour.running) tour.pause();
