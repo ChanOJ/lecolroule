@@ -570,8 +570,10 @@ Procedure, per domain (the 3 alternative ones first, they have no mail; `lecolro
    to `bunny` in `local.dns_domains`, apply (certificates of its redirections), run
    `python3 scripts/smoke_test.py --env prod --redirect-domains`. For `lecolroule.fr`, also send a
    test e-mail (e.g. mail-tester.com: SPF, DKIM, DMARC) and check that mail comes in.
-5. Set it to `dnssec`, apply, then publish the DS record of `tofu output dns` at Infomaniak
-   (DNSSEC → add a DS: key tag, algorithm, digest type, digest).
+5. Set it to `dnssec`, apply, **wait one hour** (`dns_ttl`: resolvers must first drop the unsigned
+   answers they cached; with the DS published sooner, they answer SERVFAIL until then, as seen for
+   `lecolroule.fr`), then publish the DS record of `tofu output dns` at Infomaniak (DNSSEC → add a
+   DS: key tag, algorithm, digest type, digest).
 
 Afterwards: remove the Infomaniak web redirections and the `infomaniak_record` resources of
 `infra/dns.tf` (with a `removed` block, so that nothing is deleted at Infomaniak while it may
