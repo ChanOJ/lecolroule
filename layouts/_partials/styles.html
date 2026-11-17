@@ -24,9 +24,23 @@
 {{- $css = printf `%s
 @media screen and (max-width: 736px) { #bg:after { background-image: url("%s"); background-image: image-set(url("%s") type("image/webp"), url("%s") type("image/jpeg")); } }` $css $bg.jpgSmall $bg.webpSmall $bg.jpgSmall -}}
 {{- $main = $css | resources.FromString "css/main.css" | minify | fingerprint "md5" }}
-{{- /* Font Awesome: its @font-face rules list 5 formats per font; every
-       current browser uses woff2, the only one kept (static/webfonts/). */ -}}
-{{- $fa := resources.Get "css/fontawesome-all.min.css" -}}
+{{- /* Font Awesome. With the subset made by scripts/fonts.py (assets/fontawesome/,
+       the deployment workflow makes it): its stylesheet, with the rules of the
+       icons the site uses only, and its fonts, fingerprinted. Without it (local
+       preview): the full stylesheet and fonts. */ -}}
+{{- $fa := resources.Get "fontawesome/fontawesome.css" -}}
+{{- with $fa -}}
+{{- $faCss := .Content -}}
+{{- range resources.Match "fontawesome/*.woff2" -}}
+  {{- $from := printf "url(%s)" (path.Base .Name) -}}
+  {{- if not (strings.Contains $faCss $from) }}{{ errorf "styles.html: %q not found in fontawesome/fontawesome.css" $from }}{{ end -}}
+  {{- $faCss = replace $faCss $from (printf "url(%s)" (. | fingerprint "md5").RelPermalink) -}}
+{{- end -}}
+{{- $fa = $faCss | resources.FromString "css/fontawesome.min.css" | fingerprint "md5" -}}
+{{- else -}}
+{{- /* Its @font-face rules list 5 formats per font; every current browser uses
+       woff2, the only one kept (static/webfonts/). */ -}}
+{{- $fa = resources.Get "css/fontawesome-all.min.css" -}}
 {{- $faCss := $fa.Content -}}
 {{- $faFont := `src:url\([^)]*\.eot\);src:[^}]*?url\(([^)]*\.woff2)\) format\("woff2"\)[^}]*` -}}
 {{- if ne (len (findRE $faFont $faCss)) 3 }}{{ errorf "styles.html: the 3 Font Awesome @font-face rules were not found" }}{{ end -}}
@@ -34,7 +48,8 @@
        held back by the icon fonts (the icons appear when their font arrives). */ -}}
 {{- if ne (len (findRE `font-display:block` $faCss)) 3 }}{{ errorf "styles.html: the 3 Font Awesome font-display:block were not found" }}{{ end -}}
 {{- $faCss = replace $faCss "font-display:block" "font-display:swap" -}}
-{{- $fa = replaceRE $faFont `src:url($1) format("woff2")` $faCss | resources.FromString "css/fontawesome-all.min.css" | fingerprint "md5" }}
+{{- $fa = replaceRE $faFont `src:url($1) format("woff2")` $faCss | resources.FromString "css/fontawesome-all.min.css" | fingerprint "md5" -}}
+{{- end }}
 		<link rel="stylesheet" href="{{ $fa.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ $main.RelPermalink }}" />
 		<link rel="stylesheet" href="{{ partial "asset-url.html" "css/site.css" }}" />

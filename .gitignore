@@ -44,3 +44,6 @@ override.tf.json
 
 # Claude Code: personal settings (permissions, local paths). .claude/launch.json is shared.
 .claude/settings.local.json
+
+# Font Awesome subset, made by scripts/fonts.py (deployment workflow).
+/assets/fontawesome/

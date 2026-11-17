@@ -20,6 +20,7 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
 - `scripts/newsletter.py`: sends a blog post as the newsletter (see "Newsletter").
 - `scripts/dns_compare.py`: compares the DNS answers of Bunny and Infomaniak (see "DNS").
+- `scripts/fonts.py`: Font Awesome reduced to the icons used (see "Performance and icons").
 - `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
 
 Local preview: `hugo server --renderToMemory` (keeps `dist/` untouched), then http://localhost:1313/fr/.
@@ -409,6 +410,17 @@ Checked with Lighthouse ([PageSpeed Insights](https://pagespeed.web.dev/), mobil
   (`body.bg-later`), and the home page is preloaded when the browser is idle. Font Awesome's fonts
   use `font-display: swap` (rewritten in `styles.html`). The intro never waits for window `load` (which also waits for
   analytics); the header text fades in without unfolding (an animated height moves the page: layout shift).
+- Font Awesome subset (`scripts/fonts.py`, run by the deployment workflow before the build): the
+  script builds the site, collects the icons its pages use (classes `fa-<name>`, their font given
+  by `solid`, `brands` or neither = regular, as in the theme's CSS) and writes to `assets/fontawesome/`
+  (ignored by git) the three fonts reduced to those icons (about 8 KB instead of 170 KB) and the
+  Font Awesome stylesheet with their rules only; `styles.html` uses them when present, fingerprinted,
+  else the full files of `static/webfonts/` (local preview). Nothing to do when adding an icon: the
+  next deployment includes it. After the build, `scripts/fonts.py --check dist` fails if a page
+  uses an icon missing from the subset; the script also fails on an icon absent from the font its
+  classes select (a brand icon without `style="brands"`: invisible). Locally (needs
+  `pip install fonttools brotli`): `python3 scripts/fonts.py`, then `hugo server`; delete
+  `assets/fontawesome/` to go back to the full fonts.
 - Logo resized and converted to WebP at build time (`img.html` option `resize`); language flags
   are SVG.
 - Icons (`layouts/_partials/favicon.html`, also used by the 404 page): `/favicon.ico` (16 and

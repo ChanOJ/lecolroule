@@ -80,9 +80,21 @@ jobs:
       - name: Check the 3D models
         run: python3 scripts/models.py --check
 
+      # Font Awesome reduced to the icons the pages use (assets/fontawesome/,
+      # picked up by the build below). The script builds the site once to find them.
+      - name: Subset the Font Awesome fonts
+        run: |
+          python3 -m venv "$RUNNER_TEMP/fonts"
+          "$RUNNER_TEMP/fonts/bin/pip" install --quiet fonttools==4.60.2 brotli==1.2.1
+          "$RUNNER_TEMP/fonts/bin/python" scripts/fonts.py
+
       # Warnings (e.g. deprecations) fail the build so they get fixed early.
       - name: Build
         run: hugo --panicOnWarning
+
+      # Every icon of the built pages is in the subset they use.
+      - name: Check the Font Awesome subset
+        run: '"$RUNNER_TEMP/fonts/bin/python" scripts/fonts.py --check dist'
 
       # Guard against a missing environment secret silently falling back to
       # another environment's storage zone.
