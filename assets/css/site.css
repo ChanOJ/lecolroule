@@ -646,6 +646,31 @@ html.viewer-is-open {
 			line-height: 1;
 		}
 
+	/* Tucked away while the visit plays (visit3d.js, autoHide): the controls slide out of the screen,
+	   up or down, and the pointer hides; a click brings them back */
+	.visit3d-bar,
+	.visit3d-ui .visit3d-close,
+	.visit3d-player {
+		transition: transform 0.4s ease, opacity 0.4s ease;
+	}
+
+		/* !important: over the canvas's own cursor (a hand over a door) */
+		.visit3d-stage.is-tucked,
+		.visit3d-stage.is-tucked * {
+			cursor: none !important;
+		}
+
+		.visit3d-stage.is-tucked .visit3d-bar,
+		.visit3d-stage.is-tucked .visit3d-ui .visit3d-close {
+			transform: translateY(calc(-100% - 1rem));
+			opacity: 0;
+		}
+
+		.visit3d-stage.is-tucked .visit3d-player {
+			transform: translateY(calc(100% + 1rem));
+			opacity: 0;
+		}
+
 	.visit3d-help {
 		position: absolute;
 		left: 0.75rem;

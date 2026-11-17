@@ -1521,6 +1521,7 @@ scene.traverse((o) => {
 });
 
 const FPS_PREVIEW = 30, FPS_FULL = LOW ? 30 : 60;   // see frame(); phones: a steady 30 rather than an uneven 60
+const HIDE_AFTER = 3000;   // ms: full-screen controls tucked away while the visit plays (createVisit)
 let current = null;   // one viewer at a time (a page swapped in by the in-site navigation gets a new one)
 
 export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = () => {}, standalone = false } = {}) {
@@ -1827,6 +1828,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     const moved = swingDoors(Math.min(0.25, (time - lastFrame) / 1000) || 0);   // same speed on slow devices
     lastFrame = time;
     if (seen !== loaded) { seen = loaded; invalidate(); }
+    autoHide();
     if (tour.running ? tour.update() : controls.update()) invalidate();
     if (!moved && dirty <= 0) return;
     dirty--;
@@ -1919,6 +1921,37 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
   // During the guided visit, a click elsewhere than on a door pauses it (the view buttons, top left,
   // leave it); the controls of the view only work outside the visit.
   let press = null, hoverAt = 0;
+  // Controls tucked away, full screen, while the visit plays: the view buttons, the close button and
+  // the player slide out of the screen HIDE_AFTER ms after the last action (a clean picture, e.g. to
+  // record a video of the visit) and come back on a click or a tap anywhere, or a key; that click
+  // only brings them back (it neither pauses the visit nor opens a door). Paused or outside the
+  // visit, they stay.
+  let tucked = false, hideTimer = 0, holding = false, pressTucked = false;
+  const tuck = (on) => {
+    if (tucked === on) return;
+    tucked = on;
+    stage.classList.toggle('is-tucked', on);
+  };
+  function autoHide() {
+    if (!(full && tour.running && !tour.paused)) {
+      clearTimeout(hideTimer); hideTimer = 0;
+      tuck(false);
+    } else if (!tucked && !hideTimer) {
+      hideTimer = setTimeout(() => {
+        hideTimer = 0;
+        if (holding) autoHide();    // not while the slider is held
+        else if (full && tour.running && !tour.paused) tuck(true);
+      }, HIDE_AFTER);
+    }
+  }
+  const showControls = () => {
+    clearTimeout(hideTimer); hideTimer = 0;
+    tuck(false);
+    autoHide();
+  };
+  stage.addEventListener('pointerdown', () => { pressTucked = tucked; holding = true; showControls(); }, true);
+  window.addEventListener('pointerup', () => { holding = false; });
+  stage.addEventListener('keydown', showControls, true);
   const onPress = (event) => {
     if (full && !tour.running) controls.enabled = true;
     press = full ? { x: event.clientX, y: event.clientY, t: performance.now() } : null;
@@ -1927,7 +1960,7 @@ export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = (
     if (!full || !press) return;
     const still = Math.hypot(event.clientX - press.x, event.clientY - press.y) < 6 && performance.now() - press.t < 600;
     press = null;
-    if (!still) return;
+    if (!still || pressTucked) return;   // the click that brought the controls back does nothing else
     const d = doorAt(event);
     if (d) d.target = d.target > 0.5 ? 0 : 1;
     else if (tour.running) tour.pause();
