@@ -12,7 +12,7 @@
 locals {
   # Key: zone name (punycode for "lecolroulé"), value: migration state.
   dns_domains = {
-    "lecolroule.fr"         = "bunny"
+    "lecolroule.fr"         = "dnssec"
     "lecolroule.com"        = "dnssec"
     "xn--lecolroul-j4a.com" = "dnssec" # lecolroulé.com
     "xn--lecolroul-j4a.fr"  = "dnssec" # lecolroulé.fr
