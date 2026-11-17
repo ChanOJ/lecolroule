@@ -1,52 +1,30 @@
-# DNS records of the website in the lecolroule.fr zone, hosted at Infomaniak.
-#
-# Only the records pointing to bunny.net and the Google Search Console
-# verification are managed here. The rest of the zone
-# stays managed in the Infomaniak manager: mail (MX, SPF, DKIM, DMARC, BIMI) and
-# the apex A/AAAA/TXT records that belong to Infomaniak's web redirection
-# (lecolroule.fr -> https://www.lecolroule.fr/valloire/). The zone itself is
-# never managed, so that no plan can ever delete it.
+# Former DNS records of the website in the lecolroule.fr zone at Infomaniak
+# (www, test, Google Search Console verification). The 4 domains are served by
+# Bunny DNS since 2026-11-17 (dns_bunny.tf): these records are no longer used.
+# They leave the state without being deleted at Infomaniak (removed blocks:
+# nothing is destroyed). Once applied, this file, the infomaniak provider
+# (versions.tf) and the INFOMANIAK_TOKEN secret can go.
 
-locals {
-  zone      = "lecolroule.fr"
-  test_name = "le-col-roule-test"
-}
-
-resource "infomaniak_record" "www" {
-  zone_fqdn = local.zone
-  type      = "CNAME"
-  source    = "www"
-  target    = module.prod.cdn_hostname
-  ttl       = 3600
+removed {
+  from = infomaniak_record.www
 
   lifecycle {
-    prevent_destroy = true
+    destroy = false
   }
 }
 
-# Target computed from the pull zone name (not from module.test, which depends
-# on this record): bunny.net system hostnames are "<pull zone name>.b-cdn.net".
-resource "infomaniak_record" "test" {
-  zone_fqdn = local.zone
-  type      = "CNAME"
-  source    = "test"
-  target    = "${local.test_name}.b-cdn.net"
-  ttl       = 3600
+removed {
+  from = infomaniak_record.test
+
+  lifecycle {
+    destroy = false
+  }
 }
 
-# Google Search Console: proof of ownership of the domain (also in
-# dns_bunny.tf, for when the domain is delegated to Bunny).
-resource "infomaniak_record" "google_site_verification" {
-  zone_fqdn = local.zone
-  type      = "TXT"
-  source    = "."
-  # Infomaniak stores TXT values with their quotes.
-  target = "\"google-site-verification=D3Y2KhznVBAMJY05TDKwWZiBqteuLRvoufknwr0mFDc\""
-  ttl    = 3600
-}
+removed {
+  from = infomaniak_record.google_site_verification
 
-# Created by hand in the Infomaniak manager before the apply.
-import {
-  to = infomaniak_record.google_site_verification
-  id = "lecolroule.fr,39510579"
+  lifecycle {
+    destroy = false
+  }
 }
