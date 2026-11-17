@@ -187,7 +187,7 @@ the site: `hugo server`, apartment page, a click on the visit opens it full scre
   full screen, it stops at the end or with the view buttons (top left). Full screen, a player at the
   bottom drives it: -5 s, play/pause, +5 s, a slider over the whole path, the time; a click on the
   view (elsewhere than on a door) pauses it; keys: space, left and right arrows. While it plays,
-  the controls (view buttons, close button, player) and the pointer slide away after 3 s
+  the controls (view buttons, close button, player) and the pointer slide away after 1 s
   (`HIDE_AFTER`: a clean picture to record a video); a click, a tap or a key brings them back, that
   click doing nothing else. Paused, the view
   is free; playing again puts the camera back on the path. The view always turns round a point

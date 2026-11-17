@@ -1521,7 +1521,7 @@ scene.traverse((o) => {
 });
 
 const FPS_PREVIEW = 30, FPS_FULL = LOW ? 30 : 60;   // see frame(); phones: a steady 30 rather than an uneven 60
-const HIDE_AFTER = 3000;   // ms: full-screen controls tucked away while the visit plays (createVisit)
+const HIDE_AFTER = 1000;   // ms: full-screen controls tucked away while the visit plays (createVisit)
 let current = null;   // one viewer at a time (a page swapped in by the in-site navigation gets a new one)
 
 export function createVisit(stage, { labels = {}, onOpen = () => {}, onClose = () => {}, standalone = false } = {}) {
