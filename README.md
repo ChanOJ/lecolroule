@@ -3,7 +3,7 @@
 Showcase website of a holiday rental in Valloire: https://www.lecolroule.fr/, in French (the
 reference), English, Dutch, German and Italian.
 Generated with [Hugo](https://gohugo.io) on the "Dimension" theme by HTML5 UP (jQuery), hosted on
-bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
+bunny.net (Storage Zone + Pull Zone) and Bunny DNS; the domains are registered at Infomaniak.
 
 ## Layout
 
@@ -19,7 +19,6 @@ bunny.net (Storage Zone + Pull Zone). DNS is managed at Infomaniak.
 - `scripts/deploy.py`: deployment to bunny.net (see below).
 - `scripts/smoke_test.py`: checks of a deployed environment (see below).
 - `scripts/newsletter.py`: sends a blog post as the newsletter (see "Newsletter").
-- `scripts/dns_compare.py`: compares the DNS answers of Bunny and Infomaniak (see "DNS").
 - `scripts/fonts.py`: Font Awesome reduced to the icons used (see "Performance and icons").
 - `infra/`: bunny.net and DNS configuration as code (OpenTofu, see below).
 
@@ -475,7 +474,7 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
 | `modules/site/main.tf` | one environment: storage zone (404 → `not_found_page`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, legacy redirects, page cache |
-| `dns.tf` | DNS records `www` and `test` in the `lecolroule.fr` zone at Infomaniak (rest of the zone is managed by hand) |
+| `dns.tf` | `removed` blocks of the former Infomaniak records (left in place, out of the state): to delete with the `infomaniak` provider once applied |
 | `dns_bunny.tf` | the 4 domains at Bunny DNS (zones, every record) and the redirect pull zone of the alternative hostnames (see "DNS") |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
@@ -516,7 +515,8 @@ always encrypted (`enforced = true`) and the encrypted `infra/terraform.tfstate`
 it can be shared with CI. Commit it after every `tofu apply`. Three values are needed:
 
 - `BUNNYNET_API_KEY`: bunny.net account API key;
-- `INFOMANIAK_TOKEN`: Infomaniak API token restricted to DNS (Profile → Developer → API tokens);
+- `INFOMANIAK_TOKEN`: Infomaniak API token restricted to DNS (Profile → Developer → API tokens),
+  needed only until `infra/dns.tf` and the `infomaniak` provider are gone;
 - `TF_VAR_state_passphrase`: state encryption passphrase. **Losing it makes the state unreadable**:
   it is kept in Proton Pass (vault `LeColRoule`) as the source of truth.
 
@@ -541,41 +541,40 @@ they are in the dashboard.
 GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIAK_TOKEN` and `TF_VAR_STATE_PASSPHRASE`
 (exposed as `TF_VAR_state_passphrase`).
 
-## DNS (migration to Bunny DNS in progress)
+## DNS (Bunny DNS)
 
-Goal: the 4 domains (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com` = `xn--lecolroul-j4a.com`,
-`lecolroulé.fr` = `xn--lecolroul-j4a.fr`) fully described in `infra/dns_bunny.tf`: their Bunny DNS
-zones with every record (mail included), and the redirection of the alternative hostnames (the 4
-apexes, `www` of the 3 alternative domains) to `https://www.lecolroule.fr/` by the
-`le-col-roule-redirects` pull zone (301 edge rule, keeping the path: `https://lecolroule.com/fr/...` lands on the same page). Infomaniak stays the registrar: the name servers
-and the DNSSEC DS record of each domain are set there by hand, once.
+The 4 domains (`lecolroule.fr`, `lecolroule.com`, `lecolroulé.com` = `xn--lecolroul-j4a.com`,
+`lecolroulé.fr` = `xn--lecolroul-j4a.fr`) are fully described in `infra/dns_bunny.tf`: their Bunny
+DNS zones with every record (mail included), DNSSEC on, and the redirection of the alternative
+hostnames (the 4 apexes, `www` of the 3 alternative domains) to `https://www.lecolroule.fr/` by the
+`le-col-roule-redirects` pull zone (301 edge rule, keeping the path: `https://lecolroule.com/fr/...`
+lands on the same page). Infomaniak stays the registrar: the name servers (`kiki.bunny.net`,
+`coco.bunny.net`) and the DNSSEC DS record of each domain are set there by hand.
+`tofu output dns` gives both, per domain.
 
-`local.dns_domains` in `infra/dns_bunny.tf` holds the state of each domain: `infomaniak` (still
-delegated to Infomaniak; the Bunny zone is ready but unused), `bunny` (delegated to Bunny; the TLS
-certificates of its redirections are issued), `dnssec` (Bunny DNSSEC on, DS published at
-Infomaniak). `tofu output dns` gives the Bunny name servers and, once DNSSEC is on, the DS record.
+The mail records of `lecolroule.fr` (Proton, Brevo: MX, SPF, DKIM, DMARC, BIMI): a mistake breaks
+the sending or the receiving of e-mails. After changing them, send a test e-mail (e.g.
+mail-tester.com: SPF, DKIM, DMARC) and check that mail comes in.
 
-`scripts/dns_compare.py [domain]` asks both providers' name servers directly: the records that
-must not change (site, mail, verification codes) must be answered identically, and Bunny must
-answer an address for every redirected hostname.
+**Moving a domain to Bunny DNS** (done for the 4 domains in November 2026). `local.dns_domains`
+holds the state of each domain: `infomaniak` (delegated elsewhere; the Bunny zone is ready but
+unused), `bunny` (delegated to Bunny; the TLS certificates of its redirections are issued),
+`dnssec` (Bunny DNSSEC on, DS published at the registrar).
 
-Procedure, per domain (the 3 alternative ones first, they have no mail; `lecolroule.fr` last):
-
-1. `python3 scripts/dns_compare.py <domain>`: everything as expected.
-2. Infomaniak manager → domain → DNSSEC: disable it (removes the DS record at the registry), then
-   **wait 48 h**: resolvers may keep the old DS that long, and a DS not matching the new name
-   servers' keys makes the domain unreachable (mail included).
-3. Infomaniak manager → domain → DNS servers: `kiki.bunny.net`, `coco.bunny.net`.
-4. Once the new name servers are seen (`dig NS <domain>`, up to 48 h for `.com`): set the domain
-   to `bunny` in `local.dns_domains`, apply (certificates of its redirections), run
-   `python3 scripts/smoke_test.py --env prod --redirect-domains`. For `lecolroule.fr`, also send a
-   test e-mail (e.g. mail-tester.com: SPF, DKIM, DMARC) and check that mail comes in.
-5. Set it to `dnssec`, apply, then publish the DS record of `tofu output dns` at Infomaniak
-   (DNSSEC → add a DS: key tag, algorithm, digest type, digest).
-
-Afterwards: remove the Infomaniak web redirections and the `infomaniak_record` resources of
-`infra/dns.tf` (with a `removed` block, so that nothing is deleted at Infomaniak while it may
-still be needed), and this "in progress".
+1. Write every record of the current zone in `infra/dns_bunny.tf`, apply, and compare the answers
+   of both providers' name servers (`dig @<name server> <name> <type>`): identical for everything
+   that must not change (site, mail, verification codes).
+2. Registrar → domain → DNSSEC: disable it (removes the DS record at the registry), then wait for
+   the TTL of the old DS (1 h for `.fr`; 48 h is safe): a DS not matching the new name servers'
+   keys makes the domain unreachable (mail included).
+3. Registrar → domain → DNS servers: `kiki.bunny.net`, `coco.bunny.net`.
+4. Once the registry shows them (`dig NS <domain> @d.nic.fr` for `.fr`): set the domain to `bunny`,
+   apply (certificates of its redirections), run
+   `python3 scripts/smoke_test.py --env prod --redirect-domains`, and test the mail if it has any.
+5. Set it to `dnssec`, apply, **wait one hour** (`dns_ttl`: resolvers must first drop the unsigned
+   answers they cached; with the DS published sooner, they answer SERVFAIL until then, as seen for
+   `lecolroule.fr`), then publish the DS record of `tofu output dns` at the registrar (DNSSEC → add
+   a DS: key tag, algorithm, digest type, digest).
 
 ## Planned work
 
@@ -586,4 +585,3 @@ still be needed), and this "in progress".
    Webmaster Tools, a few weeks after the switch of 2026-11-10).
 3. PR checks for the website (parity of the languages with FR).
 4. Cache: purge only changed URLs instead of the whole pull zone (assets are already fingerprinted).
-5. Finish the move of the 4 domains to Bunny DNS (see "DNS" above).

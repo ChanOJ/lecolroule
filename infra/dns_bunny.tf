@@ -2,10 +2,10 @@
 # domains to the site. Infomaniak stays the registrar: the name servers and the
 # DNSSEC DS record of each domain are set there by hand (README.md, "DNS").
 #
-# Migration (README.md, "DNS"): every zone is created here and filled like the
-# Infomaniak one, but has no effect until the domain is delegated to Bunny.
+# Moving a domain here (README.md, "DNS"): its zone is created and filled like
+# the current one, but has no effect until the domain is delegated to Bunny.
 # The state of each domain is in local.dns_domains:
-#   "infomaniak": delegated to Infomaniak (Bunny zone ready, unused);
+#   "infomaniak": delegated elsewhere (Bunny zone ready, unused);
 #   "bunny":      delegated to Bunny: TLS certificates of its redirections;
 #   "dnssec":     same, plus Bunny DNSSEC on (DS record published at Infomaniak).
 
@@ -134,9 +134,9 @@ locals {
   fr = bunnynet_dns_zone.this["lecolroule.fr"].id
 
   # Every record of the lecolroule.fr zone other than the apex redirection,
-  # copied from Infomaniak. Mail (Proton) and Brevo records: a mistake here
-  # breaks the sending or the receiving of e-mails, check them with
-  # scripts/dns_compare.py before any delegation change.
+  # first copied from Infomaniak. Mail (Proton) and Brevo records: a mistake here
+  # breaks the sending or the receiving of e-mails: after a change, send a test
+  # e-mail (mail-tester.com) and check that mail comes in (README.md, "DNS").
   fr_records = {
     www  = { name = "www", type = "CNAME", value = module.prod.cdn_hostname }
     test = { name = "test", type = "CNAME", value = module.test.cdn_hostname }

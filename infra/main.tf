@@ -31,14 +31,10 @@ module "test" {
   # No cache at all: every deployment is visible at once.
   cache = "none"
 
-
-  name      = local.test_name
+  name      = "le-col-roule-test"
   hostname  = "test.lecolroule.fr"
   noindex   = true
   analytics = false
-
-  # The TLS certificate can only be issued once the hostname resolves to bunny.net.
-  depends_on = [infomaniak_record.test]
 }
 
 output "prod" {
