@@ -474,7 +474,6 @@ Locally: `python3 scripts/smoke_test.py --env prod --redirect-domains`.
 | `main.tf` | the environments: `module.prod` (`www.lecolroule.fr`), `module.test` (`test.lecolroule.fr`) |
 | `modules/site/main.tf` | one environment: storage zone (404 → `not_found_page`), pull zone, hostname |
 | `modules/site/edgerules.tf` | edge rules: security headers, legacy redirects, page cache |
-| `dns.tf` | `removed` blocks of the former Infomaniak records (left in place, out of the state): to delete with the `infomaniak` provider once applied |
 | `dns_bunny.tf` | the 4 domains at Bunny DNS (zones, every record) and the redirect pull zone of the alternative hostnames (see "DNS") |
 | `encryption.tf` | state/plan encryption (AES-GCM, key derived from a passphrase) |
 | `secrets.env` | Proton Pass **references** to the secrets (no secret values) |
@@ -512,11 +511,9 @@ contributors need an approval before their workflows run (and never get the secr
 
 **Secrets.** The state contains secrets (storage zone passwords, pull zone token auth key), so it is
 always encrypted (`enforced = true`) and the encrypted `infra/terraform.tfstate` is committed, so
-it can be shared with CI. Commit it after every `tofu apply`. Three values are needed:
+it can be shared with CI. Commit it after every `tofu apply`. Two values are needed:
 
 - `BUNNYNET_API_KEY`: bunny.net account API key;
-- `INFOMANIAK_TOKEN`: Infomaniak API token restricted to DNS (Profile → Developer → API tokens),
-  needed only until `infra/dns.tf` and the `infomaniak` provider are gone;
 - `TF_VAR_state_passphrase`: state encryption passphrase. **Losing it makes the state unreadable**:
   it is kept in Proton Pass (vault `LeColRoule`) as the source of truth.
 
@@ -538,7 +535,7 @@ they are in the dashboard.
   apply, then commit of the updated encrypted state by `github-actions[bot]`.
   Pull `main` afterwards before working on `infra/` locally.
 
-GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`), `INFOMANIAK_TOKEN` and `TF_VAR_STATE_PASSPHRASE`
+GitHub secrets used: `BUNNY_API_KEY` (exposed as `BUNNYNET_API_KEY`) and `TF_VAR_STATE_PASSPHRASE`
 (exposed as `TF_VAR_state_passphrase`).
 
 ## DNS (Bunny DNS)
