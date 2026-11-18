@@ -1,5 +1,8 @@
 {{- /* Sitemap of one language, with the same hreflang alternates as the pages'
-       <head> (language codes, x-default = English). lastmod comes from git.
+       <head> (language codes, x-default = English). lastmod comes from git (last
+       commit of the page's file); for the home page, the date of the Airbnb
+       reviews (data/reviews.yaml, `updated`) when more recent: they are part of
+       its visible content but live outside its file.
        Pages without a URL (blog posts, shown on the blog page) are skipped. */ -}}
 {{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -8,8 +11,15 @@
 {{- if .Permalink }}
   <url>
     <loc>{{ .Permalink }}</loc>
-    {{- if not .Lastmod.IsZero }}
-    <lastmod>{{ .Lastmod.Format "2006-01-02" }}</lastmod>
+    {{- $lastmod := .Lastmod }}
+    {{- if .IsHome }}
+      {{- with hugo.Data.reviews.updated }}
+        {{- $reviews := time . }}
+        {{- if $reviews.After $lastmod }}{{ $lastmod = $reviews }}{{ end }}
+      {{- end }}
+    {{- end }}
+    {{- if not $lastmod.IsZero }}
+    <lastmod>{{ $lastmod.Format "2006-01-02" }}</lastmod>
     {{- end }}
     {{- range .AllTranslations }}
     <xhtml:link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" />
