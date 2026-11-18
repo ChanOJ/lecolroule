@@ -373,7 +373,8 @@ run the workflow in `test` mode, check the e-mails, then run it in `send` mode.
   its posts (blog page). They include the amenities (`amenities`) and, as `sameAs`, the Airbnb
   page of the language, the social links and the Google and Apple business profiles
   (`profiles`).
-- Sitemap per language with the same `hreflang` alternates and `lastmod` from git.
+- Sitemap per language with the same `hreflang` alternates and `lastmod` from git (last commit of
+  the page's file; the home page takes the `updated` date of `data/reviews.yaml` when more recent).
 - Images: real width/height (no layout shift), native lazy loading (`loading="lazy"`), the first
   image of a page loaded at once.
 
