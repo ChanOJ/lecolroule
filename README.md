@@ -390,6 +390,9 @@ ePrivacy rules), so it has no cookie banner:
 - Maps are OpenStreetMap (`map` shortcode, Leaflet): no cookie; the tiles come from
   tile.openstreetmap.org (light use, within its usage policy, attribution shown).
 - `lcr_lang` (language menu) only stores a choice the visitor made.
+- Privacy policy: `content/privacy.<lang>.md` (not in the menu; linked from the footer, `i18n` key
+  `privacy`), also required by the Google OAuth consent screen. Update it when a service is added
+  (newsletter, maps, analytics...).
 - The 3D visit is served by the site (three.js included): no third-party request.
 - The newsletter form is posted to Brevo only when the visitor subscribes; its captcha,
   Cloudflare Turnstile, sets no cookie and is loaded only when the form comes into view (blog page).

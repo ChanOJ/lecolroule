@@ -56,6 +56,11 @@ PAGES = {
     "/nl/appartement-valloire/": "nl",
     "/de/ferienwohnung-valloire/": "de",
     "/it/appartamento-valloire/": "it",
+    "/fr/confidentialite/": "fr",
+    "/en/privacy/": "en",
+    "/nl/privacy/": "nl",
+    "/de/datenschutz/": "de",
+    "/it/privacy/": "it",
 }
 LANGUAGES = sorted(set(PAGES.values()))
 
