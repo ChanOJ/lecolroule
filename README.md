@@ -361,6 +361,29 @@ Flow: write the post in French, preview it locally (the e-mail at
 `http://localhost:1313/fr/blog/<post>/email.html`), translate it, merge, deploy to test then prod,
 run the workflow in `test` mode, check the e-mails, then run it in `send` mode.
 
+## Google Business Profile
+
+A French blog post is also published as an "Update" on the Google listing of the flat
+(`scripts/gbp_post.py`, workflow "Google Business Profile: post", manual; API v4
+`localPosts`). Text = the post turned into plain text (1500 characters at most, no link: the API
+refuses URLs), photo = the post's first image, "Learn more" button = the post on the prod blog
+page. `test` mode checks the credentials and the listing and prints the post; `send` (from `main`
+only) publishes it, once the post is on prod, and skips a post whose button link is already on the
+listing.
+
+- Google Cloud project `lecolroule` (1005304165886), Business Profile APIs allowlisted on
+  2026-11-22; OAuth consent screen "External", **in production** (a "Testing" app's refresh
+  token expires after 7 days), without logo (a logo triggers Google's app verification), privacy
+  policy = the site's `/fr/confidentialite/`. OAuth client of type "Desktop app".
+- Secrets, in Proton Pass (vault `LeColRoule`: `google-client-id`, `google-client-secret`,
+  `google-refresh-token`; references in `scripts/gbp.env`) and as repository secrets
+  `GBP_CLIENT_ID`, `GBP_CLIENT_SECRET`, `GBP_REFRESH_TOKEN`.
+- The refresh token comes from `pass-cli run --env-file scripts/gbp.env -- python3
+  scripts/gbp_post.py --login` (log in as the owner of the listing, `google@lecolroule.fr`;
+  "unverified app" warning: Advanced → continue). Revoked if the password changes or the app is
+  deleted: run it again.
+- Flow: after the newsletter, run the workflow in `test` mode, then in `send` mode.
+
 ## SEO
 
 - Each page: `seoTitle` (<title>, ~60 characters max), `description` (~150 characters) and
