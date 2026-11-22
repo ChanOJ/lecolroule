@@ -1,0 +1,63 @@
+name: "Google Business Profile: post"
+
+# Publishes a French blog post as an "Update" on the Google Business Profile
+# listing (scripts/gbp_post.py).
+# - mode "test": checks the credentials and the listing, prints what would be
+#   published, posts nothing;
+# - mode "send": publishes it. Only from main, only once the post is on the prod
+#   site, never twice (an existing post with the same button link is skipped).
+#
+# Repository secrets: GBP_CLIENT_ID, GBP_CLIENT_SECRET, GBP_REFRESH_TOKEN
+# (Google Cloud project "lecolroule", scope business.manage).
+
+on:
+  workflow_dispatch:
+    inputs:
+      post:
+        description: "Post file name, without language and extension (e.g. 2026-12-01-winter)"
+        type: string
+        required: true
+      mode:
+        description: "test: check only; send: publish"
+        type: choice
+        options: [test, send]
+        default: test
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: "0.169.0"
+
+concurrency:
+  group: gbp-post
+  cancel-in-progress: false
+
+jobs:
+  gbp-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refuse sending from another branch than main
+        if: inputs.mode == 'send' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Sending is only allowed from main."
+          exit 1
+
+      - uses: actions/checkout@v7
+
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i hugo.deb
+
+      - name: Build
+        run: hugo --quiet
+
+      - name: Google Business Profile (${{ inputs.mode }})
+        env:
+          GBP_CLIENT_ID: ${{ secrets.GBP_CLIENT_ID }}
+          GBP_CLIENT_SECRET: ${{ secrets.GBP_CLIENT_SECRET }}
+          GBP_REFRESH_TOKEN: ${{ secrets.GBP_REFRESH_TOKEN }}
+          POST: ${{ inputs.post }}
+          MODE: ${{ inputs.mode }}
+        run: python3 scripts/gbp_post.py "$POST" $([ "$MODE" = send ] && echo --send)

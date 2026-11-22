@@ -47,3 +47,4 @@ override.tf.json
 
 # Font Awesome subset, made by scripts/fonts.py (deployment workflow).
 /assets/fontawesome/
+!scripts/gbp.env
